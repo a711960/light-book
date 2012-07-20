@@ -145,7 +145,7 @@ ProcedureC.l showDialog(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   ;Define hLib = LoadLibrary_("c:\windows\system32\MSVBVM60.DLL")
   ;If hLib
   ;   *log\info("loaded MSVBVM60: " + Str(hLib))
-     If OpenLibrary(1, "c:\Dev\habrhabr\trunk\MathLib.dll")
+     If OpenLibrary(1, "c:\Dev\light-book\trunk\ScriptComponent\MSSCWrapper.dll")
        *log\info("called OpenLibrary(MathLib.dll)")
 
        Define pIID1.GUID, pIID2.GUID 
@@ -178,7 +178,7 @@ ProcedureC.l showDialog(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
        
        CloseLibrary(1)
      Else
-       *log\error("can not load c:\Dev\habrhabr\trunk\MathLib.dll")
+       *log\error("can not load MSSCWrapper.dll")
      EndIf
   ;   FreeLibrary_(hLib)
   ;Else
@@ -265,6 +265,6 @@ EndProcedure
 ; CursorPosition = 108
 ; FirstLine = 81
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 174
-; FirstLine = 132
+; CursorPosition = 147
+; FirstLine = 134
 ; Folding = ---
