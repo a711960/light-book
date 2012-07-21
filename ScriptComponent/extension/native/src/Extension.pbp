@@ -10,12 +10,12 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-21 17:07" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-21 18:16" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="8a3f947024360c435fc7e544231482a9"/>
+      <fingerprint md5="e9ecd7837968c79c0bd63187a173893c"/>
     </file>
     <file name="Logger.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -39,8 +39,8 @@
       <options unicode="1" thread="1" onerror="1"/>
       <temporaryexe value="source"/>
       <format exe="dll" cpu="0"/>
-      <compilecount enable="1" value="238"/>
-      <buildcount enable="1" value="237"/>
+      <compilecount enable="1" value="242"/>
+      <buildcount enable="1" value="241"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

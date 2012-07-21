@@ -1,14 +1,12 @@
 ;-TOP
 
 ;**
-;* Kommentar    : ScriptControl _
-;* Author 1     : ts-soft _
-;* Author 2     : mk-soft _
-;* Author 3     : Michael Kastner _
-;* Datei        : ScriptControl.pb _
-;* Version      : 1.12 _
-;* Erstellt     : 10.07.2006 _
-;* Geandert     : 17.07.2010 _
+;* Kommentar    : ScriptControl 
+;* Author       : Michael Kastner 
+;* Datei        : ScriptControl.pb
+;* Version      : 1.12 
+;* Erstellt     : 10.07.2006 
+;* Geandert     : 17.07.2010 
 
 EnableExplicit
 
@@ -75,79 +73,110 @@ Structure EXCEPINFO
   CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding3.b[4] : CompilerEndIf
 EndStructure
 
+;- Object Structures
+Structure Script
+  *VTable
+  ScriptControl.IScriptControl
+EndStructure
+
+;- Interface
+Interface IScript
+  Release()
+  About()
+  AddObject(name.s, *object)
+  AddCode(Script.s)
+  EvalVarType.l(StringVar.s)
+  EvalVariant.l(StringVar.s, *Value.Variant)
+  EvalDouble.d(StringVar.s)
+  EvalFloat.f(StringVar.s)
+  EvalQuad.q(StringVar.s)
+  EvalLong.l(StringVar.s)
+  EvalWord.w(StringVar.s)
+  EvalByte.b(StringVar.s)
+  EvalStr.s(StringVar.s)
+  Reset()
+  Run.l(Script.s)
+  SetLanguage(Language.s)
+  SetTimeOut(ms.l)
+  GetTimeOut.l()
+  SetSitehWnd(hWnd.l)
+  GetSitehWnd.l()
+  SetAllowUI(value.l)
+  GetAllowUI.l()
+  SetUseSafeSubset(value.l)
+  GetUseSafeSubset.l()
+  GetError.s()
+EndInterface
+
 ; ***************************************************************************************
+
 
 ;** InitScriptControl
 
-Procedure InitScriptControl()
+Procedure.l NewScript()
 ;- Create ScriptControl
-  ;** g ScriptControl
-  ;* Interfacevariable
-  Global ScriptControl.IScriptControl
- 
+  Define *oNew.Script
+  *oNew = AllocateMemory (SizeOf(Script))
+  InitializeStructure(*oNew, Script)
+  
+  *oNew\VTable  = ?VT_Script
+  
   CoInitialize_(0)
-  If CoCreateInstance_(?CLSID_ScriptControl, 0, 1, ?IID_IScriptControl, @ScriptControl) = #S_OK
-    ScriptControl\Reset()
-    ScriptControl\put_Language("VBScript")
+  
+  If CoCreateInstance_(?CLSID_ScriptControl, 0, 1, ?IID_IScriptControl, @*oNew\ScriptControl) = #S_OK
+    *oNew\ScriptControl\Reset()
+    *oNew\ScriptControl\put_Language("VBScript")
   EndIf
-  DataSection
-  CLSID_ScriptControl:
-  Data.l $0E59F1D5
-  Data.w $1FBE,$11D0
-  Data.b $8F,$F2,$00,$A0,$D1,$00,$38,$BC
-
-  IID_IScriptControl:
-  Data.l $0E59F1D3
-  Data.w $1FBE,$11D0
-  Data.b $8F,$F2,$00,$A0,$D1,$00,$38,$BC
-  EndDataSection
+  
+  ProcedureReturn *oNew
 EndProcedure
 
 
 ;** Delete ScriptControl
 
-Procedure DeleteScriptControl()
+Procedure SCtr__Release(*This.Script)
 ;- Destroy ScriptControl
-  ScriptControl\Release()
+  *This\ScriptControl\Release()
   CoUninitialize_()
+  FreeMemory(*This)
 EndProcedure
 
 ; ***************************************************************************************
 
-;** SCtr_About
-Procedure SCtr_About()
+;** SCtr__About
+Procedure SCtr__About(*This.Script)
 ;- Show AboutBox for ScriptControl
-  ScriptControl\_AboutBox()
+  *This\ScriptControl\_AboutBox()
 EndProcedure
 
-;** SCtr_AddObject
-Procedure SCtr_AddObject(name.s, *object)
+;** SCtr__AddObject
+Procedure SCtr__AddObject(*This.Script, name.s, *object)
 ;- Add an object to the global namespace of the scripting engine
-  ProcedureReturn ScriptControl\AddObject(name, *object, 0)
+  ProcedureReturn *This\ScriptControl\AddObject(name, *object, 0)
 EndProcedure
 
-;** SCtr_AddCode
-Procedure SCtr_AddCode(Script.s)
+;** SCtr__AddCode
+Procedure SCtr__AddCode(*This.Script, Script.s)
 ;-  Add code to the global module
-  ProcedureReturn ScriptControl\AddCode(Script)
+  ProcedureReturn *This\ScriptControl\AddCode(Script)
 EndProcedure
 
-;**SCtr_EvalVarType
+;**SCtr__EvalVarType
 ;* Get variable type, returns LONG Variant Type
-Procedure.l SCtr_EvalVarType(StringVar.s)
+Procedure.l SCtr__EvalVarType(*This.Script, StringVar.s)
   Protected var.VARIANT
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     ProcedureReturn var\vt
   Else
     ProcedureReturn 0
   EndIf
 EndProcedure
 
-;** SCtr_EvalVariant
+;** SCtr__EvalVariant
 ;* Read variant variable
-Procedure.l SCtr_EvalVariant(StringVar.s, *Value.Variant)
+Procedure.l SCtr__EvalVariant(*This.Script, StringVar.s, *Value.Variant)
   Protected var.VARIANT, result.l
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     VariantClear_(*Value)
     If VariantCopy_(*Value, var) = #S_OK
       result = #True
@@ -161,11 +190,11 @@ Procedure.l SCtr_EvalVariant(StringVar.s, *Value.Variant)
   EndIf
 EndProcedure
 
-;** SCtr_EvalDate
+;** SCtr__EvalDate
 ;* Read Date variable, Unix Date (Long)
-Procedure.l SCtr_EvalDate(StringVar.s)
+Procedure.l SCtr__EvalDate(*This.Script, StringVar.s)
   Protected var.VARIANT, result.l
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_DATE
         result = (var\dblVal) * 86400 - 2209161600
@@ -179,11 +208,11 @@ Procedure.l SCtr_EvalDate(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalDouble
+;** SCtr__EvalDouble
 ;* Read double variable
-Procedure.d SCtr_EvalDouble(StringVar.s)
+Procedure.d SCtr__EvalDouble(*This.Script, StringVar.s)
   Protected var.VARIANT, result.d
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -211,11 +240,11 @@ Procedure.d SCtr_EvalDouble(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalFloat
+;** SCtr__EvalFloat
 ;* Read float variable
-Procedure.f SCtr_EvalFloat(StringVar.s)
+Procedure.f SCtr__EvalFloat(*This.Script, StringVar.s)
   Protected var.VARIANT, result.f
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -243,11 +272,11 @@ Procedure.f SCtr_EvalFloat(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalQuad
+;** SCtr__EvalQuad
 ;* Read quad variable
-Procedure.q SCtr_EvalQuad(StringVar.s)
+Procedure.q SCtr__EvalQuad(*This.Script, StringVar.s)
   Protected var.VARIANT, result.q
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -275,11 +304,11 @@ Procedure.q SCtr_EvalQuad(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalLong
+;** SCtr__EvalLong
 ;* Read loang variable
-Procedure.l SCtr_EvalLong(StringVar.s)
+Procedure.l SCtr__EvalLong(*This.Script, StringVar.s)
   Protected var.VARIANT, result.l
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -307,11 +336,11 @@ Procedure.l SCtr_EvalLong(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalWord
+;** SCtr__EvalWord
 ;* Read word variable
-Procedure.w SCtr_EvalWord(StringVar.s)
+Procedure.w SCtr__EvalWord(*This.Script, StringVar.s)
   Protected var.VARIANT, result.w
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -339,11 +368,11 @@ Procedure.w SCtr_EvalWord(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalByte
+;** SCtr__EvalByte
 ;* Read byte variable
-Procedure.b SCtr_EvalByte(StringVar.s)
+Procedure.b SCtr__EvalByte(*This.Script, StringVar.s)
   Protected var.VARIANT, result.b
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
     Select var\vt
       Case #VT_BOOL
         result =  var\boolVal
@@ -371,11 +400,11 @@ Procedure.b SCtr_EvalByte(StringVar.s)
   EndIf
 EndProcedure
 
-;** SCtr_EvalStr
+;** SCtr__EvalStr
 ;* Read string variable
-Procedure.s SCtr_EvalStr(StringVar.s)
+Procedure.s SCtr__EvalStr(*This.Script, StringVar.s)
   Protected var.VARIANT, result.s
-  If ScriptControl\Eval(StringVar, @var) = #S_OK
+  If *This\ScriptControl\Eval(StringVar, @var) = #S_OK
    Select var\vt
       Case #VT_BOOL
         If var\boolVal = #VARIANT_TRUE
@@ -407,88 +436,88 @@ Procedure.s SCtr_EvalStr(StringVar.s)
   ProcedureReturn result
 EndProcedure
 
-;** SCtr_Reset
-Procedure SCtr_Reset()
+;** SCtr__Reset
+Procedure SCtr__Reset(*This.Script)
 ;- Reset the scripting engine to a newly created state
-  ProcedureReturn ScriptControl\Reset()
+  ProcedureReturn *This\ScriptControl\Reset()
 EndProcedure
 
-;** SCtr_Run
-Procedure SCtr_Run(Script.s)
+;** SCtr__Run
+Procedure.l SCtr__Run(*This.Script, Script.s)
 ;- Call a procedure defined in the global module
-  ProcedureReturn ScriptControl\ExecuteStatement(Script)
+  ProcedureReturn *This\ScriptControl\ExecuteStatement(Script)
 EndProcedure
 
-;** SCtr_SetLanguage
-Procedure SCtr_SetLanguage(Language.s)
+;** SCtr__SetLanguage
+Procedure SCtr__SetLanguage(*This.Script, Language.s)
 ;- Language engine to use("VBScript" or "JScript", default is "VBSCript")
-  ProcedureReturn ScriptControl\put_Language(Language)
+  ProcedureReturn *This\ScriptControl\put_Language(Language)
 EndProcedure
 
-;** SCtr_SetTimeOut
-Procedure SCtr_SetTimeOut(ms.l)
+;** SCtr__SetTimeOut
+Procedure SCtr__SetTimeOut(*This.Script, ms.l)
 ;-  Length of time in milliseconds that a script can execute before being considered hung
-  ProcedureReturn ScriptControl\put_Timeout(ms)
+  ProcedureReturn *This\ScriptControl\put_Timeout(ms)
 EndProcedure
 
-;** SCtr_GetTimeOut
-Procedure.l SCtr_GetTimeOut()
+;** SCtr__GetTimeOut
+Procedure.l SCtr__GetTimeOut(*This.Script)
 ;-  Length of time in milliseconds that a script can execute before being considered hung
   Protected timeout.l
-  ScriptControl\get_Timeout(@timeout)
+  *This\ScriptControl\get_Timeout(@timeout)
   ProcedureReturn timeout
 EndProcedure
 
 
-;** SCtr_SetSitehWnd
-Procedure SCtr_SetSitehWnd(hWnd.l)
+;** SCtr__SetSitehWnd
+Procedure SCtr__SetSitehWnd(*This.Script, hWnd.l)
 ;-  hWnd used as a parent for displaying UI
-  ProcedureReturn ScriptControl\put_SitehWnd(hWnd)
+  ProcedureReturn *This\ScriptControl\put_SitehWnd(hWnd)
 EndProcedure
 
-;** SCtr_GetSitehWnd
-Procedure.l SCtr_GetSitehWnd()
+;** SCtr__GetSitehWnd
+Procedure.l SCtr__GetSitehWnd(*This.Script)
 ;-  hWnd used as a parent for displaying UI
   Protected hWnd.l
-  ScriptControl\get_SitehWnd(@hwnd)
+  *This\ScriptControl\get_SitehWnd(@hwnd)
   ProcedureReturn hWnd
 EndProcedure
 
 
-;** SCtr_SetAllowUI
-Procedure SCtr_SetAllowUI(value.l)
+;** SCtr__SetAllowUI
+Procedure SCtr__SetAllowUI(*This.Script, value.l)
 ;-  hWnd used as a parent for displaying UI
-  ProcedureReturn ScriptControl\put_AllowUI(value)
+  ProcedureReturn *This\ScriptControl\put_AllowUI(value)
 EndProcedure
 
-;** SCtr_GetAllowUI
-Procedure.l SCtr_GetAllowUI()
+;** SCtr__GetAllowUI
+Procedure.l SCtr__GetAllowUI(*This.Script)
 ;-  hWnd used as a parent for displaying UI
   Protected value.l
-  ScriptControl\get_AllowUI(@value)
+  *This\ScriptControl\get_AllowUI(@value)
   ProcedureReturn value
 EndProcedure
 
-;** SCtr_SetUseSafeSubset
-Procedure SCtr_SetUseSafeSubset(value.l)
+;** SCtr__SetUseSafeSubset
+Procedure SCtr__SetUseSafeSubset(*This.Script, value.l)
 ;-  hWnd used as a parent for displaying UI
-  ProcedureReturn ScriptControl\put_UseSafeSubset(value)
+  ProcedureReturn *This\ScriptControl\put_UseSafeSubset(value)
 EndProcedure
 
-;** SCtr_GetUseSafeSubset
-Procedure.l SCtr_GetUseSafeSubset()
+;** SCtr__GetUseSafeSubset
+Procedure.l SCtr__GetUseSafeSubset(*This.Script)
 ;-  hWnd used as a parent for displaying UI
   Protected value.l
-  ScriptControl\get_UseSafeSubset(@value)
+  *This\ScriptControl\get_UseSafeSubset(@value)
   ProcedureReturn value
 EndProcedure
 
-;** SCtr_GetError
-Procedure.s SCtr_GetError()
+;** SCtr__GetError
+Procedure.s SCtr__GetError(*This.Script)
 ;- The last error reported by the scripting engine
   Protected ScriptError.IScriptError
   Protected Line, Description, DescriptionText.s, Result.s
-  If ScriptControl\get_Error(@ScriptError) = #S_OK
+  If *This\ScriptControl\get_Error(@ScriptError) = #S_OK
     ScriptError\get_Line(@Line)
     If ScriptError\get_Description(@Description) = #S_OK
       If Description
@@ -500,7 +529,7 @@ Procedure.s SCtr_GetError()
     ScriptError\Clear()
     ScriptError\Release()
   Else
-    Result = "Fehler: SCtr_GetError"
+    Result = "Failed: SCtr__GetError"
   EndIf
   Result = "Line " + Str(Line) + ": " + DescriptionText
   ProcedureReturn Result
@@ -540,7 +569,51 @@ Procedure CheckVT(*var.VARIANT, Type)
   EndIf
  
 EndProcedure
+
+
+;- DATA SECTION
+DataSection
+  
+    CLSID_ScriptControl:
+    Data.l $0E59F1D5
+    Data.w $1FBE,$11D0
+    Data.b $8F,$F2,$00,$A0,$D1,$00,$38,$BC
+  
+    IID_IScriptControl:
+    Data.l $0E59F1D3
+    Data.w $1FBE,$11D0
+    Data.b $8F,$F2,$00,$A0,$D1,$00,$38,$BC
+   
+    ; Own VT, function pointers
+    VT_Script:
+    Data.i @SCtr__Release()
+    Data.i @SCtr__About()
+    Data.i @SCtr__AddObject()
+    Data.i @SCtr__AddCode()
+    Data.i @SCtr__EvalVarType()
+    Data.i @SCtr__EvalVariant()
+    Data.i @SCtr__EvalDouble()
+    Data.i @SCtr__EvalFloat()
+    Data.i @SCtr__EvalQuad()
+    Data.i @SCtr__EvalLong()
+    Data.i @SCtr__EvalWord()
+    Data.i @SCtr__EvalByte()
+    Data.i @SCtr__EvalStr()
+    Data.i @SCtr__Reset()
+    Data.i @SCtr__Run()
+    Data.i @SCtr__SetLanguage()
+    Data.i @SCtr__SetTimeOut()
+    Data.i @SCtr__GetTimeOut()
+    Data.i @SCtr__SetSitehWnd()
+    Data.i @SCtr__GetSitehWnd()
+    Data.i @SCtr__SetAllowUI()
+    Data.i @SCtr__GetAllowUI()
+    Data.i @SCtr__SetUseSafeSubset()
+    Data.i @SCtr__GetUseSafeSubset()
+    Data.i @SCtr__GetError()
+EndDataSection
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 12
+; CursorPosition = 121
+; FirstLine = 79
 ; Folding = -----
 ; EnableXP

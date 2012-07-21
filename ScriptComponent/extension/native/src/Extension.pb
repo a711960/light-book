@@ -1,5 +1,9 @@
 ﻿EnableExplicit
 
+DataSection
+  jsonClass : IncludeBinary "VbsJson.vbs" + Chr(0)
+EndDataSection 
+
 ;#LOG_FILE = "C:\pureair.log"
 
 XIncludeFile "Unsigned.pb"
@@ -67,6 +71,8 @@ Structure ExecuteParameters
   hwnd.l
   ctx.l
   code.l
+  argc.l
+  *argv.FREObjectArray
 EndStructure
 
 Procedure ErrorHandler()
@@ -78,7 +84,9 @@ Procedure RunScript(*params.ExecuteParameters)
   OnErrorCall(@ErrorHandler())
   
   ;Create Control
-  InitScriptControl()
+  Define *control.IScript
+  
+  *control = NewScript()
   
   Define *my.objObject = NewObject(?VT_Object)
   
@@ -98,22 +106,31 @@ Procedure RunScript(*params.ExecuteParameters)
   vbs = ReplaceString(vbs, "'", #DOUBLEQUOTE$)
   
   ;Set Script Language
-  SCtr_SetLanguage("VBScript")
+  *control\SetLanguage("VBScript")
   
   ;Set timeout
-  SCtr_SetTimeOut(10000)
+  *control\SetTimeOut(10000)
   
   ;Add Object from data section (VT_Object) with alias "My"
-  SCtr_AddObject("my", *my)
+  *control\AddObject("my", *my)
+  
+  
+  Define jsonParser.s = PeekS(?jsonClass)
   
   ;Add Script to Control
-  Define r1.l = SCtr_AddCode(vbs)
+  Define addJsonResult.l = *control\AddCode(jsonParser)
+  If addJsonResult <> #S_OK
+    *log\error(*control\GetError())
+  EndIf
+  
+  ;Add Script to Control
+  Define r1.l = *control\AddCode(vbs)
   If r1 <> #S_OK
-    *log\error(SCtr_GetError())
+    *log\error(*control\GetError())
   EndIf
   
   ;Get value of variable "value" 
-  Define result.d = SCtr_EvalDouble("value")
+  Define result.d = *control\EvalDouble("value")
   *log\info("value = " + StrD(result))
   
   ;Check map
@@ -122,7 +139,7 @@ Procedure RunScript(*params.ExecuteParameters)
   Next
   
   ;Destroy Control
-  DeleteScriptControl()
+  *control\Release()
    
   Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, asGlobal(Str(*params\code)), asGlobal(StrD(result)))
   *log\Debug (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
@@ -166,6 +183,8 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
    *params\hwnd = 0 ;todo
    *params\jsonParameters = jsonParameters
    *params\jsonInjectData = jsonInjectData
+   *params\argc = argc
+   *params\argv = *argv
    
    If(async)
      *log\info("execute async")
@@ -229,7 +248,8 @@ EndProcedure
 ProcedureCDLL finalizer(extData.l)
   ;do nothing
 EndProcedure 
+
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 88
-; FirstLine = 79
+; CursorPosition = 122
+; FirstLine = 97
 ; Folding = ---
