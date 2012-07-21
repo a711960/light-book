@@ -6,7 +6,7 @@ XIncludeFile "Unsigned.pb"
 XIncludeFile "Unicode.pb"
 XIncludeFile "Logger.pb"
 XIncludeFile "FlashRuntimeExtensions.pbi"
-XIncludeFile "ScriptControl.pbi"
+XIncludeFile "ScriptControl.pb"
 XIncludeFile "Object.pb"
 
 Global *log.Logger
@@ -80,17 +80,19 @@ Procedure RunScript(*params.ExecuteParameters)
   ;Create Control
   InitScriptControl()
   
+  Define *my.objObject = NewObject(?VT_Object)
+  
   ;Add some tags
-  Tags("Zahl")\vt = #VT_R8
-  Tags()\dblVal = 100.95
+  *my\Values("Zahl")\vt = #VT_R8
+  *my\Values()\dblVal = 100.95
   
   ;Script
   Define vbs.s
   vbs = "Dim name, value" + #CRLF$
   vbs + "name = 'VB-Zahl'" + #CRLF$
-  vbs + "My.Smarttags(name) = 20" + #CRLF$
-  vbs + "My.Smarttags('Text') = 'Hallo Welt'" + #CRLF$
-  vbs + "value = My.Smarttags('Zahl')" + #CRLF$
+  vbs + "my.items(name) = 20" + #CRLF$
+  vbs + "my.items('Text') = 'Hallo Welt'" + #CRLF$
+  vbs + "value = My.items('Zahl')" + #CRLF$
   vbs + "MsgBox 'Value = ' & value"
   vbs = ReplaceString(vbs, "'", #DOUBLEQUOTE$)
   
@@ -98,10 +100,10 @@ Procedure RunScript(*params.ExecuteParameters)
   SCtr_SetLanguage("VBScript")
   
   ;Set timeout
-  SCtr_SetTimeOut(20000)
+  SCtr_SetTimeOut(10000)
   
-  ;Add Object from data section (VT_Smarttags) with alias "My"
-  SCtr_AddObject("My", NewObject(?VT_Smarttags))
+  ;Add Object from data section (VT_Object) with alias "My"
+  SCtr_AddObject("my", *my)
   
   ;Add Script to Control
   Define r1.l = SCtr_AddCode(vbs)
@@ -114,8 +116,8 @@ Procedure RunScript(*params.ExecuteParameters)
   *log\info("value = " + StrD(result))
   
   ;Check map
-  ForEach tags()
-    *log\info("Map(" + MapKey(Tags()) + "): " + VT_STR(Tags()))
+  ForEach *my\Values()
+    *log\info("Map(" + MapKey(*my\Values()) + "): " + VT_STR(*my\Values()))
   Next
   
   ;Destroy Control
@@ -227,6 +229,5 @@ ProcedureCDLL finalizer(extData.l)
   ;do nothing
 EndProcedure 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 122
-; FirstLine = 82
+; CursorPosition = 8
 ; Folding = ---
