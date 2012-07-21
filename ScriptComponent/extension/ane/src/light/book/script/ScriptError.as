@@ -1,5 +1,8 @@
 package light.book.script
 {
+    /**
+     * Provides basic information about script errors
+     */
     public class ScriptError
     {
         private static const CLASS:String = "Class";
@@ -99,11 +102,30 @@ package light.book.script
             32767:"False",
             32811:"Element not found"};
 
+        /**
+         * @private
+         */
         public var Class:String = CLASS_NAME;
+
+        /**
+         * Error number
+         */
         public var number:Number = 0;
+
+        /**
+         * Error line
+         */
         public var line:Number = 0;
+
+        /**
+         * Error description
+         */
         public var description:String = "";
 
+        /**
+         * @Constructor
+         * @param object deserialized from extension JSON response
+         */
         public function ScriptError(object:Object = null)
         {
             if(object != null)
@@ -114,11 +136,19 @@ package light.book.script
             }
         }
 
+        /**
+         * Test if deserialized object is ScriptError
+         * @param object
+         * @return
+         */
         public static function isError(object:Object):Boolean
         {
              return object != null && object.hasOwnProperty("Class") && object[CLASS] != null && CLASS_NAME == object["Class"];
         }
 
+        /**
+         * @inheritDoc
+         */
         public function toString():String
         {
             return "ScriptError{number=" + String(number) + ",line=" + String(line) + ",description=" + String(description) + "}";

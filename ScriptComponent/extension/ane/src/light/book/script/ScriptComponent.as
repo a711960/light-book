@@ -10,8 +10,26 @@ package light.book.script
     import mx.logging.Log;
 
     /**
-     * Wrapper for PureBasic extension
+     * ScriptComponent extension, interface to MS ScriptComponent
+     *
+     * Data objects are serialized to JSON and then are available in script via
+     * <b>parameters.items("arguments")</b>
+     *
+     * JSON parsers are automatically embedded in script:
+     *
+     * VBScript: <a href="http://demon.tw/my-work/vbs-json.html">http://demon.tw/my-work/vbs-json.html</a>
+     * JScript: <a href="https://github.com/douglascrockford/JSON-js/">https://github.com/douglascrockford/JSON-js/</a>
+     *
+     * Loopback example:
+     * <code>
+         Dim json, result, o
+         Set json = New VbsJson
+         Set o = json.Decode(parameters.items("arguments"))
+         result = json.Encode(o)
+     * </code>
      */
+    [Event(name="SCRIPT_RESULT", type="light.book.script.ScriptResult")]
+    [Event(name="SCRIPT_FAULT", type="light.book.script.ScriptFault")]
     public class ScriptComponent extends EventDispatcher
     {
         /**
@@ -33,9 +51,8 @@ package light.book.script
 
 
         /**
-         * Creates context
-         * @param contextType default value is "PureAir"
-         * @param actionScriptData ant number
+         * @Constructor
+         * @param contextType default value is "ScriptComponent"
          */
         public function ScriptComponent(contextType:String = "ScriptComponent")
         {
@@ -66,11 +83,17 @@ package light.book.script
             }
         }
 
+        /**
+         * @private
+         */
         private function get contextCreated():Boolean
         {
             return _context != null;
         }
 
+        /**
+         * @private
+         */
         private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, jsonData:String, script:String):String
         {
             if (!contextCreated)
@@ -90,6 +113,23 @@ package light.book.script
             return result;
         }
 
+
+        /**
+         * Execute script asynchronously
+         * @param vbs is language VBScript(true) ot JScript(false)
+         * @param timeout length of time in milliseconds that a script can execute before being considered hung
+         * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
+         * @param script script to be executed
+         * @return script id
+         * @see ScriptResult
+         * @see ScriptFault
+         *
+         * <code>
+         *            Dim json, o
+         *            Set json = New VbsJson
+         *            Set o = json.Decode(parameters.items("arguments"))
+         * </code>
+         */
         public function executeAsync(vbs:Boolean, timeout:int, data:Object, script:String):int
         {
             var code:int = Math.round(Math.random() * 100000);
@@ -107,6 +147,20 @@ package light.book.script
             return code;
         }
 
+        /**
+         * Execute script immediately
+         * @param vbs is language VBScript(true) ot JScript(false)
+         * @param timeout length of time in milliseconds that a script can execute before being considered hung
+         * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
+         * @param script script to be executed
+         * @return deserialized script "result" variable
+         *
+         * <code>
+         *            Dim json, o
+         *            Set json = New VbsJson
+         *            Set o = json.Decode(parameters.items("arguments"))
+         * </code>
+         */
         public function executeSync(vbs:Boolean, timeout:int, data:Object, script:String):Object
         {
             var code:int = Math.round(Math.random() * 100000);
@@ -124,6 +178,9 @@ package light.book.script
             return resultObject;
         }
 
+        /**
+         * @private
+         */
         private function onStatusEvent(event:StatusEvent):void
         {
             if(Log.isDebug())
