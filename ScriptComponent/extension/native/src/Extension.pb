@@ -7,6 +7,7 @@ XIncludeFile "Unicode.pb"
 XIncludeFile "Logger.pb"
 XIncludeFile "FlashRuntimeExtensions.pbi"
 XIncludeFile "ScriptControl.pbi"
+XIncludeFile "Object.pb"
 
 Global *log.Logger
 
@@ -60,293 +61,6 @@ Procedure LogError()
    EndIf
 EndProcedure 
 
-
-;- Strukturen ***************************************************************************
-
-  Structure udtObject
-    *VTable
-    cntRef.l
-    *oOwn.IUnknown
-    *oPar.IUnknown
-    *oApp.IUnknown
-  EndStructure
-
-  Structure EXCEPINFO
-    wCode.w
-    wReserved.w
-    CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding1.b[4] : CompilerEndIf
-    bstrSource.s
-    bstrDescription.s
-    bstrHelpFile.s
-    dwHelpContext.l
-    CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding2.b[4] : CompilerEndIf
-    *pvReserved
-    *pfnDeferredFillIn
-    sCode.l
-    CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding3.b[4] : CompilerEndIf
-  EndStructure
- 
-  Structure udtArgs
-    ID.VARIANT[0]
-  EndStructure
- 
-;- Helper Variant String ****************************************************************
-
-Procedure.s VT_STR(*Var.Variant)
-
-  Protected hr.l, result.s, VarDest.Variant
- 
-  ;vhLastError = 0
- 
-  If *Var
-    hr = VariantChangeType_(VarDest, *Var, 0, #VT_BSTR)
-    If hr = #S_OK
-      result = PeekS(VarDest\bstrVal, #PB_Any, #PB_Unicode)
-      VariantClear_(VarDest)
-      ProcedureReturn result
-    Else
-      ProcedureReturn ""
-    EndIf
-   
-  EndIf
-EndProcedure
-
-;- Helper Check Variant Type ************************************************************
-
-Procedure CheckVT(*var.VARIANT, Type)
- 
-  Protected *va.VARIANT
- 
-  If *var\vt & #VT_VARIANT = #VT_VARIANT
-    *va = *var\pvarVal
-  Else
-    *va = *var
-  EndIf
-  If *va\vt & #VT_TYPEMASK <> Type
-    ProcedureReturn #DISP_E_BADVARTYPE
-  Else
-    ProcedureReturn #S_OK
-  EndIf
- 
-EndProcedure
-
-;- Helper New Object ********************************************************************
-
-Procedure NewObject(*VT_Application)
- 
-  Define *oNew.udtObject
- 
-  ;Eine neues Applikationsobjekt erstellen
-  *oNew         = AllocateMemory (SizeOf(udtObject))
-  *oNew\VTable  = *VT_Application
-  *oNew\oOwn    = *oNew
-  *oNew\oPar    = *oNew
-  *oNew\oApp    = *oNew
-  *oNew\oOwn\AddRef()
-  ProcedureReturn *oNew
- 
-EndProcedure
-
-; ***************************************************************************************
-
-;- Konstanten ***************************************************************************
-
-; DispIds
-
-  #Smarttags  = 101
- 
-;- Deklarationen ************************************************************************
-
-  Declare Object_GetSmarttags(*This, *varname.string, *value.VARIANT)
-  Declare Object_PutSmarttags(*This, *varname.string, *value.VARIANT)
- 
-;- Globale Variablen, Listen
- 
-  Global NewMap Tags.VARIANT()
- 
-;- CLASS OBJECT *************************************************************************
-
-  ; Begin Standard Interfaces
-
-  Procedure.l Object_QueryInterface(*This.udtObject, *iid.IID, *Object.Integer)
-   
-    ;Standardzuweisungen auf eigenes Objekt
-    If CompareMemory(*iid, ?IID_IUnknown, 16) Or CompareMemory(*iid, ?IID_IDispatch, 16)
-      *Object\i = *This : *This\oOwn\AddRef()
-      ProcedureReturn #S_OK
-    EndIf
-
-    ProcedureReturn #E_NOINTERFACE
-
-  EndProcedure
- 
-  Procedure.l Object_AddRef(*This.udtObject)
-
-    *This\cntRef + 1
-    ProcedureReturn *This\cntRef
-
-  EndProcedure
- 
-  Procedure.l Object_Release(*This.udtObject)
-
-    ;Wenn Referenzzahler nicht auf 0 kommt
-    If *This\cntRef > 1
-      *This\cntRef - 1
-      ProcedureReturn *This\cntRef
-    EndIf
-
-    ;Eigenes Objekt auflosen
-    FreeMemory(*This)
-    ProcedureReturn 0
-
-  EndProcedure
- 
-  Procedure.l Object_GetTypeInfoCount(*This.udtObject, *CntTypeInfo.Long)
-   
-    *CntTypeInfo\l = 0
-    ProcedureReturn #S_OK
-
-  EndProcedure
- 
-  Procedure.l Object_GetTypeInfo(*This.udtObject, TypeInfo.l, LocalId.l, *ppTypeInfo.Integer)
-   
-    ProcedureReturn #S_OK
-
-  EndProcedure
- 
-  Procedure.l Object_GetIDsOfNames(*This.udtObject, *iid.IID, *Name.String, cntNames.l, lcid.l, *DispId.Long)
-   
-    Protected Name.s
-   
-    Name = LCase(*Name\s)
-    ; Hier die Funktionsnamen auf DispId auflosen
-    Select name
-      Case "smarttags" 
-        *DispId\l = #Smarttags
-       
-      Default
-        ProcedureReturn #DISP_E_MEMBERNOTFOUND
-       
-    EndSelect
-   
-    ProcedureReturn #S_OK
-   
-  EndProcedure
- 
-  Procedure.l Object_Invoke(*This.udtObject, DispId.l, *iid.IID, lcid.l, Flags.w, *DispParams.DISPPARAMS, *vResult.VARIANT, *ExcepInfo.EXCEPINFO, *ArgErr.Integer)
-   
-    Protected *vArg.udtArgs, r1
-   
-    *vArg = *DispParams\rgvarg
-   
-    Select DispId
-      ; Hier werden die Funktionen aufgerufen
-      ; Mit den Flags kann man den Type PropertyGet oder PropertyPut unterscheiden 
-       Case #Smarttags
-        ; Funktion fur Get aufrufen
-        If Flags & #DISPATCH_PROPERTYGET = #DISPATCH_PROPERTYGET
-          ; Hier werden die Anzahl der Parameter uberpruft
-          If *Dispparams\cArgs <> 1
-            ProcedureReturn #DISP_E_BADPARAMCOUNT
-          EndIf
-          ; Hier werden die Typen der Parameter uberpruft
-          If CheckVT(*vArg\ID[0], #VT_BSTR)
-            ProcedureReturn #DISP_E_BADVARTYPE
-          EndIf
-          Object_GetSmarttags(*This, *vArg\ID[0], *vResult)
-          ProcedureReturn #S_OK
-         
-        ; Funktion fur Put aufrufen
-        ElseIf Flags & #DISPATCH_PROPERTYPUT = #DISPATCH_PROPERTYPUT
-          ; Hier werden die Anzahl der Parameter uberpruft
-          If *Dispparams\cArgs <> 2
-            ProcedureReturn #DISP_E_BADPARAMCOUNT
-          EndIf
-          ; Hier werden die Typen der Parameter uberpruft
-          If CheckVT(*vArg\ID[1], #VT_BSTR)
-            ProcedureReturn #DISP_E_BADVARTYPE
-          EndIf
-          Object_PutSmarttags(*This, *vArg\ID[1], *vArg\ID[0])
-          ProcedureReturn #S_OK
-         
-        ; Funktion wurde ohne Get oder Put aufgerufen
-        Else
-          ProcedureReturn #DISP_E_BADPARAMCOUNT
-         
-        EndIf
-       
-      Default
-        ProcedureReturn #DISP_E_MEMBERNOTFOUND
-         
-    EndSelect
-
-  EndProcedure
- 
-  ; End Standard Interfaces
- 
-  ; Begin Eigene Interfaces
- 
-  Procedure Object_GetSmarttags(*this, *varname.VARIANT, *value.VARIANT)
-   
-    Protected *p, name.s
-   
-    name = VT_STR(*varname)
-   
-    If FindMapElement(Tags(), name)
-      *p = @Tags()
-      VariantCopy_(*value, *p)
-    Else
-      VariantClear_(*value)
-    EndIf
-   
-  EndProcedure
- 
-  Procedure Object_PutSmarttags(*this, *varname.VARIANT, *value.VARIANT)
-   
-    Protected *p, name.s
-   
-    name = VT_STR(*varname)
-    If AddMapElement(Tags(), name)
-      *p = @Tags()
-      VariantCopy_(*p, *value)
-    EndIf
-   
-  EndProcedure
- 
-  ; End Eigene Interfaces
- 
-;- DATA SECTION *************************************************************************
-
-  DataSection
-
-    ; Standard IID
-    IID_IUnknown: ; {00000000-0000-0000-C000-000000000046}
-    Data.l $00000000
-    Data.w $0000,$0000
-    Data.b $C0,$00,$00,$00,$00,$00,$00,$46
-
-    IID_IDispatch: ; {00020400-0000-0000-C000-000000000046}
-    Data.l $00020400
-    Data.w $0000,$0000
-    Data.b $C0,$00,$00,$00,$00,$00,$00,$46
-   
-    ; Eigene VT
-    VT_Smarttags:
-    Data.i @Object_QueryInterface()
-    Data.i @Object_AddRef()
-    Data.i @Object_Release()
-    Data.i @Object_GetTypeInfoCount()
-    Data.i @Object_GetTypeInfo()
-    Data.i @Object_GetIDsOfNames()
-    Data.i @Object_Invoke()
-    Data.i @Object_GetSmarttags()
-    Data.i @Object_PutSmarttags()
-   
-   
-  EndDataSection
- 
-; ***************************************************************************************
-
 Structure ExecuteParameters
   jsonInjectData.s
   jsonParameters.s
@@ -363,37 +77,48 @@ Procedure RunScript(*params.ExecuteParameters)
   
   OnErrorCall(@ErrorHandler())
   
+  ;Create Control
   InitScriptControl()
-
+  
+  ;Add some tags
   Tags("Zahl")\vt = #VT_R8
   Tags()\dblVal = 100.95
-
+  
+  ;Script
   Define vbs.s
-  ; VB-Script
   vbs = "Dim name, value" + #CRLF$
   vbs + "name = 'VB-Zahl'" + #CRLF$
   vbs + "My.Smarttags(name) = 20" + #CRLF$
   vbs + "My.Smarttags('Text') = 'Hallo Welt'" + #CRLF$
   vbs + "value = My.Smarttags('Zahl')" + #CRLF$
   vbs + "MsgBox 'Value = ' & value"
-
   vbs = ReplaceString(vbs, "'", #DOUBLEQUOTE$)
-
+  
+  ;Set Script Language
   SCtr_SetLanguage("VBScript")
+  
+  ;Set timeout
   SCtr_SetTimeOut(20000)
+  
+  ;Add Object from data section (VT_Smarttags) with alias "My"
   SCtr_AddObject("My", NewObject(?VT_Smarttags))
+  
+  ;Add Script to Control
   Define r1.l = SCtr_AddCode(vbs)
   If r1 <> #S_OK
     *log\error(SCtr_GetError())
   EndIf
-
+  
+  ;Get value of variable "value" 
   Define result.d = SCtr_EvalDouble("value")
   *log\info("value = " + StrD(result))
-
+  
+  ;Check map
   ForEach tags()
     *log\info("Map(" + MapKey(Tags()) + "): " + VT_STR(Tags()))
   Next
-
+  
+  ;Destroy Control
   DeleteScriptControl()
    
   Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, asGlobal(Str(*params\code)), asGlobal(StrD(result)))
@@ -502,6 +227,6 @@ ProcedureCDLL finalizer(extData.l)
   ;do nothing
 EndProcedure 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 479
-; FirstLine = 440
-; Folding = -----
+; CursorPosition = 122
+; FirstLine = 82
+; Folding = ---

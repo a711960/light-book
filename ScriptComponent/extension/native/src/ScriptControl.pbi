@@ -1,17 +1,20 @@
 ;-TOP
+
 ;**
 ;* Kommentar    : ScriptControl _
 ;* Author 1     : ts-soft _
 ;* Author 2     : mk-soft _
-; Author 3      :
+;* Author 3     : Michael Kastner _
 ;* Datei        : ScriptControl.pb _
 ;* Version      : 1.12 _
 ;* Erstellt     : 10.07.2006 _
 ;* Geandert     : 17.07.2010 _
 
+EnableExplicit
+
 ;** i IScriptControl
-;* Interface fur ScriptControl
 Interface IScriptControl Extends IDispatch
+;- Interface for ScriptControl
   get_Language(a)
   put_Language(strLanguage.p-bstr)
   get_State(a)
@@ -38,6 +41,7 @@ Interface IScriptControl Extends IDispatch
 EndInterface
 
 Interface IScriptError ; Provides access to scripting error information
+;- Interface for scripting error information
   QueryInterface(riid.l,ppvObj.l)
   AddRef()
   Release()
@@ -56,11 +60,27 @@ Interface IScriptError ; Provides access to scripting error information
   Clear()
 EndInterface
 
+Structure EXCEPINFO
+  wCode.w
+  wReserved.w
+  CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding1.b[4] : CompilerEndIf
+  bstrSource.s
+  bstrDescription.s
+  bstrHelpFile.s
+  dwHelpContext.l
+  CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding2.b[4] : CompilerEndIf
+  *pvReserved
+  *pfnDeferredFillIn
+  sCode.l
+  CompilerIf #PB_Compiler_Processor = #PB_Processor_x64 : padding3.b[4] : CompilerEndIf
+EndStructure
+
 ; ***************************************************************************************
 
 ;** InitScriptControl
 
 Procedure InitScriptControl()
+;- Create ScriptControl
   ;** g ScriptControl
   ;* Interfacevariable
   Global ScriptControl.IScriptControl
@@ -87,6 +107,7 @@ EndProcedure
 ;** Delete ScriptControl
 
 Procedure DeleteScriptControl()
+;- Destroy ScriptControl
   ScriptControl\Release()
   CoUninitialize_()
 EndProcedure
@@ -94,25 +115,25 @@ EndProcedure
 ; ***************************************************************************************
 
 ;** SCtr_About
-;* erzeugt eine AboutBox vom ScriptControl
 Procedure SCtr_About()
+;- Show AboutBox for ScriptControl
   ScriptControl\_AboutBox()
 EndProcedure
 
 ;** SCtr_AddObject
-;* Object hinzufugen
 Procedure SCtr_AddObject(name.s, *object)
+;- Add an object to the global namespace of the scripting engine
   ProcedureReturn ScriptControl\AddObject(name, *object, 0)
 EndProcedure
 
 ;** SCtr_AddCode
-;* Code hinzufugen
 Procedure SCtr_AddCode(Script.s)
+;-  Add code to the global module
   ProcedureReturn ScriptControl\AddCode(Script)
 EndProcedure
 
 ;**SCtr_EvalVarType
-;* Einen VariablenType lesen, ist LONG Variant Type
+;* Get variable type, returns LONG Variant Type
 Procedure.l SCtr_EvalVarType(StringVar.s)
   Protected var.VARIANT
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -123,7 +144,7 @@ Procedure.l SCtr_EvalVarType(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalVariant
-;* Einen Variablenwert lesen, ist Variant
+;* Read variant variable
 Procedure.l SCtr_EvalVariant(StringVar.s, *Value.Variant)
   Protected var.VARIANT, result.l
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -141,7 +162,7 @@ Procedure.l SCtr_EvalVariant(StringVar.s, *Value.Variant)
 EndProcedure
 
 ;** SCtr_EvalDate
-;* Einen Variablenwert lesen, ist Unix Datum (Long)
+;* Read Date variable, Unix Date (Long)
 Procedure.l SCtr_EvalDate(StringVar.s)
   Protected var.VARIANT, result.l
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -159,7 +180,7 @@ Procedure.l SCtr_EvalDate(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalDouble
-;* Einen Variablenwert lesen, ist DOUBLE
+;* Read double variable
 Procedure.d SCtr_EvalDouble(StringVar.s)
   Protected var.VARIANT, result.d
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -191,7 +212,7 @@ Procedure.d SCtr_EvalDouble(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalFloat
-;* Einen Variablenwert lesen, ist FLOAT
+;* Read float variable
 Procedure.f SCtr_EvalFloat(StringVar.s)
   Protected var.VARIANT, result.f
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -223,7 +244,7 @@ Procedure.f SCtr_EvalFloat(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalQuad
-;* Einen Variablenwert lesen, ist Quad
+;* Read quad variable
 Procedure.q SCtr_EvalQuad(StringVar.s)
   Protected var.VARIANT, result.q
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -255,7 +276,7 @@ Procedure.q SCtr_EvalQuad(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalLong
-;* Einen Variablenwert lesen, ist LONG
+;* Read loang variable
 Procedure.l SCtr_EvalLong(StringVar.s)
   Protected var.VARIANT, result.l
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -287,7 +308,7 @@ Procedure.l SCtr_EvalLong(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalWord
-;* Einen Variablenwert lesen, ist WORD
+;* Read word variable
 Procedure.w SCtr_EvalWord(StringVar.s)
   Protected var.VARIANT, result.w
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -319,7 +340,7 @@ Procedure.w SCtr_EvalWord(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalByte
-;* Einen Variablenwert lesen, ist BYTE
+;* Read byte variable
 Procedure.b SCtr_EvalByte(StringVar.s)
   Protected var.VARIANT, result.b
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -351,7 +372,7 @@ Procedure.b SCtr_EvalByte(StringVar.s)
 EndProcedure
 
 ;** SCtr_EvalStr
-;* Einen Variablenwert lesen, ist String
+;* Read string variable
 Procedure.s SCtr_EvalStr(StringVar.s)
   Protected var.VARIANT, result.s
   If ScriptControl\Eval(StringVar, @var) = #S_OK
@@ -387,40 +408,84 @@ Procedure.s SCtr_EvalStr(StringVar.s)
 EndProcedure
 
 ;** SCtr_Reset
-;* Setzt das Control zuruck
 Procedure SCtr_Reset()
+;- Reset the scripting engine to a newly created state
   ProcedureReturn ScriptControl\Reset()
 EndProcedure
 
 ;** SCtr_Run
-;* Funktion im Code aufrufen, der mit AddCode hinzugefugt wurde!
 Procedure SCtr_Run(Script.s)
+;- Call a procedure defined in the global module
   ProcedureReturn ScriptControl\ExecuteStatement(Script)
 EndProcedure
 
 ;** SCtr_SetLanguage
-;* Die Sprache einstellen (zB "VBScript" oder "JScript", default ist "VBSCript"
 Procedure SCtr_SetLanguage(Language.s)
+;- Language engine to use("VBScript" or "JScript", default is "VBSCript")
   ProcedureReturn ScriptControl\put_Language(Language)
 EndProcedure
 
 ;** SCtr_SetTimeOut
-;* Timeoutwert setzen
 Procedure SCtr_SetTimeOut(ms.l)
+;-  Length of time in milliseconds that a script can execute before being considered hung
   ProcedureReturn ScriptControl\put_Timeout(ms)
 EndProcedure
 
 ;** SCtr_GetTimeOut
-;* Ermitteln welchen Wert TimeOut hat (Default 10000)
-Procedure SCtr_GetTimeOut()
+Procedure.l SCtr_GetTimeOut()
+;-  Length of time in milliseconds that a script can execute before being considered hung
   Protected timeout.l
   ScriptControl\get_Timeout(@timeout)
   ProcedureReturn timeout
 EndProcedure
 
+
+;** SCtr_SetSitehWnd
+Procedure SCtr_SetSitehWnd(hWnd.l)
+;-  hWnd used as a parent for displaying UI
+  ProcedureReturn ScriptControl\put_SitehWnd(hWnd)
+EndProcedure
+
+;** SCtr_GetSitehWnd
+Procedure.l SCtr_GetSitehWnd()
+;-  hWnd used as a parent for displaying UI
+  Protected hWnd.l
+  ScriptControl\get_SitehWnd(@hwnd)
+  ProcedureReturn hWnd
+EndProcedure
+
+
+;** SCtr_SetAllowUI
+Procedure SCtr_SetAllowUI(value.l)
+;-  hWnd used as a parent for displaying UI
+  ProcedureReturn ScriptControl\put_AllowUI(value)
+EndProcedure
+
+;** SCtr_GetAllowUI
+Procedure.l SCtr_GetAllowUI()
+;-  hWnd used as a parent for displaying UI
+  Protected value.l
+  ScriptControl\get_AllowUI(@value)
+  ProcedureReturn value
+EndProcedure
+
+;** SCtr_SetUseSafeSubset
+Procedure SCtr_SetUseSafeSubset(value.l)
+;-  hWnd used as a parent for displaying UI
+  ProcedureReturn ScriptControl\put_UseSafeSubset(value)
+EndProcedure
+
+;** SCtr_GetUseSafeSubset
+Procedure.l SCtr_GetUseSafeSubset()
+;-  hWnd used as a parent for displaying UI
+  Protected value.l
+  ScriptControl\get_UseSafeSubset(@value)
+  ProcedureReturn value
+EndProcedure
+
 ;** SCtr_GetError
-;* Ermitteln den Fehler (Line + Description)
 Procedure.s SCtr_GetError()
+;- The last error reported by the scripting engine
   Protected ScriptError.IScriptError
   Protected Line, Description, DescriptionText.s, Result.s
   If ScriptControl\get_Error(@ScriptError) = #S_OK
@@ -440,7 +505,42 @@ Procedure.s SCtr_GetError()
   Result = "Line " + Str(Line) + ": " + DescriptionText
   ProcedureReturn Result
 EndProcedure
+
+
+Procedure.s VT_STR(*Var.Variant)
+;- Helper Variant String 
+  Protected hr.l, result.s, VarDest.Variant
+  
+  If *Var
+    hr = VariantChangeType_(VarDest, *Var, 0, #VT_BSTR)
+    If hr = #S_OK
+      result = PeekS(VarDest\bstrVal, #PB_Any, #PB_Unicode)
+      VariantClear_(VarDest)
+      ProcedureReturn result
+    Else
+      ProcedureReturn ""
+    EndIf
+   
+  EndIf
+EndProcedure
+
+Procedure CheckVT(*var.VARIANT, Type)
+;- Helper Check Variant Type
+  Protected *va.VARIANT
+ 
+  If *var\vt & #VT_VARIANT = #VT_VARIANT
+    *va = *var\pvarVal
+  Else
+    *va = *var
+  EndIf
+  If *va\vt & #VT_TYPEMASK <> Type
+    ProcedureReturn #DISP_E_BADVARTYPE
+  Else
+    ProcedureReturn #S_OK
+  EndIf
+ 
+EndProcedure
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 441
-; Folding = ----
+; CursorPosition = 12
+; Folding = -----
 ; EnableXP
