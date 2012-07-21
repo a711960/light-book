@@ -22,9 +22,9 @@
 
         [Bindable]
         private var example:String = 'Dim json, result, o\n' +
-        'Set json = New VbsJson\n' +
-        'Set o = json.Decode(parameters.items("arguments"))\n' +
-        'result = json.Encode(o)\n';
+                'Set json = New VbsJson\n' +
+                'Set o = json.Decode(parameters.items("arguments"))\n' +
+                'result = json.Encode(o)\n';
 
         private var extension:ScriptComponent;
 
@@ -57,16 +57,19 @@
             var code:int = Math.round(Math.random() * 10000);
 
             var parameters:Object = {};
-            parameters["language"] = "VBScript";
-            parameters["timeout"] = 1000 * 60;
-            parameters["function"] = "test";
-            parameters["allowui"] = true;
+            parameters["number"] = 1;
+            parameters["description"] = "Null reference";
+            parameters["source"] = "test.vbs";
+            parameters["line"] = 567;
+            parameters["text"] = "test = a.text";
 
             var jsonParameters:String = by.blooddy.crypto.serialization.JSON.encode(parameters);
-            log.info("execute() result: " + extension.execute(code, async.selected, vbs.selected, 10000, jsonParameters, script.text));
+
+            var resultString:String = extension.execute(code, async.selected, vbs.selected, 10000, jsonParameters, script.text);
+            var result:Object = by.blooddy.crypto.serialization.JSON.decode(resultString);
+            log.info("execute() result: {0}", ObjectUtil.toString(result));
             log.info("execute() end");
         }
-
         ]]>
 	</mx:Script>
     <mx:VBox height="100%" width="100%">

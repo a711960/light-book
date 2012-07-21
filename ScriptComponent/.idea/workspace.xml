@@ -2,21 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="0f2f565a-927f-4b98-99a8-7a14e35e223d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/lib/blooddy_crypto.swc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/application/ScriptComponent.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptEvent.as" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/extension/native/src/FlashRuntimeExtensions.pbi" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/extension/native/src/ScriptControl.pbi" />
-      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ScriptComponent\application\lib\VBSExtension.swc" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ScriptComponent.iml" afterPath="$PROJECT_DIR$/ScriptComponent.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml" afterPath="$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptComponent.as" afterPath="$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptComponent.as" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pb" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pbp" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pbp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Logger.pb" afterPath="$PROJECT_DIR$/extension/native/src/Logger.pb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Object.pb" afterPath="$PROJECT_DIR$/extension/native/src/Object.pb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/ScriptControl.pb" afterPath="$PROJECT_DIR$/extension/native/src/ScriptControl.pb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Unicode.pb" afterPath="$PROJECT_DIR$/extension/native/src/Unicode.pb" />
     </list>
     <ignored path="ScriptComponent.iws" />
@@ -78,7 +70,25 @@
       <file leaf-file-name="ScriptComponent.as" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptComponent.as">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="97" column="42" selection-start="3264" selection-end="3264" vertical-scroll-proportion="0.0">
+            <state line="79" column="87" selection-start="2498" selection-end="2498" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Extension.pb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="58" column="24" selection-start="1794" selection-end="1794" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FlashRuntimeExtensions.pbi" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extension/native/src/FlashRuntimeExtensions.pbi">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="225" column="0" selection-start="7058" selection-end="7110" vertical-scroll-proportion="-8.64">
               <folding />
             </state>
           </provider>
@@ -87,15 +97,36 @@
       <file leaf-file-name="ScriptExtensionDemo.mxml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="71" selection-start="2430" selection-end="2430" vertical-scroll-proportion="0.6826138">
+            <state line="63" column="37" selection-start="2261" selection-end="2261" vertical-scroll-proportion="0.6827957">
               <folding>
-                <marker date="1342869827010" expanded="false" signature="436:747" placeholder="..." />
-                <marker date="1342869827010" expanded="true" signature="946:1386" placeholder="{...}" />
-                <marker date="1342869827010" expanded="true" signature="1454:1539" placeholder="{...}" />
-                <marker date="1342869827010" expanded="true" signature="1599:1643" placeholder="{...}" />
-                <marker date="1342869827010" expanded="true" signature="1709:2476" placeholder="{...}" />
-                <marker date="1342869827010" expanded="true" signature="2558:2626" placeholder="{...}" />
+                <marker date="1342897194221" expanded="true" signature="272:583" placeholder="..." />
+                <marker date="1342897194221" expanded="true" signature="815:869" placeholder="..." />
+                <marker date="1342897194221" expanded="true" signature="888:915" placeholder="..." />
+                <marker date="1342897194221" expanded="true" signature="1028:1468" placeholder="{...}" />
+                <marker date="1342897194221" expanded="true" signature="1536:1727" placeholder="{...}" />
+                <marker date="1342897194221" expanded="true" signature="1787:1831" placeholder="{...}" />
+                <marker date="1342897194221" expanded="true" signature="1897:2717" placeholder="{...}" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TextTarget.as" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/src/logging/TextTarget.as">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="40" selection-start="1364" selection-end="1364" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="e#22#50#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ScriptControl.pb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extension/native/src/ScriptControl.pb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="22" column="0" selection-start="452" selection-end="452" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -112,16 +143,7 @@
       <file leaf-file-name="build.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="116" column="71" selection-start="4651" selection-end="4651" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="catalog.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/application/lib/blooddy_crypto.swc!/catalog.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="223" column="56" selection-start="10523" selection-end="10559" vertical-scroll-proportion="0.0">
+            <state line="107" column="0" selection-start="4037" selection-end="4037" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -142,10 +164,13 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/build.xml" />
         <option value="$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptEvent.as" />
-        <option value="$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml" />
         <option value="$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptComponent.as" />
+        <option value="$PROJECT_DIR$/extension/native/src/VbsJson.vbs" />
+        <option value="$PROJECT_DIR$/extension/native/src/Extension.pb" />
+        <option value="$PROJECT_DIR$/build.xml" />
+        <option value="$PROJECT_DIR$/application/src/logging/TextTarget.as" />
+        <option value="$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml" />
       </list>
     </option>
   </component>
@@ -340,21 +365,157 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth1" value="225" />
     <property name="project.structure.last.edited" value="Modules" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth0" value="207" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth3" value="46" />
     <property name="project.structure.proportion" value="0.15" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth2" value="226" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth2" value="195" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder5" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth1" value="194" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth0" value="195" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth5" value="870" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth4" value="195" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeWidth3" value="195" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth4" value="226" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth5" value="901" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder5" value="5" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder2" value="2" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder0" value="0" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="Moments ago" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+            <PATH vcs="svn" revision="6">C:\Dev\light-book\trunk\ScriptComponent\extension\native\src\FlashRuntimeExtensions.pb</PATH>
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with tree conflicts" />
+          <option name="myStatusName" value="Merged with tree conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Switched" />
+          <option name="myStatusName" value="Switched" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SWITCHED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with property conflicts" />
+          <option name="myStatusName" value="Will be merged with property conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
   </component>
   <component name="RunManager" selected="AIR.ScripComponentDemo">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -467,6 +628,17 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
+      <JSDebuggerConfigurationSettings>
+        <option name="engineId" />
+        <option name="fileUrl" />
+      </JSDebuggerConfigurationSettings>
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -575,15 +747,15 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Kahlua" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17395945" sideWeight="0.67070484" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17395945" sideWeight="0.67070484" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32929516" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -667,33 +839,82 @@
         <state line="8" column="14" selection-start="216" selection-end="216" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="116" column="71" selection-start="4651" selection-end="4651" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/application/lib/blooddy_crypto.swc!/catalog.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="223" column="56" selection-start="10523" selection-end="10559" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/ScriptControl.pb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="0" selection-start="452" selection-end="452" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/json2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptComponent.as">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="42" selection-start="3264" selection-end="3264" vertical-scroll-proportion="0.0">
+        <state line="79" column="87" selection-start="2498" selection-end="2498" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/VbsJson.vbs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="68" column="35" selection-start="2584" selection-end="2584" vertical-scroll-proportion="0.66952056">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="58" column="24" selection-start="1794" selection-end="1794" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/FlashRuntimeExtensions.pbi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="225" column="0" selection-start="7058" selection-end="7110" vertical-scroll-proportion="-8.64">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="107" column="0" selection-start="4037" selection-end="4037" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/src/logging/TextTarget.as">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="40" selection-start="1364" selection-end="1364" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="e#22#50#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="71" selection-start="2430" selection-end="2430" vertical-scroll-proportion="0.6826138">
+        <state line="63" column="37" selection-start="2261" selection-end="2261" vertical-scroll-proportion="0.6827957">
           <folding>
-            <marker date="1342869827010" expanded="false" signature="436:747" placeholder="..." />
-            <marker date="1342869827010" expanded="true" signature="946:1386" placeholder="{...}" />
-            <marker date="1342869827010" expanded="true" signature="1454:1539" placeholder="{...}" />
-            <marker date="1342869827010" expanded="true" signature="1599:1643" placeholder="{...}" />
-            <marker date="1342869827010" expanded="true" signature="1709:2476" placeholder="{...}" />
-            <marker date="1342869827010" expanded="true" signature="2558:2626" placeholder="{...}" />
+            <marker date="1342897194221" expanded="true" signature="272:583" placeholder="..." />
+            <marker date="1342897194221" expanded="true" signature="815:869" placeholder="..." />
+            <marker date="1342897194221" expanded="true" signature="888:915" placeholder="..." />
+            <marker date="1342897194221" expanded="true" signature="1028:1468" placeholder="{...}" />
+            <marker date="1342897194221" expanded="true" signature="1536:1727" placeholder="{...}" />
+            <marker date="1342897194221" expanded="true" signature="1787:1831" placeholder="{...}" />
+            <marker date="1342897194221" expanded="true" signature="1897:2717" placeholder="{...}" />
           </folding>
         </state>
       </provider>

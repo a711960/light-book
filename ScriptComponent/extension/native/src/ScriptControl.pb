@@ -1,4 +1,4 @@
-;-TOP
+﻿;-TOP
 
 ;**
 ;* Kommentar    : ScriptControl 
@@ -512,28 +512,67 @@ Procedure.l SCtr__GetUseSafeSubset(*This.Script)
   ProcedureReturn value
 EndProcedure
 
+Procedure.s ErrorJSON(number.l, description.s, source.s, line.l, text.s)
+  Define template.s = "{'line':{line},'source':'{source}','description':'{description}','text':'{text}','number':{number}}"
+  template= ReplaceString(template, "'", #DOUBLEQUOTE$)
+  
+  template= ReplaceString(template, "{line}", Str(line))
+  template= ReplaceString(template, "{description}", ReplaceString(description, #DOUBLEQUOTE$, "'"))
+  template= ReplaceString(template, "{source}", ReplaceString(source, #DOUBLEQUOTE$, "'"))
+  template= ReplaceString(template, "{text}", ReplaceString(text, #DOUBLEQUOTE$, "'"))
+  template= ReplaceString(template, "{number}", Str(number))
+ 
+  ProcedureReturn template
+EndProcedure
+
+
 ;** SCtr__GetError
 Procedure.s SCtr__GetError(*This.Script)
 ;- The last error reported by the scripting engine
   Protected ScriptError.IScriptError
-  Protected Line, Description, DescriptionText.s, Result.s
+  Protected Line.l, Description.l, DescriptionText.s, Result.s, number.l, text.l, textString.s, source.l, sourceString.s
   If *This\ScriptControl\get_Error(@ScriptError) = #S_OK
     ScriptError\get_Line(@Line)
+    ScriptError\get_Number(@number)
+    
+    If ScriptError\get_Source(@source) = #S_OK
+      If source
+        sourceString = PeekS(source)
+        ;sourceString = UnicodeToUtf8(sourceString)
+      Else
+        sourceString = "No Source"
+      EndIf
+    EndIf
+    
     If ScriptError\get_Description(@Description) = #S_OK
       If Description
         DescriptionText = PeekS(Description)
+        ;DescriptionText = UnicodeToUtf8(DescriptionText)
       Else
         DescriptionText = "No Error"
       EndIf
     EndIf
+    
+    If ScriptError\get_Text(@text) = #S_OK
+      If text
+        textString = PeekS(text)
+        ;textString = UnicodeToUtf8(textString)
+      Else
+        textString = "No Text"
+      EndIf
+    EndIf
+    
     ScriptError\Clear()
     ScriptError\Release()
+    
+    Result = ErrorJSON(number, DescriptionText, sourceString, Line, textString)
   Else
-    Result = "Failed: SCtr__GetError"
+    Result = ErrorJSON(1, "SCtr__GetError failed", "", 0, "")
   EndIf
-  Result = "Line " + Str(Line) + ": " + DescriptionText
   ProcedureReturn Result
 EndProcedure
+
+
 
 
 Procedure.s VT_STR(*Var.Variant)
@@ -570,6 +609,13 @@ Procedure CheckVT(*var.VARIANT, Type)
  
 EndProcedure
 
+;-T_BSTR
+Procedure helpSysAllocString(*Value)
+  ProcedureReturn SysAllocString_(*Value)
+EndProcedure
+Prototype.l ProtoSysAllocString(Value.p-unicode)
+
+Global T_BSTR.ProtoSysAllocString = @helpSysAllocString()
 
 ;- DATA SECTION
 DataSection
@@ -613,7 +659,7 @@ DataSection
     Data.i @SCtr__GetError()
 EndDataSection
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 121
-; FirstLine = 79
-; Folding = -----
+; CursorPosition = 547
+; FirstLine = 528
+; Folding = ------
 ; EnableXP

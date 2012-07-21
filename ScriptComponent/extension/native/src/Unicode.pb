@@ -35,6 +35,6 @@ Procedure.l asGlobal(string.s)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 35
+; CursorPosition = 18
 ; Folding = -
 ; EnableXP

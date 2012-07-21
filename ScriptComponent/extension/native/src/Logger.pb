@@ -8,7 +8,7 @@ Enumeration
     #LOG_DISABLED   = 4
 EndEnumeration
 
-Global LOG_LEVEL.l = #LOG_INFO
+Global LOG_LEVEL.l = #LOG_DEBUG
 
  
 Interface Logger
@@ -103,7 +103,6 @@ Procedure New_Logger(name.s)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 77
-; FirstLine = 57
+; CursorPosition = 10
 ; Folding = --
 ; EnableXP
