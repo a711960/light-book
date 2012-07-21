@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
-               xmlns:s="library://ns.adobe.com/flex/spark"
-               creationComplete="initializeApplication()"
-               uncaughtError="onUncaughtError(event)">
-    <fx:Declarations>
-        <!-- Place non-visual elements (e.g., services, value objects) here -->
-        <fx:String id="example">
-            <![CDATA[Dim json, result, o
-Set json = New VbsJson
-Set o = json.Decode(parameters.items("arguments"))
-result = json.Encode(o)
-]]>
-        </fx:String>
-    </fx:Declarations>
-
-    <fx:Script>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
+                        creationComplete="initializeApplication()"
+                        showStatusBar="false"
+        >
+    <mx:Script>
 		<![CDATA[
         import light.book.script.ScriptComponent;
         import light.book.script.ScriptEvent;
@@ -30,6 +19,12 @@ result = json.Encode(o)
         import by.blooddy.crypto.serialization.JSON;
 
         private static const log:ILogger = Log.getLogger("ScriptExtensionDemo.mxml");
+
+        [Bindable]
+        private var example:String = 'Dim json, result, o\n' +
+        'Set json = New VbsJson\n' +
+        'Set o = json.Decode(parameters.items("arguments"))\n' +
+        'result = json.Encode(o)\n';
 
         private var extension:ScriptComponent;
 
@@ -58,6 +53,7 @@ result = json.Encode(o)
 
         private function onClick(event:MouseEvent):void
         {
+            log.info("execute() start");
             var code:int = Math.round(Math.random() * 10000);
 
             var parameters:Object = {};
@@ -67,18 +63,21 @@ result = json.Encode(o)
             parameters["allowui"] = true;
 
             var jsonParameters:String = by.blooddy.crypto.serialization.JSON.encode(parameters);
-            log.info("execute() result: " + extension.execute(code, true, true, 10000, jsonParameters, script.text));
+            log.info("execute() result: " + extension.execute(code, async.selected, vbs.selected, 10000, jsonParameters, script.text));
+            log.info("execute() end");
         }
 
-        private function onUncaughtError(event:UncaughtErrorEvent):void
-        {
-            log.error(ObjectUtil.toString(event.error));
-        }
         ]]>
-	</fx:Script>
-    <s:VGroup height="100%" width="100%">
-        <s:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
-        <s:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" editable="true" text="{example}"/>
-        <s:Button label="ShowDialog" click="onClick(event)"/>
-    </s:VGroup>
-</s:Application>
+	</mx:Script>
+    <mx:VBox height="100%" width="100%">
+        <mx:HDividedBox height="100%" width="100%">
+            <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
+            <mx:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" editable="true" text="{example}"/>
+        </mx:HDividedBox>
+        <mx:HBox>
+            <mx:Button label="ShowDialog" click="onClick(event)"/>
+            <mx:CheckBox id="async" label="Async"/>
+            <mx:CheckBox id="vbs" label="{vbs.selected ? 'VBScript' : 'JScript'}" selected="true"/>
+        </mx:HBox>
+    </mx:VBox>
+</mx:WindowedApplication>

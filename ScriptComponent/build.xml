@@ -105,9 +105,6 @@
     <target name="build.application" description="Build Air application">
         <info title="Build application" description="Build Air application"/>
         <exec executable="${amxmlc}" failonerror="true">
-            <arg line="-library-path=${env.AIR_SDK_HOME}\frameworks\libs"/>
-            <arg line="-library-path+=${env.AIR_SDK_HOME}\frameworks\libs\air"/>
-            <arg line="-library-path+=${env.AIR_SDK_HOME}\frameworks\locale\{locale}"/>
             <arg line="-locale en_US"/>
             <arg line="${incremental}"/>
             <arg line="-debug=${debug}"/>

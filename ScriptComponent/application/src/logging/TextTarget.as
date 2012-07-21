@@ -1,11 +1,11 @@
 package logging
 {
+    import mx.controls.TextArea;
     import mx.formatters.DateFormatter;
     import mx.logging.AbstractTarget;
     import mx.logging.ILogger;
     import mx.logging.LogEvent;
-
-    import spark.components.TextArea;
+    import mx.logging.LogEventLevel;
 
     public class TextTarget extends AbstractTarget
     {
@@ -32,27 +32,27 @@ package logging
                 var category:String = ILogger(event.target).category + SEPARATOR;
                 var msg:String = date + level + category + event.message;
                 var formatted:String = applyColor(msg, event.level);
-                output.text += formatted + "\n";
+                output.htmlText += formatted + "\n";
                 output.callLater(output.callLater, [scrollDown, []]);
             }
         }
 
         private function scrollDown():void
         {
-//            output.verticalScrollPosition = output.maxVerticalScrollPosition;
+            output.verticalScrollPosition = output.maxVerticalScrollPosition;
         }
 
         private function applyColor(msg:String, level:int):String
         {
-//            switch (level)
-//            {
-//                case LogEventLevel.ERROR:
-//                    return "<font color='#FF0000'>" + msg + "</font>";
-//                case LogEventLevel.WARN:
-//                    return "<font color='#0000FF'>" + msg + "</font>";
-//                case LogEventLevel.DEBUG:
-//                    return "<font color='#BBBBBB'>" + msg + "</font>";
-//            }
+            switch (level)
+            {
+                case LogEventLevel.ERROR:
+                    return "<font color='#FF0000'>" + msg + "</font>";
+                case LogEventLevel.WARN:
+                    return "<font color='#0000FF'>" + msg + "</font>";
+                case LogEventLevel.DEBUG:
+                    return "<font color='#BBBBBB'>" + msg + "</font>";
+            }
             return msg;
         }
 

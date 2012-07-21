@@ -124,13 +124,6 @@ Procedure.s ExecuteScript(*params.ExecuteParameters)
   jsonData = Utf8ToUnicode(*params\jsonData)
   *log\info("[" + request + "] ScriptComponent jsonData: " + #CRLF$ + jsonData)
   
-  
-  ;*parameters\Values("arguments")\vt = #VT_BSTR
-  ;*parameters\Values("arguments")\bstrVal = jsonData
-  
-  ;*parameters\Values("arguments")\vt = #VT_R8
-  ;*parameters\Values("arguments")\dblVal = 100.95
-  
   Define *arguments.VARIANT
   *arguments = AddMapElement(*parameters\Values(), "arguments")
   Define hRes.l = VariantInit_(*arguments)
@@ -163,6 +156,7 @@ Procedure.s ExecuteScript(*params.ExecuteParameters)
     EndIf
   EndIf
   
+  VariantClear_(*arguments)
  
   ;Get value of variable "result" 
   Define result.s = *control\EvalStr("result")
@@ -236,7 +230,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   EndIf
 
   Define resultObject.l
-  result = FRENewObjectFromUTF8(toULong(Len(resultString)), @resultString, @resultObject)
+  result = FRENewObjectFromUTF8(toULong(Len(resultString)), asGlobal(resultString), @resultObject)
   *log\Debug(ResultDescription(result, "FRENewObjectFromUTF8"))
   
   ProcedureReturn resultObject
@@ -291,6 +285,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 140
-; FirstLine = 118
+; CursorPosition = 232
+; FirstLine = 199
 ; Folding = ---
