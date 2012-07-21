@@ -52,6 +52,8 @@
 
     <property name="ane.src.dir" location="${ane.dir}/src"/>
 
+    <property name="ane.lib.dir" location="${ane.dir}/lib"/>
+
     <property name="app.src.dir" location="${app.dir}/src"/>
 
     <!--keystore-->
@@ -111,7 +113,6 @@
             <arg line="-warnings=${warnings}"/>
             <arg line="-headless-server=true"/>
             <arg line="-external-library-path+=${app.lib.dir}/${native}.swc"/>
-            <arg line="-library-path+=${app.lib.dir}/blooddy_crypto.swc"/>
             <arg line="-output ${app.dir}/${application}.swf"/>
             <arg line="-- ${app.src.dir}/${application}.mxml"/>
         </exec>
@@ -145,6 +146,7 @@
             <arg line="-debug=${debug}"/>
             <arg line="-warnings=${warnings}"/>
             <arg line="-output ${app.lib.dir}/${native}.swc"/>
+            <arg line="-library-path+=${ane.lib.dir}/blooddy_crypto.swc"/>
             <arg line="-source-path+=${ane.src.dir}"/>
             <arg line="-include-sources=${ane.src.dir}"/>
         </exec>

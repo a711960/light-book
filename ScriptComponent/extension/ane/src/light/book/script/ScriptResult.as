@@ -2,23 +2,22 @@ package light.book.script
 {
     import flash.events.Event;
 
-    public class ScriptEvent extends Event
+    public class ScriptResult extends Event
     {
         public static const RESULT:String = "SCRIPT_RESULT";
-        public var code:String;
-        public var level:String;
+        public var code:int;
+        public var result:Object;
 
-        public function ScriptEvent(type:String, code:String, level:String)
+        public function ScriptResult(type:String, code:int, result:Object)
         {
             super(type, false, false);
             this.code = code;
-            this.level = level;
+            this.result = result;
         }
-
 
         override public function clone():Event
         {
-            return new ScriptEvent(type, code, level);
+            return new ScriptResult(type, code, result);
         }
     }
 }

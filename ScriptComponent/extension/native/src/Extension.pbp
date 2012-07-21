@@ -10,24 +10,28 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-21 22:51" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-22 01:25" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="0b7c331ec8a489cc7b9e6b1e78a8d00c"/>
-    </file>
-    <file name="Logger.pb">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="c908f7469103cf592e7832ecd2fbf9d7"/>
+      <fingerprint md5="cadddd10dc5bbb870fa38259c39a8eaa"/>
     </file>
     <file name="Unicode.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="8fa3bf1432ef3bc4018ef061a7ff213b"/>
+      <fingerprint md5="9c5519357840c7d8781bfce4fbac0bb5"/>
     </file>
     <file name="Unsigned.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
       <fingerprint md5="b6f51f9ec8065616f2efe7c3cdb8798c"/>
+    </file>
+    <file name="ScriptControl.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
+      <fingerprint md5="d8dda900d2e5da6752469b08dc6e0af5"/>
+    </file>
+    <file name="Object.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
+      <fingerprint md5="098db1977bdc610e24802af236f4081a"/>
     </file>
   </section>
   <section name="targets">
@@ -38,9 +42,10 @@
       <executable value="..\bin\ScriptComponent.dll"/>
       <options unicode="1" thread="1" onerror="1"/>
       <temporaryexe value="source"/>
-      <format exe="dll" cpu="0"/>
-      <compilecount enable="1" value="302"/>
-      <buildcount enable="1" value="301"/>
+      <format exe="dll" cpu="5"/>
+      <warnings custom="1" type="display"/>
+      <compilecount enable="1" value="280"/>
+      <buildcount enable="1" value="278"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>
@@ -51,7 +56,7 @@
         <field5 value="0,0,1,0"/>
         <field6 value="PureBasic Extension"/>
         <field7 value="PureBasic Extension"/>
-        <field8 value="pureair.dll"/>
+        <field8 value="ScriptComponent.dll"/>
         <field15 value="VOS_NT_WINDOWS32"/>
         <field16 value="VFT_DLL"/>
       </versioninfo>

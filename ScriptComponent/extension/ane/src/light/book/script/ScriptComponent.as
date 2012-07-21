@@ -1,5 +1,7 @@
 package light.book.script
 {
+    import by.blooddy.crypto.serialization.JSON;
+
     import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
     import flash.external.ExtensionContext;
@@ -28,6 +30,7 @@ package light.book.script
          * @private
          */
         private var contextType:String;
+
 
         /**
          * Creates context
@@ -68,33 +71,81 @@ package light.book.script
             return _context != null;
         }
 
-        public function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, jsonData:String, script:String):String
+        private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, jsonData:String, script:String):String
         {
             if (!contextCreated)
-                return null;
+                return '{"line":0, "number":1, "Class":"light.book.script.ScriptError"}';
 
             var result:String = null;
 
             try
             {
-                result = _context.call('execute', code, async, vbs, timeout, jsonData, script) as String;
-                if (!result)
-                {
-                    log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6})", code, async, vbs, timeout, jsonData, script);
-                }
+                result = _context.call("execute", code, async, vbs, timeout, jsonData, script) as String;
             }
             catch (e:Error)
             {
                 log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}), stacktrace: {7}", code, async, vbs, timeout, jsonData, script, e.getStackTrace());
+                return '{"line":0, "number":1, "Class":"light.book.script.ScriptError"}'
             }
             return result;
         }
 
+        public function executeAsync(vbs:Boolean, timeout:int, data:Object, script:String):int
+        {
+            var code:int = Math.round(Math.random() * 100000);
+            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+            var result:String = execute(code, true, vbs,  timeout, jsonData, script);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
+            if(ScriptError.isError(resultObject))
+            {
+                var scriptError:ScriptError = new ScriptError(resultObject);
+                if(scriptError.number != 0)
+                {
+                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
+                }
+            }
+            return code;
+        }
+
+        public function executeSync(vbs:Boolean, timeout:int, data:Object, script:String):Object
+        {
+            var code:int = Math.round(Math.random() * 100000);
+            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+            var result:String = execute(code, false, vbs,  timeout, jsonData, script);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
+            if(ScriptError.isError(resultObject))
+            {
+                var scriptError:ScriptError = new ScriptError(resultObject);
+                if(scriptError.number != 0)
+                {
+                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
+                }
+            }
+            return resultObject;
+        }
 
         private function onStatusEvent(event:StatusEvent):void
         {
-            log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
-            dispatchEvent(new ScriptEvent(ScriptEvent.RESULT, event.code, event.level));
+            if(Log.isDebug())
+                log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
+            var code:int = parseInt(event.code);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(event.level);
+            if(ScriptError.isError(resultObject))
+            {
+                var scriptError:ScriptError = new ScriptError(resultObject);
+                if(scriptError.number != 0)
+                {
+                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
+                }
+                else
+                {
+                    dispatchEvent(new ScriptResult(ScriptResult.RESULT, code, resultObject));
+                }
+            }
+            else
+            {
+                dispatchEvent(new ScriptResult(ScriptResult.RESULT, code, resultObject));
+            }
         }
 
         /**
@@ -108,7 +159,7 @@ package light.book.script
                 //clean all references
                 _context.removeEventListener(StatusEvent.STATUS, onStatusEvent);
                 _context = null;
-                log.info("Disposed {0}", this.contextType);
+                log.debug("Disposed {0}", this.contextType);
             }
             else
             {

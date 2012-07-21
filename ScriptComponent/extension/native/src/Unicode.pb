@@ -11,7 +11,7 @@ Procedure.s Utf8ToUnicode(string.s)
   ;- Converts UCS2 to UTF8
   Define size.i, result.s
   size = MultiByteToWideChar_(#CP_UTF8, 0, @string, -1, 0, 0)
-  result = Space(size + 1)
+  result = Space(size * 2 + 1)
   MultiByteToWideChar_(#CP_UTF8, 0 , @string, -1, @result, size)
   ProcedureReturn result
 EndProcedure
@@ -20,7 +20,7 @@ Procedure.s UnicodeToUtf8(string.s)
   ;- Converts UTF8 to UCS2
   Define size.i, result.s
   size = WideCharToMultiByte_(#CP_UTF8, 0, @string, -1, 0, 0, 0, 0)
-  result = Space(size + 1)
+  result = Space(size * 2 + 1)
   WideCharToMultiByte_(#CP_UTF8, 0 , @string, -1, @result, size, 0, 0)
   ProcedureReturn result
 EndProcedure
@@ -35,6 +35,6 @@ Procedure.l asGlobal(string.s)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 18
+; CursorPosition = 27
 ; Folding = -
 ; EnableXP

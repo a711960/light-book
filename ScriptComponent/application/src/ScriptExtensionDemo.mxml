@@ -7,7 +7,7 @@
     <mx:Script>
 		<![CDATA[
         import light.book.script.ScriptComponent;
-        import light.book.script.ScriptEvent;
+        import light.book.script.ScriptResult;
 
         import logging.ConsoleTarget;
         import logging.TextTarget;
@@ -37,13 +37,12 @@
             NativeApplication.nativeApplication.addEventListener(Event.EXITING, onExit, false, 0, true);
 
             extension = new ScriptComponent("ScriptExtensionDemo");
-            extension.addEventListener(ScriptEvent.RESULT, onResult, false, 0, true);
+            extension.addEventListener(ScriptResult.RESULT, onResult, false, 0, true);
         }
 
-        private function onResult(event:ScriptEvent):void
+        private function onResult(event:ScriptResult):void
         {
-            var result:Object = by.blooddy.crypto.serialization.JSON.decode(event.level);
-            log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(result));
+            log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(event.result));
         }
 
         private function onExit(event:Event):void
@@ -53,9 +52,6 @@
 
         private function onClick(event:MouseEvent):void
         {
-            log.info("execute() start");
-            var code:int = Math.round(Math.random() * 10000);
-
             var parameters:Object = {};
             parameters["number"] = 1;
             parameters["description"] = "Null reference";
@@ -63,19 +59,26 @@
             parameters["line"] = 567;
             parameters["text"] = "test = a.text";
 
-            var jsonParameters:String = by.blooddy.crypto.serialization.JSON.encode(parameters);
-
-            var resultString:String = extension.execute(code, async.selected, vbs.selected, 10000, jsonParameters, script.text);
-            var result:Object = by.blooddy.crypto.serialization.JSON.decode(resultString);
-            log.info("execute() result: {0}", ObjectUtil.toString(result));
-            log.info("execute() end");
+            if (async.selected)
+            {
+                var code:int = extension.executeAsync(vbs.selected, 10000, parameters, script.text);
+                log.info("execute() code: {0}", code);
+            }
+            else
+            {
+                log.info("execute() start");
+                var result:Object = extension.executeSync(vbs.selected, 10000, parameters, script.text);
+                log.info("execute() result: {0}", ObjectUtil.toString(result));
+                log.info("execute() end");
+            }
         }
         ]]>
 	</mx:Script>
     <mx:VBox height="100%" width="100%">
         <mx:HDividedBox height="100%" width="100%">
             <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
-            <mx:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" editable="true" text="{example}"/>
+            <mx:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" editable="true"
+                         text="{example}"/>
         </mx:HDividedBox>
         <mx:HBox>
             <mx:Button label="ShowDialog" click="onClick(event)"/>

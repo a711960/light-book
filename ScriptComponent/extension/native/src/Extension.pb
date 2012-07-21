@@ -123,7 +123,7 @@ Procedure.s ExecuteScript(*params.ScriptParameters)
   Define hRes.l = VariantInit_(*arguments)
   If #S_OK <> hRes
     trace("Failed to create BSTR");
-    resultString = ErrorJSON(1, "VariantInit_ failed", "ExecuteScript", 0, "")
+    resultString = ErrorJSON(2, 0)
   Else
     *arguments\vt = #VT_BSTR
     *arguments\bstrVal = T_BSTR(jsonData)
@@ -212,7 +212,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *params\vbs = vbs
   *params\timeout = timeout
   
-  Define resultString.s = ErrorJSON(0, "", "", 0, "")
+  Define resultString.s = ErrorJSON(0, 0)
   
   If(async)
     trace("execute async")
@@ -278,5 +278,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 3
+; CursorPosition = 214
+; FirstLine = 200
 ; Folding = ---
