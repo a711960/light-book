@@ -7,6 +7,7 @@
     <mx:Script>
 		<![CDATA[
         import light.book.script.ScriptComponent;
+        import light.book.script.ScriptFault;
         import light.book.script.ScriptResult;
 
         import logging.ConsoleTarget;
@@ -38,6 +39,12 @@
 
             extension = new ScriptComponent("ScriptExtensionDemo");
             extension.addEventListener(ScriptResult.RESULT, onResult, false, 0, true);
+            extension.addEventListener(ScriptFault.FAULT, onError, false, 0, true);
+        }
+
+        private function onError(event:ScriptFault):void
+        {
+            log.error("Code: {0} returned: {1}", event.code, event.error);
         }
 
         private function onResult(event:ScriptResult):void

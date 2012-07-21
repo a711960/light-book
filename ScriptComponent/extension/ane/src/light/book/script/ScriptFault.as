@@ -15,11 +15,14 @@ package light.book.script
             super(type, false, false);
             this.code = code;
             this.error = error;
+            this.text = error.toString();
         }
 
         override public function clone():Event
         {
-            return new ScriptFault(type, code, error);
+            var scriptFault:ScriptFault = new ScriptFault(type, code, error);
+            scriptFault.text = text;
+            return scriptFault;
         }
     }
 }

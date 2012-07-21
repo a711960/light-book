@@ -118,5 +118,10 @@ package light.book.script
         {
              return object != null && object.hasOwnProperty("Class") && object[CLASS] != null && CLASS_NAME == object["Class"];
         }
+
+        public function toString():String
+        {
+            return "ScriptError{number=" + String(number) + ",line=" + String(line) + ",description=" + String(description) + "}";
+        }
     }
 }
