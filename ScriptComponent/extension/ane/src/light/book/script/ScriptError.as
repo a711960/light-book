@@ -53,6 +53,7 @@ package light.book.script
             501:"Illegal assignment",
             502:"Object not safe for scripting",
             503:"Object not safe for initializing",
+            506:"Class not defined",
             1001:"Out of memory",
             1002:"Syntax error",
             1003:"Expected ':'",

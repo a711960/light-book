@@ -17,15 +17,13 @@
         import mx.logging.Log;
         import mx.utils.ObjectUtil;
 
-        import by.blooddy.crypto.serialization.JSON;
-
         private static const log:ILogger = Log.getLogger("ScriptExtensionDemo.mxml");
 
         [Bindable]
-        private var example:String = 'Dim json, result, o\n' +
-                'Set json = New VbsJson\n' +
-                'Set o = json.Decode(parameters.items("arguments"))\n' +
-                'result = json.Encode(o)\n';
+        private var example:String = 'Dim js, result, o\n' +
+                'Set js = New JSON\n' +
+                'Set o = js.parse(parameters.items("arguments"))\n' +
+                'result = js.stringify(o)\n';
 
         private var extension:ScriptComponent;
 

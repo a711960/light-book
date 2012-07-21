@@ -1,6 +1,7 @@
 package light.book.script
 {
-    import by.blooddy.crypto.serialization.JSON;
+    //Much faster serialization using Haxe
+    //import by.blooddy.crypto.serialization.JSON;
 
     import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
@@ -22,10 +23,10 @@ package light.book.script
      *
      * Loopback example:
      * <code>
-         Dim json, result, o
-         Set json = New VbsJson
-         Set o = json.Decode(parameters.items("arguments"))
-         result = json.Encode(o)
+         Dim js, result, o
+         Set js = New JSON
+         Set o = js.parse(parameters.items("arguments"))
+         result = js.stringify(o)
      * </code>
      */
     [Event(name="SCRIPT_RESULT", type="light.book.script.ScriptResult")]
@@ -123,19 +124,13 @@ package light.book.script
          * @return script id
          * @see ScriptResult
          * @see ScriptFault
-         *
-         * <code>
-         *            Dim json, o
-         *            Set json = New VbsJson
-         *            Set o = json.Decode(parameters.items("arguments"))
-         * </code>
          */
         public function executeAsync(vbs:Boolean, timeout:int, data:Object, script:String):int
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+            var jsonData:String = JSON.stringify(data);
             var result:String = execute(code, true, vbs,  timeout, jsonData, script);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
+            var resultObject:Object = JSON.parse(result);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
@@ -154,19 +149,13 @@ package light.book.script
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
          * @return deserialized script "result" variable
-         *
-         * <code>
-         *            Dim json, o
-         *            Set json = New VbsJson
-         *            Set o = json.Decode(parameters.items("arguments"))
-         * </code>
          */
         public function executeSync(vbs:Boolean, timeout:int, data:Object, script:String):Object
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+            var jsonData:String = JSON.stringify(data);
             var result:String = execute(code, false, vbs,  timeout, jsonData, script);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
+            var resultObject:Object = JSON.parse(result);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
@@ -186,7 +175,7 @@ package light.book.script
             if(Log.isDebug())
                 log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
             var code:int = parseInt(event.code);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(event.level);
+            var resultObject:Object = JSON.parse(event.level);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
