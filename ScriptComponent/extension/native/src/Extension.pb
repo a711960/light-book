@@ -1,7 +1,10 @@
 ﻿EnableExplicit
 
 DataSection
-  jsonClass : IncludeBinary "VbsJson.vbs" + Chr(0)
+  jsonVBS : IncludeBinary "VbsJson.vbs" 
+  Data.s Chr(0)
+  jsonJS  : IncludeBinary "json2.js"
+  Data.s Chr(0)
 EndDataSection 
 
 ;#LOG_FILE = "C:\pureair.log"
@@ -66,139 +69,177 @@ Procedure LogError()
 EndProcedure 
 
 Structure ExecuteParameters
-  jsonInjectData.s
-  jsonParameters.s
   hwnd.l
-  ctx.l
   code.l
-  argc.l
-  *argv.FREObjectArray
+  vbs.l
+  timeout.l
+  jsonData.s
+  script.s
+  ctx.l
 EndStructure
 
 Procedure ErrorHandler()
-   MessageRequester("OnError test", "The following error happened: " + ErrorMessage())
+   *log\error("Unhandled error: " + ErrorMessage())
 EndProcedure
  
-Procedure RunScript(*params.ExecuteParameters)
+;-T_BSTR
+Procedure helpSysAllocString(*Value)
+  ProcedureReturn SysAllocString_(*Value)
+EndProcedure
+Prototype.l ProtoSysAllocString(Value.p-unicode)
+
+Global T_BSTR.ProtoSysAllocString = @helpSysAllocString()
+
+
+Procedure.s ExecuteScript(*params.ExecuteParameters)
+  Define request.s = Str(*params\code)
+  
+  *log\info("[" + request + "] Prepared To run script")
   
   OnErrorCall(@ErrorHandler())
   
   ;Create Control
-  Define *control.IScript
+  Define *control.IScript = NewScript()
+  *log\info("[" + request + "] Initialized ScriptComponent")
   
-  *control = NewScript()
-  
-  Define *my.objObject = NewObject(?VT_Object)
-  
-  ;Add some tags
-  *my\Values("Zahl")\vt = #VT_R8
-  *my\Values()\dblVal = 100.95
-  
- 
-  ;Script
-  Define vbs.s
-  vbs = "Dim name, value" + #CRLF$
-  vbs + "name = 'VB-Zahl'" + #CRLF$
-  vbs + "my.items(name) = 20" + #CRLF$
-  vbs + "my.items('Text') = 'Hallo Welt'" + #CRLF$
-  vbs + "value = My.items('Zahl')" + #CRLF$
-  vbs + "MsgBox 'Value = ' & value"
-  vbs = ReplaceString(vbs, "'", #DOUBLEQUOTE$)
-  
-  ;Set Script Language
-  *control\SetLanguage("VBScript")
+  Define jsonParser.s
   
   ;Set timeout
-  *control\SetTimeOut(10000)
+  *control\SetTimeOut(*params\timeout)
+  *log\info("[" + request + "] ScriptComponent timeout=" + Str(*params\timeout))
   
-  ;Add Object from data section (VT_Object) with alias "My"
-  *control\AddObject("my", *my)
-  
-  
-  Define jsonParser.s = PeekS(?jsonClass)
-  
-  ;Add Script to Control
-  Define addJsonResult.l = *control\AddCode(jsonParser)
-  If addJsonResult <> #S_OK
-    *log\error(*control\GetError())
+  ;Set Script Language
+  If(*params\vbs)
+    *control\SetLanguage("VBScript")
+    *log\info("[" + request + "] ScriptComponent language=VBScript")
+    jsonParser = PeekS(?jsonVBS, -1, #PB_UTF16)
+  Else
+    *control\SetLanguage("JScript")
+    *log\info("[" + request + "] ScriptComponent language=JScript")
+    jsonParser = PeekS(?jsonJS, -1, #PB_UTF16)
   EndIf
   
+  Define *parameters.objObject, jsonData.s
+  *parameters = NewObject()
+  jsonData = Utf8ToUnicode(*params\jsonData)
+  *log\info("[" + request + "] ScriptComponent jsonData: " + #CRLF$ + jsonData)
+  
+  
+  ;*parameters\Values("arguments")\vt = #VT_BSTR
+  ;*parameters\Values("arguments")\bstrVal = jsonData
+  
+  ;*parameters\Values("arguments")\vt = #VT_R8
+  ;*parameters\Values("arguments")\dblVal = 100.95
+  
+  Define *arguments.VARIANT
+  *arguments = AddMapElement(*parameters\Values(), "arguments")
+  Define hRes.l = VariantInit_(*arguments)
+  If #S_OK = hRes
+    *arguments\vt = #VT_BSTR
+    *arguments\bstrVal = T_BSTR(jsonData)
+   
+    *control\AddObject("parameters", *parameters)
+  Else
+    *log\error("Failed to create BSTR");
+  EndIf 
+
+  
+  ;*log\info("[" + request + "] ScriptComponent parser: " + #CRLF$ + jsonParser)
+  
   ;Add Script to Control
-  Define r1.l = *control\AddCode(vbs)
-  If r1 <> #S_OK
-    *log\error(*control\GetError())
+  Define r.l = *control\AddCode(jsonParser)
+  If r <> #S_OK
+    *log\error("Failed to add json parser: " + *control\GetError())
+  Else
+    *log\info("[" + request + "] ScriptComponent loaded JSON parser")
+    
+    ;*log\info("[" + request + "] ScriptComponent script: " + #CRLF$ + Utf8ToUnicode(*params\script))
+    ;Add Script to Control
+    r = *control\AddCode(Utf8ToUnicode(*params\script))
+    If r <> #S_OK
+      *log\error("Failed to execute plugin: " + *control\GetError())
+    Else
+      *log\info("[" + request + "] ScriptComponent executed plugin")
+    EndIf
   EndIf
   
-  ;Get value of variable "value" 
-  Define result.d = *control\EvalDouble("value")
-  *log\info("value = " + StrD(result))
-  
-  ;Check map
-  ForEach *my\Values()
-    *log\info("Map(" + MapKey(*my\Values()) + "): " + VT_STR(*my\Values()))
-  Next
+ 
+  ;Get value of variable "result" 
+  Define result.s = *control\EvalStr("result")
+  *log\info("result = " + result)
   
   ;Destroy Control
   *control\Release()
-   
-  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, asGlobal(Str(*params\code)), asGlobal(StrD(result)))
+  
+  ProcedureReturn result
+EndProcedure
+ 
+ 
+Procedure RunScript(*params.ExecuteParameters)
+  Define result.s = ExecuteScript(*params)
+  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, asGlobal(Str(*params\code)), asGlobal(result))
   *log\Debug (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
 EndProcedure
 
  
-
 ;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *log\info("Invoked Execute")
-  
-  Define result.l
-  
   *log\info("Method args size: " + Str(fromULong(argc)))
 
-  Define resultObject.l, length.l, async.l, jsonParameters.s, jsonInjectData.s, *string.Ascii, code.l
+  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, isVBScript.l, timeout.l
   
   result = FREGetObjectAsInt32(*argv\object[0], @code)
   *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
-  
+ 
   result = FREGetObjectAsBool(*argv\object[1], @async)
   *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsBool"))
   
-  result = FREGetObjectAsUTF8(*argv\object[2], @length, @*string)
-  *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  jsonParameters = PeekS(*string, fromULong(length) + 1)
+  result = FREGetObjectAsBool(*argv\object[2], @isVBScript)
+  *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsBool"))
   
-  result = FREGetObjectAsUTF8(*argv\object[3], @length, @*string)
+  result = FREGetObjectAsInt32(*argv\object[3], @timeout)
+  *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
+  
+  result = FREGetObjectAsUTF8(*argv\object[4], @length, @*string)
   *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  jsonInjectData = PeekS(*string, fromULong(length) + 1)
+  jsonData = PeekS(*string, fromULong(length) + 1)
+  
+  result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
+  *log\Debug("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
+  script = PeekS(*string, fromULong(length) + 1)
   
   *log\info("Argument: code=" + Str(code))
   *log\info("Argument: async=" + Str(fromULong(async)))
-  *log\info("Argument: jsonParameters=" + Utf8ToUnicode(jsonParameters))
-  *log\info("Argument: jsonInjectData=" + Utf8ToUnicode(jsonInjectData))
+  *log\info("Argument: timeout=" + Str(timeout))
+  *log\info("Argument: isVBScript=" + Str(fromULong(isVBScript)))
+  *log\info("Argument: jsonData=" + Utf8ToUnicode(jsonData))
+  *log\info("Argument: script=" + Utf8ToUnicode(script))
   
   
-   Define *params.ExecuteParameters = AllocateMemory(SizeOf(ExecuteParameters))
-   *params\ctx = ctx
-   *params\code = code
-   *params\hwnd = 0 ;todo
-   *params\jsonParameters = jsonParameters
-   *params\jsonInjectData = jsonInjectData
-   *params\argc = argc
-   *params\argv = *argv
-   
-   If(async)
-     *log\info("execute async")
-     CreateThread(@RunScript(), *params)
-   Else
-     *log\info("execute sync")
-     RunScript(*params)
-   EndIf
+  Define *params.ExecuteParameters = AllocateMemory(SizeOf(ExecuteParameters))
+  *params\ctx = ctx
+  *params\code = code
+  *params\hwnd = 0 ;todo
+  *params\script = script
+  *params\jsonData = jsonData
+  *params\vbs = isVBScript
+  *params\timeout = timeout
   
-   ;return Boolean.TRUE
-   result = FRENewObjectFromBool(toULong(1), @resultObject)
-   *log\Debug(ResultDescription(result, "FRENewObjectFromBool"))
+  Define resultString.s = "ok"
+  If(async)
+    *log\info("execute async")
+    CreateThread(@RunScript(), *params)
+  Else
+    *log\info("execute sync")
+    resultString = ExecuteScript(*params)
+  EndIf
+
+  Define resultObject.l
+  result = FRENewObjectFromUTF8(toULong(Len(resultString)), @resultString, @resultObject)
+  *log\Debug(ResultDescription(result, "FRENewObjectFromUTF8"))
   
-   ProcedureReturn resultObject
+  ProcedureReturn resultObject
 EndProcedure
 
 
@@ -250,6 +291,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 122
-; FirstLine = 97
+; CursorPosition = 140
+; FirstLine = 118
 ; Folding = ---

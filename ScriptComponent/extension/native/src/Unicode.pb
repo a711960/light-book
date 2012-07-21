@@ -11,7 +11,7 @@ Procedure.s Utf8ToUnicode(string.s)
   ;- Converts UCS2 to UTF8
   Define size.i, result.s
   size = MultiByteToWideChar_(#CP_UTF8, 0, @string, -1, 0, 0)
-  result = Space(size*2 + 1)
+  result = Space(size + 1)
   MultiByteToWideChar_(#CP_UTF8, 0 , @string, -1, @result, size)
   ProcedureReturn result
 EndProcedure
@@ -33,7 +33,8 @@ Procedure.l asGlobal(string.s)
   PokeS(*result, string, -1, #PB_Ascii)
   ProcedureReturn *result
 EndProcedure
+
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 13
+; CursorPosition = 35
 ; Folding = -
 ; EnableXP

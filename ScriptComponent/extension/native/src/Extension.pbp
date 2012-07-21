@@ -10,12 +10,12 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-21 18:16" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-21 20:57" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="e9ecd7837968c79c0bd63187a173893c"/>
+      <fingerprint md5="6cea1e532c1381a84d7bb849163f4f9f"/>
     </file>
     <file name="Logger.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -23,7 +23,7 @@
     </file>
     <file name="Unicode.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="dd0bec99f5cdd9671caf227a1dde64d1"/>
+      <fingerprint md5="d84fd4949545f96f035130e45b92376f"/>
     </file>
     <file name="Unsigned.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -39,8 +39,8 @@
       <options unicode="1" thread="1" onerror="1"/>
       <temporaryexe value="source"/>
       <format exe="dll" cpu="0"/>
-      <compilecount enable="1" value="242"/>
-      <buildcount enable="1" value="241"/>
+      <compilecount enable="1" value="273"/>
+      <buildcount enable="1" value="272"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

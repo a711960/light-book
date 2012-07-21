@@ -15,14 +15,14 @@ Structure objArgs
 EndStructure
  
 
-Procedure.l NewObject(*VT_Application)
+Procedure.l NewObject()
   Define *oNew.objObject
  
   ;Create new Object
   *oNew         = AllocateMemory (SizeOf(objObject))
   ;structures with arrays lists and maps must be initialized
   InitializeStructure(*oNew, objObject)
-  *oNew\VTable  = *VT_Application
+  *oNew\VTable  = ?VT_Object
   *oNew\oOwn    = *oNew
   *oNew\oPar    = *oNew
   *oNew\oApp    = *oNew
@@ -199,7 +199,7 @@ DataSection
 EndDataSection
   
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 106
-; FirstLine = 90
+; CursorPosition = 24
+; FirstLine = 2
 ; Folding = --
 ; EnableXP

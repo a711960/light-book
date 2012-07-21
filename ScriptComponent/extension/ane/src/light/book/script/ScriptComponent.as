@@ -68,24 +68,24 @@ package light.book.script
             return _context != null;
         }
 
-        public function execute(code:int, async:Boolean, jsonParameters:String, jsonInjectData:String):Boolean
+        public function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, jsonData:String, script:String):String
         {
             if (!contextCreated)
-                return false;
+                return null;
 
-            var result:Boolean = false;
+            var result:String = null;
 
             try
             {
-                result = _context.call('execute', code, async, jsonParameters, jsonInjectData) as Boolean;
+                result = _context.call('execute', code, async, vbs, timeout, jsonData, script) as String;
                 if (!result)
                 {
-                    log.error("Invocation error: execute({0}, {1}, {2}, {3})", code, async, jsonParameters, jsonInjectData);
+                    log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6})", code, async, vbs, timeout, jsonData, script);
                 }
             }
             catch (e:Error)
             {
-                log.error("Invocation error: execute({0}, {1}, {2}, {3}), stacktrace: {4}", code, async, jsonParameters, jsonInjectData, e.getStackTrace());
+                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}), stacktrace: {7}", code, async, vbs, timeout, jsonData, script, e.getStackTrace());
             }
             return result;
         }
