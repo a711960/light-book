@@ -86,6 +86,7 @@ Procedure RunScript(*params.ExecuteParameters)
   *my\Values("Zahl")\vt = #VT_R8
   *my\Values()\dblVal = 100.95
   
+ 
   ;Script
   Define vbs.s
   vbs = "Dim name, value" + #CRLF$
@@ -229,5 +230,6 @@ ProcedureCDLL finalizer(extData.l)
   ;do nothing
 EndProcedure 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 8
+; CursorPosition = 88
+; FirstLine = 79
 ; Folding = ---
