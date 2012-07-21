@@ -11,26 +11,37 @@ package light.book.script
     import mx.logging.Log;
 
     /**
-     * ScriptComponent extension, interface to MS ScriptComponent
-     *
-     * Data objects are serialized to JSON and then are available in script via
-     * <b>parameters.items("arguments")</b>
-     *
-     * JSON parsers are automatically embedded in script:
-     *
-     * VBScript: <a href="http://demon.tw/my-work/vbs-json.html">http://demon.tw/my-work/vbs-json.html</a>
-     * JScript: <a href="https://github.com/douglascrockford/JSON-js/">https://github.com/douglascrockford/JSON-js/</a>
-     *
-     * Loopback example:
-     * <code>
-         Dim js, result, o
-         Set js = New JSON
-         Set o = js.parse(parameters.items("arguments"))
-         result = js.stringify(o)
-     * </code>
+     * Script was executed with errors
      */
     [Event(name="SCRIPT_RESULT", type="light.book.script.ScriptResult")]
+
+    /**
+     * Script was successfully executed
+     */
     [Event(name="SCRIPT_FAULT", type="light.book.script.ScriptFault")]
+
+    /**
+     * <p>ScriptComponent extension, interface to MS ScriptComponent</p>
+     *
+     * <p>Data objects are serialized to JSON and then are available in script via
+     * <b>parameters.items("arguments")</b></p>
+     *
+     * <p>JSON parsers are automatically embedded in script:
+     *
+     * <ul>
+     * <li>VBScript: <a href="http://demon.tw/my-work/vbs-json.html">http://demon.tw/my-work/vbs-json.html</a></li>
+     * <li>JScript: <a href="https://github.com/douglascrockford/JSON-js/">https://github.com/douglascrockford/JSON-js/</a></li>
+     * </ul>
+     *
+     * Loopback example:
+     * <pre>
+     *    Dim js, result, o
+     *    Set js = New JSON
+     *    Set o = js.parse(parameters.items("arguments"))
+     *    result = js.stringify(o)
+     * </pre>
+     * </p>
+     */
     public class ScriptComponent extends EventDispatcher
     {
         /**
@@ -38,6 +49,9 @@ package light.book.script
          */
         public static const CONTEXT:String = "light.book.script.ScriptComponent";
 
+        /**
+         * @private
+         */
         private static const log:ILogger = Log.getLogger(CONTEXT);
 
         /**
@@ -52,7 +66,7 @@ package light.book.script
 
 
         /**
-         * @Constructor
+         * Constructor
          * @param contextType default value is "ScriptComponent"
          */
         public function ScriptComponent(contextType:String = "ScriptComponent")

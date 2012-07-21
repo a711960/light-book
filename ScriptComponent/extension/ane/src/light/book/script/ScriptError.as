@@ -124,7 +124,7 @@ package light.book.script
         public var description:String = "";
 
         /**
-         * @Constructor
+         * Constructor
          * @param object deserialized from extension JSON response
          */
         public function ScriptError(object:Object = null)

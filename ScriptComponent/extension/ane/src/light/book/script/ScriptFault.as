@@ -4,10 +4,13 @@ package light.book.script
     import flash.events.Event;
 
     /**
-     * ScriptFault indicates that script execution failed
+     * Script was executed with errors
      */
     public class ScriptFault extends ErrorEvent
     {
+        /**
+         * Event type
+         */
         public static const FAULT:String = "SCRIPT_FAULT";
 
         /**
@@ -22,7 +25,7 @@ package light.book.script
         public var code:int;
 
         /**
-         * @Constructor
+         * Constructor
          * @param type
          * @param code
          * @param error
