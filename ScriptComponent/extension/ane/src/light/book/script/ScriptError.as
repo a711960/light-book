@@ -5,9 +5,19 @@ package light.book.script
      */
     public class ScriptError
     {
+        /**
+         * @Private
+         */
         private static const CLASS:String = "Class";
+
+        /**
+         * @Private
+         */
         private static const CLASS_NAME:String = "light.book.script.ScriptError";
-        
+
+        /**
+         * @Private
+         */
         public static const ERROR_CODES:Object = {5:"Invalid procedure call or argument",
             6:"Overflow",
             7:"Out of memory",
