@@ -116,7 +116,7 @@ package light.book.script
 
         /**
          * Execute script asynchronously
-         * @param vbs is language VBScript(true) ot JScript(false)
+         * @param vbs is language VBScript(true) or JScript(false)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
@@ -149,7 +149,7 @@ package light.book.script
 
         /**
          * Execute script immediately
-         * @param vbs is language VBScript(true) ot JScript(false)
+         * @param vbs is language VBScript(true) or JScript(false)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
