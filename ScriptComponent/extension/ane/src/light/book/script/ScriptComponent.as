@@ -1,5 +1,6 @@
 package light.book.script
 {
+    import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
     import flash.external.ExtensionContext;
 
@@ -9,7 +10,7 @@ package light.book.script
     /**
      * Wrapper for PureBasic extension
      */
-    public class ScriptComponent
+    public class ScriptComponent extends EventDispatcher
     {
         /**
          * Extension id, must be specified in air-manifest.xml and extension.xml
@@ -33,7 +34,7 @@ package light.book.script
          * @param contextType default value is "PureAir"
          * @param actionScriptData ant number
          */
-        public function ScriptComponent(contextType:String = "ScriptExtensionDemo", actionScriptData:int = 4)
+        public function ScriptComponent(contextType:String = "ScriptComponent")
         {
             //random type
             this.contextType = contextType + Math.round(Math.random() * 100000);
@@ -54,9 +55,6 @@ package light.book.script
 
                     //listen for extension events
                     _context.addEventListener(StatusEvent.STATUS, onStatusEvent);
-
-                    //set actionScript data
-                    _context.actionScriptData = actionScriptData;
                 }
             }
             catch(e:Error)
@@ -70,14 +68,7 @@ package light.book.script
             return _context != null;
         }
 
-        /**
-         * Test method, shows YesNoCancel modal dialog
-         * @param booleanArg boolean parameter
-         * @param flags integer parameter, #PB_MessageRequester_YesNoCancel=3, #MB_APPLMODAL = 0
-         * @param message string parameter
-         * @return
-         */
-        public function showDialog(booleanArg:Boolean, flags:int, message:String):Boolean
+        public function execute(code:int, async:Boolean, jsonParameters:String, jsonInjectData:String):Boolean
         {
             if (!contextCreated)
                 return false;
@@ -86,22 +77,24 @@ package light.book.script
 
             try
             {
-                result = _context.call('showDialog', booleanArg, flags, message) as Boolean;
+                result = _context.call('execute', code, async, jsonParameters, jsonInjectData) as Boolean;
                 if (!result)
                 {
-                    log.error("Invocation error: test({0}, {1}, {2})", booleanArg, flags, message);
+                    log.error("Invocation error: execute({0}, {1}, {2}, {3})", code, async, jsonParameters, jsonInjectData);
                 }
             }
             catch (e:Error)
             {
-                log.error("Invocation error: test({0}, {1}, {2}), stacktrace: {3}", booleanArg, flags, message, e.getStackTrace());
+                log.error("Invocation error: execute({0}, {1}, {2}, {3}), stacktrace: {4}", code, async, jsonParameters, jsonInjectData, e.getStackTrace());
             }
             return result;
         }
 
+
         private function onStatusEvent(event:StatusEvent):void
         {
             log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
+            dispatchEvent(new ScriptEvent(ScriptEvent.RESULT, event.code, event.level));
         }
 
         /**

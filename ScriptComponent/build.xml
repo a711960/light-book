@@ -114,6 +114,7 @@
             <arg line="-warnings=${warnings}"/>
             <arg line="-headless-server=true"/>
             <arg line="-external-library-path+=${app.lib.dir}/${native}.swc"/>
+            <arg line="-library-path+=${app.lib.dir}/blooddy_crypto.swc"/>
             <arg line="-output ${app.dir}/${application}.swf"/>
             <arg line="-- ${app.src.dir}/${application}.mxml"/>
         </exec>

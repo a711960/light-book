@@ -10,24 +10,20 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-20 23:01" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-21 14:28" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="9d70bda30d97464547c21458227e57bf"/>
-    </file>
-    <file name="FlashRuntimeExtensions.pb">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="6ba0f17fb7108b0e01bdc086af04c86e"/>
+      <fingerprint md5="19ae9d4c080c9f114320fa9cf96c31f2"/>
     </file>
     <file name="Logger.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="b909e44d2abfd562eddd2a28eca94d39"/>
+      <fingerprint md5="9a121908e01568784b0d0b27d2c15563"/>
     </file>
     <file name="Unicode.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="7dcbcff61c546fcaa56da1763dd09517"/>
+      <fingerprint md5="dd0bec99f5cdd9671caf227a1dde64d1"/>
     </file>
     <file name="Unsigned.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -40,11 +36,11 @@
       <outputfile value="../bin/ScriptComponent.dll"/>
       <compiler version="PureBasic 4.61 (Windows - x86)"/>
       <executable value="..\bin\ScriptComponent.dll"/>
-      <options asm="1" unicode="1" thread="1" xpskin="1" onerror="1"/>
+      <options unicode="1" thread="1" onerror="1"/>
       <temporaryexe value="source"/>
-      <format exe="dll" cpu="5"/>
-      <compilecount enable="1" value="222"/>
-      <buildcount enable="1" value="221"/>
+      <format exe="dll" cpu="0"/>
+      <compilecount enable="1" value="231"/>
+      <buildcount enable="1" value="230"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

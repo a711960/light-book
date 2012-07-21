@@ -10,6 +10,7 @@
     <fx:Script>
 		<![CDATA[
         import light.book.script.ScriptComponent;
+        import light.book.script.ScriptEvent;
 
         import logging.ConsoleTarget;
         import logging.TextTarget;
@@ -17,6 +18,8 @@
         import mx.logging.ILogger;
         import mx.logging.Log;
         import mx.utils.ObjectUtil;
+
+        import by.blooddy.crypto.serialization.JSON;
 
         private static const log:ILogger = Log.getLogger("ScriptExtensionDemo.mxml");
 
@@ -30,7 +33,13 @@
             log.info("started: debug {0}", Capabilities.isDebugger);
             NativeApplication.nativeApplication.addEventListener(Event.EXITING, onExit, false, 0, true);
 
-            extension = new ScriptComponent("ScriptExtensionDemo", 2);
+            extension = new ScriptComponent("ScriptExtensionDemo");
+            extension.addEventListener(ScriptEvent.RESULT, onResult, false, 0, true);
+        }
+
+        private function onResult(event:ScriptEvent):void
+        {
+            log.info("Code: {0} returned: {1}", event.code, event.level);
         }
 
         private function onExit(event:Event):void
@@ -40,7 +49,22 @@
 
         private function onClick(event:MouseEvent):void
         {
-            log.info("showDialog() result: " + extension.showDialog(true, 3, "Нажмите любую кнопку"));
+            var code:int = Math.round(Math.random() * 10000);
+
+            var parameters:Object = {};
+            parameters["language"] = "VBScript";
+            parameters["timeout"] = 1000 * 60;
+            parameters["script"] = "Function test() \n msgbox \"ok!\" \n test=\"[]\" \n End Function";
+            parameters["function"] = "test";
+            parameters["allowui"] = true;
+
+            var data:Object = {};
+            data["test"] = "ok!";
+
+            var jsonParameters:String = by.blooddy.crypto.serialization.JSON.encode(parameters);
+            var jsonInjectData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+
+            log.info("execute() result: " + extension.execute(code, true, jsonParameters, jsonInjectData));
         }
 
         private function onUncaughtError(event:UncaughtErrorEvent):void

@@ -101,7 +101,9 @@ Procedure New_Logger(name.s)
     *object\mutex = CreateMutex()
     ProcedureReturn *object
 EndProcedure
+
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 10
+; CursorPosition = 77
+; FirstLine = 57
 ; Folding = --
 ; EnableXP
