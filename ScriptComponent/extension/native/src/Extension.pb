@@ -1,7 +1,7 @@
 ﻿EnableExplicit
 
 Macro trace(message)
-  ;msg(message);
+  msg(message);
 EndMacro
 
 Procedure msg(message.s)
@@ -163,7 +163,8 @@ EndProcedure
  
 Procedure RunScript(*params.ScriptParameters)
   Define result.s = ExecuteScript(*params)
-  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, asGlobal(Str(*params\code)), asGlobal(result))
+  Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @result, -1, 0, 0, 0, 0)
+  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, Utf8Alloc(Str(*params\code)), UnicodeToUtf8Alloc(result))
   trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
   FreeMemory(*params)
 EndProcedure
@@ -223,7 +224,9 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   EndIf
 
   Define resultObject.l
-  result = FRENewObjectFromUTF8(toULong(Len(resultString)), asGlobal(resultString), @resultObject)
+  Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @resultString, -1, 0, 0, 0, 0)
+  
+  result = FRENewObjectFromUTF8(toULong(size), UnicodeToUtf8Alloc(resultString), @resultObject)
   trace(ResultDescription(result, "FRENewObjectFromUTF8"))
   
   ProcedureReturn resultObject
@@ -248,7 +251,7 @@ ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *
   ;If you want to return a string out of a DLL, the string has to be declared as Global before using it.
   
   ;method name
-  f(0)\name = asGlobal("execute")
+  f(0)\name = Utf8Alloc("execute")
   ;function pointer
   f(0)\function = @Execute()
   
@@ -278,6 +281,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 214
-; FirstLine = 200
+; CursorPosition = 253
+; FirstLine = 230
 ; Folding = ---
