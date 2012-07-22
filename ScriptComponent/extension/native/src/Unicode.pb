@@ -28,7 +28,7 @@ EndProcedure
 ;from PB help:
 ;  If you want to return a string out of a DLL, the string has to be declared as Global before using it.
 
-Procedure.l Utf8Alloc(string.s)
+Procedure.l AsciiAlloc(string.s)
   ;- Converts UCS2 to Ascii
   Define *result.Ascii = AllocateMemory(Len(string) + 1)
   PokeS(*result, string, -1, #PB_Ascii)
@@ -44,6 +44,6 @@ Procedure.l UnicodeToUtf8Alloc(string.s)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 32
+; CursorPosition = 30
 ; Folding = -
 ; EnableXP

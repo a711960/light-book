@@ -1,7 +1,7 @@
 ﻿EnableExplicit
 
 Macro trace(message)
-  msg(message);
+  ;msg(message);
 EndMacro
 
 Procedure msg(message.s)
@@ -164,7 +164,7 @@ EndProcedure
 Procedure RunScript(*params.ScriptParameters)
   Define result.s = ExecuteScript(*params)
   Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @result, -1, 0, 0, 0, 0)
-  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, Utf8Alloc(Str(*params\code)), UnicodeToUtf8Alloc(result))
+  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), UnicodeToUtf8Alloc(result))
   trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
   FreeMemory(*params)
 EndProcedure
@@ -251,7 +251,7 @@ ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *
   ;If you want to return a string out of a DLL, the string has to be declared as Global before using it.
   
   ;method name
-  f(0)\name = Utf8Alloc("execute")
+  f(0)\name = AsciiAlloc("execute")
   ;function pointer
   f(0)\function = @Execute()
   
@@ -281,6 +281,5 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 253
-; FirstLine = 230
+; CursorPosition = 3
 ; Folding = ---
