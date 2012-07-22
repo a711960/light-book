@@ -82,7 +82,7 @@ Structure ScriptParameters
   ctx.l
 EndStructure
 
-
+; Returns Unicode JSON string
 Procedure.s ExecuteScript(*params.ScriptParameters)
   Define request.s = Str(*params\code)
   
@@ -281,5 +281,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 3
+; CursorPosition = 225
+; FirstLine = 184
 ; Folding = ---

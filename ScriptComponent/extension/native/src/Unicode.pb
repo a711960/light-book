@@ -44,6 +44,6 @@ Procedure.l UnicodeToUtf8Alloc(string.s)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 30
+; CursorPosition = 37
 ; Folding = -
 ; EnableXP
