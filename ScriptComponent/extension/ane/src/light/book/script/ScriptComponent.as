@@ -1,7 +1,7 @@
 package light.book.script
 {
     //Much faster serialization using Haxe
-    //import by.blooddy.crypto.serialization.JSON;
+    import by.blooddy.crypto.serialization.JSON;
 
     import flash.events.EventDispatcher;
     import flash.events.StatusEvent;
@@ -142,9 +142,9 @@ package light.book.script
         public function executeAsync(vbs:Boolean, timeout:int, data:Object, script:String):int
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = JSON.stringify(data);
+            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
             var result:String = execute(code, true, vbs,  timeout, jsonData, script);
-            var resultObject:Object = JSON.parse(result);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
@@ -167,9 +167,9 @@ package light.book.script
         public function executeSync(vbs:Boolean, timeout:int, data:Object, script:String):Object
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = JSON.stringify(data);
+            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
             var result:String = execute(code, false, vbs,  timeout, jsonData, script);
-            var resultObject:Object = JSON.parse(result);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
@@ -189,7 +189,7 @@ package light.book.script
             if(Log.isDebug())
                 log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
             var code:int = parseInt(event.code);
-            var resultObject:Object = JSON.parse(event.level);
+            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(event.level);
             if(ScriptError.isError(resultObject))
             {
                 var scriptError:ScriptError = new ScriptError(resultObject);
