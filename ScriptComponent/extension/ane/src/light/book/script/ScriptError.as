@@ -139,7 +139,7 @@ package light.book.script
          */
         public function ScriptError(object:Object = null)
         {
-            super(object && object.hasOwnProperty("number") ? object["number"] : 0, object && object.hasOwnProperty("number") ? object["number"] : 0);
+            super(object && object.hasOwnProperty("number") ? ERROR_CODES[object["number"]] : 0, object && object.hasOwnProperty("number") ? object["number"] : 0);
             if(object != null)
             {
                 number =  object.hasOwnProperty("number") ? object["number"] : 0;

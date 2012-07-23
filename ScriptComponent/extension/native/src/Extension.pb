@@ -81,6 +81,7 @@ Structure ScriptParameters
   script.s
   ctx.l
   allowUI.l
+  safeSubset.l
 EndStructure
 
 ; Returns Unicode JSON string
@@ -106,6 +107,10 @@ Procedure.s ExecuteScript(*params.ScriptParameters)
   ;Set allow UI
   *control\SetAllowUI(*params\allowUI)
   trace("[" + request + "] ScriptComponent allowUI=" + Str(*params\allowUI))
+  
+  ;Set use safe subset
+  *control\SetUseSafeSubset(*params\safeSubset)
+  trace("[" + request + "] ScriptComponent safeSubset=" + Str(*params\safeSubset))
   
   ;Set Script Language
   If(*params\vbs)
@@ -186,7 +191,7 @@ EndProcedure
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked Execute, args size:" + Str(fromULong(argc)))
 
-  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, vbs.l, timeout.l, allowUI.l
+  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, vbs.l, timeout.l, allowUI.l, safeSubset.l
   
   result = FREGetObjectAsInt32(*argv\object[0], @code)
   trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
@@ -203,11 +208,14 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   result = FREGetObjectAsBool(*argv\object[4], @allowUI)
   trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
   
-  result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
+  result = FREGetObjectAsBool(*argv\object[5], @safeSubset)
+  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
+  
+  result = FREGetObjectAsUTF8(*argv\object[6], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   jsonData = PeekS(*string, fromULong(length) + 1)
   
-  result = FREGetObjectAsUTF8(*argv\object[6], @length, @*string)
+  result = FREGetObjectAsUTF8(*argv\object[7], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   script = PeekS(*string, fromULong(length) + 1)
   
@@ -229,6 +237,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *params\vbs = vbs
   *params\timeout = timeout
   *params\allowUI = allowUI
+  *params\safeSubset = safeSubset
   
   Define resultString.s = ErrorJSON(0, 0)
   
@@ -298,6 +307,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 197
-; FirstLine = 176
+; CursorPosition = 217
+; FirstLine = 189
 ; Folding = ---

@@ -109,7 +109,7 @@ package light.book.script
         /**
          * @private
          */
-        private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, allowUI:Boolean, jsonData:String, script:String):String
+        private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, jsonData:String, script:String):String
         {
             if (!contextCreated)
                 return '{"line":0, "number":1, "Class":"error"}';
@@ -118,11 +118,11 @@ package light.book.script
 
             try
             {
-                result = _context.call("execute", code, async, vbs, timeout, allowUI, jsonData, script) as String;
+                result = _context.call("execute", code, async, vbs, timeout, allowUI, safeSubset, jsonData, script) as String;
             }
             catch (e:Error)
             {
-                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}), stacktrace: {8}", code, async, vbs, timeout, allowUI, jsonData, script, e.getStackTrace());
+                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}), stacktrace: {9}", code, async, vbs, timeout, allowUI, safeSubset, jsonData, script, e.getStackTrace());
                 return '{"line":0, "number":1, "Class":"error"}'
             }
             return result;
@@ -140,19 +140,15 @@ package light.book.script
          * @see ScriptResult
          * @see ScriptFault
          */
-        public function executeAsync(vbs:Boolean, timeout:int, allowUI:Boolean, data:Object, script:String):int
+        public function executeAsync(vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, data:Object, script:String):int
         {
             var code:int = Math.round(Math.random() * 100000);
             var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, true, vbs,  timeout, allowUI, jsonData, script);
+            var result:String = execute(code, true, vbs,  timeout, allowUI, safeSubset, jsonData, script);
             var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {
-                var scriptError:ScriptError = new ScriptError(resultObject);
-                if(scriptError.number != 0)
-                {
-                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
-                }
+                dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
             }
             return code;
         }
@@ -166,19 +162,15 @@ package light.book.script
          * @param script script to be executed
          * @return deserialized script "result" variable
          */
-        public function executeSync(vbs:Boolean, timeout:int, allowUI:Boolean, data:Object, script:String):Object
+        public function executeSync(vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, data:Object, script:String):Object
         {
             var code:int = Math.round(Math.random() * 100000);
             var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, false, vbs,  timeout, allowUI, jsonData, script);
+            var result:String = execute(code, false, vbs,  timeout, allowUI, safeSubset, jsonData, script);
             var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {
-                var scriptError:ScriptError = new ScriptError(resultObject);
-                if(scriptError.number != 0)
-                {
-                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
-                }
+                throw new ScriptError(resultObject);
             }
             return resultObject;
         }
