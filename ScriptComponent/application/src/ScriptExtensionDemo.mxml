@@ -65,13 +65,13 @@
 
             if (async.selected)
             {
-                var code:int = extension.executeAsync(vbs.selected, 10000, parameters, script.text);
+                var code:int = extension.executeAsync(vbs.selected, 10000, ui.selected, parameters, script.text);
                 log.info("execute() code: {0}", code);
             }
             else
             {
                 log.info("execute() start");
-                var result:Object = extension.executeSync(vbs.selected, 10000, parameters, script.text);
+                var result:Object = extension.executeSync(vbs.selected, 10000, ui.selected, parameters, script.text);
                 log.info("execute() result: {0}", ObjectUtil.toString(result));
                 log.info("execute() end");
             }
@@ -88,6 +88,7 @@
             <mx:Button label="ShowDialog" click="onClick(event)"/>
             <mx:CheckBox id="async" label="Async"/>
             <mx:CheckBox id="vbs" label="{vbs.selected ? 'VBScript' : 'JScript'}" selected="true"/>
+            <mx:CheckBox id="ui" label="AllowUI" selected="true"/>
         </mx:HBox>
     </mx:VBox>
 </mx:WindowedApplication>

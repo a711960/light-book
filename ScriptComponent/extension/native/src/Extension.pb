@@ -80,6 +80,7 @@ Structure ScriptParameters
   jsonData.s
   script.s
   ctx.l
+  allowUI.l
 EndStructure
 
 ; Returns Unicode JSON string
@@ -101,6 +102,10 @@ Procedure.s ExecuteScript(*params.ScriptParameters)
   ;Set timeout
   *control\SetTimeOut(*params\timeout)
   trace("[" + request + "] ScriptComponent timeout=" + Str(*params\timeout))
+  
+  ;Set allow UI
+  *control\SetAllowUI(*params\allowUI)
+  trace("[" + request + "] ScriptComponent allowUI=" + Str(*params\allowUI))
   
   ;Set Script Language
   If(*params\vbs)
@@ -181,7 +186,7 @@ EndProcedure
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked Execute, args size:" + Str(fromULong(argc)))
 
-  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, vbs.l, timeout.l
+  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, vbs.l, timeout.l, allowUI.l
   
   result = FREGetObjectAsInt32(*argv\object[0], @code)
   trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
@@ -195,17 +200,21 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   result = FREGetObjectAsInt32(*argv\object[3], @timeout)
   trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
   
-  result = FREGetObjectAsUTF8(*argv\object[4], @length, @*string)
+  result = FREGetObjectAsBool(*argv\object[4], @allowUI)
+  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
+  
+  result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   jsonData = PeekS(*string, fromULong(length) + 1)
   
-  result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
+  result = FREGetObjectAsUTF8(*argv\object[6], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   script = PeekS(*string, fromULong(length) + 1)
   
   trace("Argument: code=" + Str(code))
   trace("Argument: async=" + Str(fromULong(async)))
   trace("Argument: timeout=" + Str(timeout))
+  trace("Argument: timeout=" + Str(allowUI))
   trace("Argument: isVBScript=" + Str(vbs))
   trace("Argument: jsonData=" + Utf8ToUnicode(jsonData))
   trace("Argument: script=" + Utf8ToUnicode(script))
@@ -219,6 +228,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *params\jsonData = jsonData
   *params\vbs = vbs
   *params\timeout = timeout
+  *params\allowUI = allowUI
   
   Define resultString.s = ErrorJSON(0, 0)
   
@@ -288,6 +298,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 157
-; FirstLine = 122
+; CursorPosition = 197
+; FirstLine = 176
 ; Folding = ---

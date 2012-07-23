@@ -486,13 +486,13 @@ EndProcedure
 
 ;** SCtr__SetAllowUI
 Procedure SCtr__SetAllowUI(*This.Script, value.l)
-;-  hWnd used as a parent for displaying UI
+;-  Enable or disable display of the UI
   ProcedureReturn *This\ScriptControl\put_AllowUI(value)
 EndProcedure
 
 ;** SCtr__GetAllowUI
 Procedure.l SCtr__GetAllowUI(*This.Script)
-;-  hWnd used as a parent for displaying UI
+;-  Enable or disable display of the UI
   Protected value.l
   *This\ScriptControl\get_AllowUI(@value)
   ProcedureReturn value
@@ -500,20 +500,20 @@ EndProcedure
 
 ;** SCtr__SetUseSafeSubset
 Procedure SCtr__SetUseSafeSubset(*This.Script, value.l)
-;-  hWnd used as a parent for displaying UI
+;-  Force script to execute in safe mode and disallow potentially harmful actions
   ProcedureReturn *This\ScriptControl\put_UseSafeSubset(value)
 EndProcedure
 
 ;** SCtr__GetUseSafeSubset
 Procedure.l SCtr__GetUseSafeSubset(*This.Script)
-;-  hWnd used as a parent for displaying UI
+;-  Force script to execute in safe mode and disallow potentially harmful actions
   Protected value.l
   *This\ScriptControl\get_UseSafeSubset(@value)
   ProcedureReturn value
 EndProcedure
 
 Procedure.s ErrorJSON(number.l, line.l)
-  Define template.s = "{'line':{line}, 'number':{number}, 'Class':'light.book.script.ScriptError'}"
+  Define template.s = "{'line':{line}, 'number':{number}, 'Class':'error'}"
   template= ReplaceString(template, "'", #DOUBLEQUOTE$)
   template= ReplaceString(template, "{line}", Str(line))
   template= ReplaceString(template, "{number}", Str(number))
@@ -627,7 +627,7 @@ DataSection
     Data.i @SCtr__GetError()
 EndDataSection
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 516
-; FirstLine = 497
+; CursorPosition = 508
+; FirstLine = 562
 ; Folding = ------
 ; EnableXP

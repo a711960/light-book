@@ -24,7 +24,7 @@ package light.book.script
      * <p>ScriptComponent extension, interface to MS ScriptComponent</p>
      *
      * <p>Data objects are serialized to JSON and then are available in script via
-     * <b>parameters.items("arguments")</b></p>
+     * <b>args</b> variable</p>
      *
      * <p>JSON parsers are automatically embedded in script:
      *
@@ -35,10 +35,10 @@ package light.book.script
      *
      * Loopback example:
      * <pre>
-     *    Dim js, result, o
-     *    Set js = New JSON
-     *    Set o = js.parse(parameters.items("arguments"))
-     *    result = js.stringify(o)
+     *    Dim o
+     *    Set o = args 'args contains parsed data from Air
+     *    o.add "key", "value"
+     *    Return o  ' Return is a function
      * </pre>
      * </p>
      */
@@ -109,21 +109,21 @@ package light.book.script
         /**
          * @private
          */
-        private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, jsonData:String, script:String):String
+        private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, allowUI:Boolean, jsonData:String, script:String):String
         {
             if (!contextCreated)
-                return '{"line":0, "number":1, "Class":"light.book.script.ScriptError"}';
+                return '{"line":0, "number":1, "Class":"error"}';
 
             var result:String = null;
 
             try
             {
-                result = _context.call("execute", code, async, vbs, timeout, jsonData, script) as String;
+                result = _context.call("execute", code, async, vbs, timeout, allowUI, jsonData, script) as String;
             }
             catch (e:Error)
             {
-                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}), stacktrace: {7}", code, async, vbs, timeout, jsonData, script, e.getStackTrace());
-                return '{"line":0, "number":1, "Class":"light.book.script.ScriptError"}'
+                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}), stacktrace: {8}", code, async, vbs, timeout, allowUI, jsonData, script, e.getStackTrace());
+                return '{"line":0, "number":1, "Class":"error"}'
             }
             return result;
         }
@@ -133,17 +133,18 @@ package light.book.script
          * Execute script asynchronously
          * @param vbs is language VBScript(true) or JScript(false)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
+         * @param allowUI Enable or disable display of the UI
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
          * @return script id
          * @see ScriptResult
          * @see ScriptFault
          */
-        public function executeAsync(vbs:Boolean, timeout:int, data:Object, script:String):int
+        public function executeAsync(vbs:Boolean, timeout:int, allowUI:Boolean, data:Object, script:String):int
         {
             var code:int = Math.round(Math.random() * 100000);
             var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, true, vbs,  timeout, jsonData, script);
+            var result:String = execute(code, true, vbs,  timeout, allowUI, jsonData, script);
             var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {
@@ -160,15 +161,16 @@ package light.book.script
          * Execute script immediately
          * @param vbs is language VBScript(true) or JScript(false)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
+         * @param allowUI Enable or disable display of the UI
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
          * @return deserialized script "result" variable
          */
-        public function executeSync(vbs:Boolean, timeout:int, data:Object, script:String):Object
+        public function executeSync(vbs:Boolean, timeout:int, allowUI:Boolean, data:Object, script:String):Object
         {
             var code:int = Math.round(Math.random() * 100000);
             var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, false, vbs,  timeout, jsonData, script);
+            var result:String = execute(code, false, vbs,  timeout, allowUI, jsonData, script);
             var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
             if(ScriptError.isError(resultObject))
             {

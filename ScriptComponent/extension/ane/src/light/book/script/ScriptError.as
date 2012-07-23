@@ -3,7 +3,7 @@ package light.book.script
     /**
      * Provides basic information about script errors
      */
-    public class ScriptError
+    public class ScriptError extends Error
     {
         /**
          * @Private
@@ -13,7 +13,7 @@ package light.book.script
         /**
          * @Private
          */
-        private static const CLASS_NAME:String = "light.book.script.ScriptError";
+        private static const CLASS_NAME:String = "error";
 
         /**
          * @Private
@@ -121,7 +121,7 @@ package light.book.script
         /**
          * Error number
          */
-        public var number:Number = 0;
+        public var number:Number = -1;
 
         /**
          * Error line
@@ -131,7 +131,7 @@ package light.book.script
         /**
          * Error description
          */
-        public var description:String = "";
+        public var description:String = "Unknown error";
 
         /**
          * Constructor
@@ -139,11 +139,18 @@ package light.book.script
          */
         public function ScriptError(object:Object = null)
         {
+            super(object && object.hasOwnProperty("number") ? object["number"] : 0, object && object.hasOwnProperty("number") ? object["number"] : 0);
             if(object != null)
             {
                 number =  object.hasOwnProperty("number") ? object["number"] : 0;
                 line =  object.hasOwnProperty("line") ? object["line"] : 0;
                 description =  ERROR_CODES[number];
+            }
+            else
+            {
+                number = 0;
+                line =  0;
+                description =  "Unknown error";
             }
         }
 
@@ -154,7 +161,7 @@ package light.book.script
          */
         public static function isError(object:Object):Boolean
         {
-             return object != null && object.hasOwnProperty("Class") && object[CLASS] != null && CLASS_NAME == object["Class"];
+             return object == null || !object.hasOwnProperty("Class") || (CLASS_NAME == object["Class"]);
         }
 
         /**
