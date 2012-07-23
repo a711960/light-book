@@ -20,7 +20,7 @@ EndProcedure
 DataSection
   jsonVBS : IncludeBinary "VbsJson.vbs" 
   Data.s Chr(0);null-terminator
-  jsonJS  : IncludeBinary "json2.js"
+  jsonJS  : IncludeBinary "JSJson.js"
   Data.s Chr(0);null-terminator
 EndDataSection 
 
