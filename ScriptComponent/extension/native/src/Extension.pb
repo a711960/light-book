@@ -138,17 +138,24 @@ Procedure.s ExecuteScript(*params.ScriptParameters)
     Else
       trace("[" + request + "] ScriptComponent loaded JSON parser")
       
-      ;trace("[" + request + "] ScriptComponent script: " + #CRLF$ + Utf8ToUnicode(*params\script))
-      ;Add Script to Control
-      r = *control\AddCode(Utf8ToUnicode(*params\script))
-      If r <> #S_OK
-        resultString = *control\GetError()
-        trace("Failed to execute plugin: " + resultString)
+      Define parsedArgs.l = *control\EvalLong("InitScript()")
+      
+      If (parsedArgs = 1)
+        ;trace("[" + request + "] ScriptComponent script: " + #CRLF$ + Utf8ToUnicode(*params\script))
+        ;Add Script to Control
+        r = *control\AddCode(Utf8ToUnicode(*params\script))
+        If r <> #S_OK
+          resultString = *control\GetError()
+          trace("Failed to execute plugin: " + resultString)
+        Else
+          trace("[" + request + "] ScriptComponent executed plugin")
+          ;Get value of variable "result" 
+          resultString.s = *control\EvalStr("result")
+          trace("result = " + resultString)
+        EndIf
       Else
-        trace("[" + request + "] ScriptComponent executed plugin")
-        ;Get value of variable "result" 
-        resultString.s = *control\EvalStr("result")
-        trace("result = " + resultString)
+         trace("[" + request + "] ScriptComponent InitScript() function")
+         resultString = *control\GetError()
       EndIf
     EndIf
     VariantClear_(*arguments)
@@ -281,6 +288,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 225
-; FirstLine = 184
+; CursorPosition = 157
+; FirstLine = 122
 ; Folding = ---

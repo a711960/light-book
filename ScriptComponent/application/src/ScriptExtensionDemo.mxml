@@ -20,10 +20,9 @@
         private static const log:ILogger = Log.getLogger("ScriptExtensionDemo.mxml");
 
         [Bindable]
-        private var example:String = 'Dim js, result, o\n' +
-                'Set js = New JSON\n' +
-                'Set o = js.parse(parameters.items("arguments"))\n' +
-                'result = js.stringify(o)\n';
+        private var example:String = 'Dim o\n' +
+                'Set o = args\n' +
+                'Return o\n';
 
         private var extension:ScriptComponent;
 
