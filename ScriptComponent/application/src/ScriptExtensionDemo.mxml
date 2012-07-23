@@ -67,7 +67,7 @@
 
             if (async.selected)
             {
-                var code:int = extension.executeAsync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.VBScript, 10000, ui.selected, safe.selected);
+                var code:int = extension.executeAsync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.JScript, 10000, ui.selected, safe.selected);
                 log.info("execute() code: {0}", code);
             }
             else
@@ -75,7 +75,7 @@
                 log.info("execute() start");
                 try
                 {
-                    var result:Object = extension.executeSync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.VBScript, 10000, ui.selected, safe.selected);
+                    var result:Object = extension.executeSync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.JScript, 10000, ui.selected, safe.selected);
                     log.info("execute() result: {0}", ObjectUtil.toString(result));
                 }
                 catch(e:ScriptError)
