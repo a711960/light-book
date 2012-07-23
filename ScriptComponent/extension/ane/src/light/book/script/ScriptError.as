@@ -119,19 +119,9 @@ package light.book.script
         public var Class:String = CLASS_NAME;
 
         /**
-         * Error number
-         */
-        public var number:Number = -1;
-
-        /**
          * Error line
          */
         public var line:Number = 0;
-
-        /**
-         * Error description
-         */
-        public var description:String = "Unknown error";
 
         /**
          * Constructor
@@ -142,15 +132,7 @@ package light.book.script
             super(object && object.hasOwnProperty("number") ? ERROR_CODES[object["number"]] : 0, object && object.hasOwnProperty("number") ? object["number"] : 0);
             if(object != null)
             {
-                number =  object.hasOwnProperty("number") ? object["number"] : 0;
                 line =  object.hasOwnProperty("line") ? object["line"] : 0;
-                description =  ERROR_CODES[number];
-            }
-            else
-            {
-                number = 0;
-                line =  0;
-                description =  "Unknown error";
             }
         }
 
@@ -161,15 +143,12 @@ package light.book.script
          */
         public static function isError(object:Object):Boolean
         {
-             return object == null || !object.hasOwnProperty("Class") || (CLASS_NAME == object["Class"]);
+             return object == null || !object.hasOwnProperty(CLASS) || (CLASS_NAME == object[CLASS]);
         }
 
-        /**
-         * @inheritDoc
-         */
         public function toString():String
         {
-            return "ScriptError{number=" + String(number) + ",line=" + String(line) + ",description=" + String(description) + "}";
+            return "ScriptError{errorID=" + String(errorID) + ",message=" + String(message) + "}";
         }
     }
 }

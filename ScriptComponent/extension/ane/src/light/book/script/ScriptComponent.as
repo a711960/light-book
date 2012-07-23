@@ -106,13 +106,15 @@ package light.book.script
             return _context != null;
         }
 
+        private static const ERROR_JSON:String = '{"line":0, "number":1, "Class":"error"}';
+
         /**
          * @private
          */
         private function execute(code:int, async:Boolean, vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, jsonData:String, script:String):String
         {
             if (!contextCreated)
-                return '{"line":0, "number":1, "Class":"error"}';
+                return ERROR_JSON;
 
             var result:String = null;
 
@@ -123,7 +125,7 @@ package light.book.script
             catch (e:Error)
             {
                 log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}), stacktrace: {9}", code, async, vbs, timeout, allowUI, safeSubset, jsonData, script, e.getStackTrace());
-                return '{"line":0, "number":1, "Class":"error"}'
+                return ERROR_JSON
             }
             return result;
         }
@@ -131,44 +133,66 @@ package light.book.script
 
         /**
          * Execute script asynchronously
-         * @param vbs is language VBScript(true) or JScript(false)
+         * @param language is language VBScript(ScriptEngine.VBScript) or JScript(ScriptEngine.JScript)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
-         * @param allowUI Enable or disable display of the UI
+         * @param allowUI enable or disable display of the UI
+         * @param safeSubset force script to execute in safe mode and disallow potentially harmful actions
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
          * @return script id
+         *
          * @see ScriptResult
          * @see ScriptFault
          */
-        public function executeAsync(vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, data:Object, script:String):int
+        public function executeAsync(script:String, data:Object = null, language:int = ScriptEngine.VBScript, timeout:int = 15000, allowUI:Boolean = true, safeSubset:Boolean = false):int
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, true, vbs,  timeout, allowUI, safeSubset, jsonData, script);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
-            if(ScriptError.isError(resultObject))
+             try
             {
-                dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
+                var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+                var result:String = execute(code, true, ScriptEngine.VBScript == language, timeout, allowUI, safeSubset, jsonData, script);
+                var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
+                if (ScriptError.isError(resultObject))
+                {
+                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
+                }
+            }
+            catch (e:Error)
+            {
+                log.error("Serialization error: {0}: {1}", e.errorID, e.message);
+                resultObject = {Class:"error", number:1};
             }
             return code;
         }
 
         /**
          * Execute script immediately
-         * @param vbs is language VBScript(true) or JScript(false)
+         * @param language is language VBScript(ScriptEngine.VBScript) or JScript(ScriptEngine.JScript)
          * @param timeout length of time in milliseconds that a script can execute before being considered hung
-         * @param allowUI Enable or disable display of the UI
+         * @param allowUI enable or disable display of the UI
+         * @param safeSubset force script to execute in safe mode and disallow potentially harmful actions
          * @param data properties passed to script, serialized to JSON, available through <b>parameters.items("arguments")</b>
          * @param script script to be executed
          * @return deserialized script "result" variable
+         *
+         * @throws ScriptError
          */
-        public function executeSync(vbs:Boolean, timeout:int, allowUI:Boolean, safeSubset:Boolean, data:Object, script:String):Object
+        public function executeSync(script:String, data:Object = null, language:int = ScriptEngine.VBScript, timeout:int = 15000, allowUI:Boolean = true, safeSubset:Boolean = false):Object
         {
             var code:int = Math.round(Math.random() * 100000);
-            var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
-            var result:String = execute(code, false, vbs,  timeout, allowUI, safeSubset, jsonData, script);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
-            if(ScriptError.isError(resultObject))
+            try
+            {
+                var jsonData:String = by.blooddy.crypto.serialization.JSON.encode(data);
+                var result:String = execute(code, false, ScriptEngine.VBScript == language, timeout, allowUI, safeSubset, jsonData, script);
+                var resultObject:Object;
+                resultObject = by.blooddy.crypto.serialization.JSON.decode(result);
+            }
+            catch (e:Error)
+            {
+                log.error("Serialization error: {0}: {1}", e.errorID, e.message);
+                resultObject = {Class:"error", number:1};
+            }
+            if (ScriptError.isError(resultObject))
             {
                 throw new ScriptError(resultObject);
             }
@@ -183,18 +207,19 @@ package light.book.script
             if(Log.isDebug())
                 log.info("Status event received: contextType={0} level={2}, code={1}", this.contextType, event.code, event.level);
             var code:int = parseInt(event.code);
-            var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(event.level);
+            var resultObject:Object;
+            try
+            {
+                resultObject = by.blooddy.crypto.serialization.JSON.decode(event.level);
+            }
+            catch(e:Error)
+            {
+                log.error("Deserialization error: {0}: {1}", e.errorID, e.message);
+                resultObject = {Class: "error", number: 1};
+            }
             if(ScriptError.isError(resultObject))
             {
-                var scriptError:ScriptError = new ScriptError(resultObject);
-                if(scriptError.number != 0)
-                {
-                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, scriptError));
-                }
-                else
-                {
-                    dispatchEvent(new ScriptResult(ScriptResult.RESULT, code, resultObject));
-                }
+                dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
             }
             else
             {

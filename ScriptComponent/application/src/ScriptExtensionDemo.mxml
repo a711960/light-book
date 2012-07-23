@@ -7,6 +7,8 @@
     <mx:Script>
 		<![CDATA[
         import light.book.script.ScriptComponent;
+        import light.book.script.ScriptEngine;
+        import light.book.script.ScriptError;
         import light.book.script.ScriptFault;
         import light.book.script.ScriptResult;
 
@@ -65,14 +67,21 @@
 
             if (async.selected)
             {
-                var code:int = extension.executeAsync(vbs.selected, 10000, ui.selected, parameters, safe.selected, script.text);
+                var code:int = extension.executeAsync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.VBScript, 10000, ui.selected, safe.selected);
                 log.info("execute() code: {0}", code);
             }
             else
             {
                 log.info("execute() start");
-                var result:Object = extension.executeSync(vbs.selected, 10000, ui.selected, safe.selected, parameters, script.text);
-                log.info("execute() result: {0}", ObjectUtil.toString(result));
+                try
+                {
+                    var result:Object = extension.executeSync(script.text, parameters, vbs.selected ? ScriptEngine.VBScript : ScriptEngine.VBScript, 10000, ui.selected, safe.selected);
+                    log.info("execute() result: {0}", ObjectUtil.toString(result));
+                }
+                catch(e:ScriptError)
+                {
+                    log.error("ScriptError: {0}", e);
+                }
                 log.info("execute() end");
             }
         }
