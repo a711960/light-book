@@ -148,7 +148,7 @@ package light.book.script
 
         public function toString():String
         {
-            return "ScriptError{errorID=" + String(errorID) + ",message=" + String(message) + "}";
+            return "ScriptError{errorID=" + String(errorID) + ", message=" + String(message) + ", line=" + String(line)+ "}";
         }
     }
 }
