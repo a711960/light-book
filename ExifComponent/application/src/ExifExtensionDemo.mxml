@@ -82,7 +82,7 @@
             {
                 var file:File = files.pop();
                 var fileShortPath:String = extension.getShortPath(file.nativePath);
-                var code:int = extension.execute(programShortPath, "-s " + fileShortPath, "", 512000, -1);
+                var code:int = extension.execute(programShortPath, fileShortPath, "", 512000, -1);
             }
         }
 
@@ -110,7 +110,7 @@
                         <mx:DataGridColumn headerText="MIME" dataField="MIMEType"/>
                         <mx:DataGridColumn headerText="File Size" dataField="FileSize"/>
                         <mx:DataGridColumn headerText="File Permissions" dataField="FilePermissions"/>
-                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="ModifyDate"/>
+                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="FileModifyDate"/>
                     </mx:columns>
                 </mx:DataGrid>
             </mx:VBox>

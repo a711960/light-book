@@ -16,7 +16,7 @@ package light.book.exif
 
         public function toString():String
         {
-            return super.toString();
+            return "ExifError{errorID=" + String(this.errorID) + ", message=" + this.message + "}";
         }
     }
 }

@@ -31,6 +31,7 @@ Procedure msg(message.s)
   EndIf
 EndProcedure
 
+
 Procedure.s GetError()
    Define error.l,  err_msg$
    error = GetLastError_()
@@ -48,7 +49,8 @@ Procedure.s GetError()
     EndIf
     ProcedureReturn err_msg$
 EndProcedure 
-  
+
+
 Procedure.l CreateErrorString(message.s)
     Define result.l, resultObject.l
     Define error.s = "error: " + message
@@ -89,16 +91,6 @@ ProcedureDLL DetachThread(Instance)
 EndProcedure
 
 
-Procedure ErrorHandler()
-  Define ErrorMessage$ = "A program error was detected:" + Chr(13) 
-  ErrorMessage$ + Chr(13)
-  ErrorMessage$ + "Error Message:   " + ErrorMessage()      + Chr(13)
-  ErrorMessage$ + "Error Code:      " + Str(ErrorCode())    + Chr(13)  
-  ErrorMessage$ + "Code Address:    " + Str(ErrorAddress()) + Chr(13)
-  trace(ErrorMessage$)
-EndProcedure
-
-
 Structure ExifParameters
   executable.s  ;path to exiftool.exe
   workingDir.s  ;process working directory
@@ -109,144 +101,114 @@ Structure ExifParameters
   code.l        ;request code
 EndStructure
 
-Structure Tag
-  line_begin.l
-  line_size.l
-  value_begin.l
-  value_size.l
-EndStructure
 
-Structure TagKeyValue
-  value.l
-  valueSize.l
-  key.l
-  keySize.l
-EndStructure
-
-
-Procedure RunExifTool(*params.ExifParameters)
-  Define key.b = Asc(":")
-  
-  Define Compiler.i = RunProgram(*params\executable, *params\parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide)
-  Define *stdout = AllocateMemory(*params\maxOutput)
-  If Compiler
-    Define offset.l = 0
-    Define size.l = 0
-    While ProgramRunning(Compiler)
+Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
+  Define program.i = RunProgram(executable, "-s " + parameters, workingDir, flags)
+  If program
+    Define *stdout = AllocateMemory(maxOutput)
+    Define offset.l, size.l
+    
+    While ProgramRunning(program)
       Sleep_(100)
-      size = AvailableProgramOutput(Compiler)
-      If(size > 0)
-        ReadProgramData(Compiler, *stdout + offset, size)
+      size = AvailableProgramOutput(program)
+      If(size > 0 And offset + size <= maxOutput)
+        ReadProgramData(program, *stdout + offset, size)
         offset = offset + size
       EndIf
     Wend
     
-    Define exitCode.l = ProgramExitCode(Compiler)
-    Debug "exitCode = " + Str(exitCode)
+    Define exitCode.l = ProgramExitCode(program)
+    CloseProgram(program) ; Close the connection to the program
     
-    If exitCode <> 0
-      ProcedureReturn 
+    If exitCode = 0
+      Define *result = AllocateMemory(offset)
+      CopyMemory(*stdout, *result, offset)
+      FreeMemory(*stdout)
+      ProcedureReturn *result
+    Else
+      FreeMemory(*stdout)
+      ProcedureReturn 0
     EndIf
-    
-    Debug "output size: " + Str(offset)
-    Dim outlines.Tag(100)
-    Dim tags.TagKeyValue(100)
-    Define i.l, n.l, prev.l
-    Define tagName.s
-    
-    For i = 1 To offset-1
-      Define b1.b = PeekB(*stdout + i - 1)
-      Define b2.b = PeekB(*stdout + i)
-      
-      If(b1 = Asc(#CR$) And b2 = Asc(#LF$))
-        outlines(n)\line_begin = *stdout + prev
-        outlines(n)\line_size = i - prev
-        Define m.l
-        For m = 1 To (i - prev)
-          Define c.b = PeekB(*stdout + prev + m)
-          If(c = key)
-            Break
-          EndIf
-        Next
-        outlines(n)\value_begin = *stdout + (prev + m + 2)
-        outlines(n)\value_size = i - (prev + m + 2)
-        
-        tags(n)\key = outlines(n)\line_begin
-        tags(n)\keySize = m
-        n = n + 1
-        prev = i
-      EndIf
-    Next
-    CloseProgram(Compiler) ; Close the connection to the program
+  Else
+    ProcedureReturn 0
   EndIf
+EndProcedure
+
+
+Procedure.s ParseTags(*stdout, file.s)
+  Define i.l, m.l, prev.l, size.l
+  Define status.l, ucsd.l, ucsm.l, *name
+  Define result.s = ""
   
-  Debug "Line count: " + Str(n)
+  ucsd = ucsdet_open_49(@status)
+  
+  If ucsd <> 0
+      size = MemorySize(*stdout)
+      For i = 1 To size - 1
+        If(PeekB(*stdout + i - 1) = 13 And PeekB(*stdout + i) = 10)
+           Define line_begin.l = *stdout + prev
+
+           For m = 1 To (i - prev)
+               If(PeekB(*stdout + prev + m) = 58) ; Asc(":")
+                    Break
+               EndIf
+           Next
+           
+           Define value_begin.l = *stdout + (prev + m + 2)
+           Define value_size.l = i - (prev + m + 2)
+           Define keySize.l = m
+           
+           prev = i
+           
+           ucsdet_setText_49(ucsd, value_begin, value_size, @status)
+           If status <> 0
+               Continue
+           EndIf
+           
+           ucsm = ucsdet_detect_49(ucsd, @status)
+           If ucsm = 0
+               Continue
+           EndIf
+          
+           *name = ucsdet_getName_49(ucsm, @status)
+           Define *target = AllocateMemory(4096)
+           Define converted.l = ucnv_convert_49(@"utf-8", *name, *target, 4000, value_begin, value_size, @status)
+           If converted > 0
+                result = result + PeekS(line_begin, keySize, #PB_Ascii) + ":" + PeekS(*target, converted - 1, #PB_Ascii)
+           EndIf
+           FreeMemory(*target)
+       EndIf
+      Next
+      ucsdet_close_49(ucsd)
+      If Len(result) > 1
+          result = result + #CRLF$ + "MD5:" + MD5FileFingerprint(file) 
+      EndIf
+      trace(result)
+      ProcedureReturn result
+  Else
+      ProcedureReturn ""
+  EndIf
+EndProcedure
   
 
-  Define status.l, ucsd.l, ucsm.l, *name, name.s, sub.s, matches.s
-  ucsd = ucsdet_open_49(@status)
-  Debug "ucsd(" + Str(ucsd) + ") status(" + Str(status) + ")"
+Procedure RunExifTool(*params.ExifParameters)
+    Define eventResult.l
+    
+    Define stdout.i = GetStdout(*params\executable, *params\parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
   
-  Define l.l, value_begin.l, value_size.l
-  For l=0 To n - 1
-    
-    value_begin = outlines(l)\value_begin
-    value_size = outlines(l)\value_size
-    
-   
-    Debug "start " + Str(value_begin)
-    Debug "end " + Str(value_begin + value_size)
-    
-    Debug Chr(PeekA(value_begin))
-    Debug PeekS(value_begin, value_size, #PB_Ascii)
-    Debug PeekS(tags(l)\key, tags(l)\keySize, #PB_Ascii)
-    
-    ucsdet_setText_49(ucsd, value_begin, value_size, @status)
-    Debug "ucsdet_setText_49 status(" + Str(status) + ")"
-    
-    ucsm = ucsdet_detect_49(ucsd, @status)
-    Debug "ucsm(" + Str(ucsm) + ") status(" + Str(status) + ")"
-    
-    If ucsm <> 0
-      *name = ucsdet_getName_49(ucsm, @status)
-      name = PeekS(*name, -1, #PB_Ascii)
-      ; convert To name
-      Define *target = AllocateMemory(4000)
-      Define converted.l
-      converted = ucnv_convert_49(@"utf-8", *name, *target, 4000, value_begin, value_size, @status)
-      Debug "ucnv_convert_49 (" + Str(status) + ")"
-      Debug "converted size = " + Str(converted)
-      tags(l)\valueSize = converted
-      Define lines.s
-      If converted > 0
-        lines = PeekS(*target, -1, #PB_UTF8)
-        tags(l)\value = AllocateMemory(converted)
-        CopyMemory(*target, tags(l)\value, converted)
-      EndIf
-      FreeMemory(*target)
-      Debug "converted: '" + lines + "'"
+    If stdout
+        Define result.s = ParseTags(stdout, *params\parameters)
+        If Len(result) > 1
+            eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc(result))
+            trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+        Else
+            eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: failed to extract metadata"))
+            trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+        EndIf
     Else
-      name = "unknown"
+        eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: execution failed"))
+        trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
     EndIf
-    Debug "ucsdet_getName_49 [" + name + "] status(" + Str(status) + ")"
-  Next
-  
-  ucsdet_close_49(ucsd)  
-  
-  Define subresult.s = ""
-  For l=0 To n - 1
-    If(tags(l)\valueSize > 0)
-      subresult = subresult + PeekS(tags(l)\key, tags(l)\keySize, #PB_Ascii) + ":" + PeekS(tags(l)\value, tags(l)\valueSize - 1, #PB_Ascii)
-      FreeMemory(tags(l)\value)
-    EndIf
-  Next
-  
-  FreeMemory(*stdout)
-  
-  trace(subresult)
-  
-  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc(subresult))
-  trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
   FreeMemory(*params)
 EndProcedure
 
@@ -437,5 +399,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 18
+; CursorPosition = 183
+; FirstLine = 171
 ; Folding = ---

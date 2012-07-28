@@ -10,12 +10,12 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-28 21:24" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-28 23:05" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="c0a8c6c32af6c61e7582a3a0e8b45cda"/>
+      <fingerprint md5="f098dd0d584970d94406b9e5005ede28"/>
     </file>
     <file name="C:\Dev\light-book\trunk\Common\include\FlashRuntimeExtensions.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
