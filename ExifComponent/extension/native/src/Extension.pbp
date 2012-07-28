@@ -10,7 +10,7 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-28 18:09" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-28 20:48" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
@@ -48,8 +48,8 @@
       <temporaryexe value="source"/>
       <format exe="dll" cpu="5"/>
       <warnings custom="1" type="display"/>
-      <compilecount enable="1" value="357"/>
-      <buildcount enable="1" value="355"/>
+      <compilecount enable="1" value="382"/>
+      <buildcount enable="1" value="380"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

@@ -7,20 +7,24 @@
     <mx:Script>
 		<![CDATA[
         import light.book.exif.ExifComponent;
-        import light.book.exif.ExifError;
         import light.book.exif.ExifFault;
         import light.book.exif.ExifResult;
 
         import logging.ConsoleTarget;
         import logging.TextTarget;
 
+        import mx.collections.ArrayCollection;
         import mx.logging.ILogger;
         import mx.logging.Log;
-        import mx.utils.ObjectUtil;
 
-        private static const log:ILogger = Log.getLogger("ExifExtensionDemo.mxml");
+        [Bindable]
+        private var infos:ArrayCollection = new ArrayCollection();
+
+        private var browser:File = new File();
+        private var files:Array = [];
 
         private var extension:ExifComponent;
+        private const log:ILogger = Log.getLogger("ExifExtensionDemo");
 
         private function initializeApplication():void
         {
@@ -33,6 +37,8 @@
             extension = new ExifComponent("ExifExtensionDemo");
             extension.addEventListener(ExifResult.RESULT, onResult, false, 0, true);
             extension.addEventListener(ExifFault.FAULT, onError, false, 0, true);
+
+            browser.addEventListener(Event.SELECT, onDirectorySelected);
         }
 
         private function onError(event:ExifFault):void
@@ -42,8 +48,9 @@
 
         private function onResult(event:ExifResult):void
         {
-
-            log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(event.result.info));
+            //log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(event.result));
+            infos.addItem(event.result.info);
+            startExif();
         }
 
         private function onExit(event:Event):void
@@ -53,13 +60,29 @@
 
         private function onClick(event:MouseEvent):void
         {
-//            for(var i:int = 0; i< 10; i++)
-//            {
+            browser.browseForDirectory("Please select a directory...");
+        }
+
+        private function onDirectorySelected(event:Event):void
+        {
+            infos.removeAll();
+            files = browser.getDirectoryListing().filter(function (element:*, index:int, arr:Array):Boolean
+            {
+                return !File(element).isDirectory;
+            });
+            log.info("Files: {0}", files.length);
+            startExif();
+        }
+
+        private function startExif():void
+        {
+            if (files.length > 0)
+            {
                 var programShortPath:String = extension.getShortPath(exiftool.text);
-                var fileShortPath:String = extension.getShortPath(params.text);
+                var file:File = files.pop();
+                var fileShortPath:String = extension.getShortPath(file.nativePath);
                 var code:int = extension.execute(programShortPath, fileShortPath, "", 512000, -1);
-                log.info("execute() code: {0}", code);
-//            }
+            }
         }
 
         private function onClick2(event:MouseEvent):void
@@ -70,13 +93,27 @@
         ]]>
 	</mx:Script>
     <mx:VBox height="100%" width="100%">
-        <mx:VDividedBox height="100%" width="100%">
-            <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
-            <mx:VBox width="100%">
-                <mx:TextInput id="exiftool" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\exiftool.exe"/>
-                <mx:TextInput id="params" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\test.fb2"/>
+        <mx:HDividedBox height="100%" width="100%">
+            <mx:VDividedBox height="100%" width="30%">
+                <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
+                <mx:VBox width="100%">
+                    <mx:TextInput id="exiftool" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\exiftool.exe"/>
+                    <mx:TextInput id="params" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\test.fb2"/>
+                </mx:VBox>
+            </mx:VDividedBox>
+            <mx:VBox height="100%" width="70%">
+                <mx:DataGrid dataProvider="{infos}" width="100%" height="100%">
+                    <mx:columns>
+                        <mx:DataGridColumn headerText="File" dataField="File Name"/>
+                        <mx:DataGridColumn headerText="File Type" dataField="File Type"/>
+                        <mx:DataGridColumn headerText="MIME" dataField="MIME Type"/>
+                        <mx:DataGridColumn headerText="File Size" dataField="File Size"/>
+                        <mx:DataGridColumn headerText="File Permissions" dataField="File Permissions"/>
+                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="File Modification Date/Time"/>
+                    </mx:columns>
+                </mx:DataGrid>
             </mx:VBox>
-        </mx:VDividedBox>
+        </mx:HDividedBox>
         <mx:HBox>
             <mx:Button label="Run ExifTool" click="onClick(event)"/>
             <mx:Button label="Get short path" click="onClick2(event)"/>

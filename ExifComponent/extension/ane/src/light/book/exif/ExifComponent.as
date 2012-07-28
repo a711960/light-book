@@ -157,9 +157,9 @@ package light.book.exif
          */
         private function onStatusEvent(event:StatusEvent):void
         {
-            log.debug("Status event received: contextType={0} code={1}", this.contextType, event.code);
+//            log.debug("Status event received: contextType={0} code={1}", this.contextType, event.code);
             var code:int = parseInt(event.code);
-            var resultObject:MetaInfo = new MetaInfo();
+            var meta:MetaInfo = new MetaInfo();
 
             if(event.level && event.level.indexOf("error:") == 0)
             {
@@ -169,20 +169,19 @@ package light.book.exif
             else if(event.level)
             {
                 var pattern:RegExp = /^([^:]+):(.+)$/img;
-                var trim:RegExp = /^\s*|\s*$/;
+                var trim:RegExp = /^\s*|\s*$/g;
                 var result:Array = pattern.exec(event.level) as Array;
                 while (result != null) 
                 {
                     var key:String = (result[1] as String).replace(trim, "");
-                    var value:String = result[2] as String;
-                    resultObject.addProperty(key, value);
+                    meta[key] = result[2];
                     result = pattern.exec(event.level);
                 }
-                dispatchEvent(new ExifResult(ExifResult.RESULT, code, resultObject));
+                dispatchEvent(new ExifResult(ExifResult.RESULT, code, meta));
             }
             else
             {
-                throw new Error("Unexpected error")
+                dispatchEvent(new ExifFault(ExifFault.FAULT, code, new ExifError("Unexpected error", 1)));
             }
         }
 
