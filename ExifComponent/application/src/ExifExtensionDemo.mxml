@@ -82,7 +82,7 @@
             {
                 var file:File = files.pop();
                 var fileShortPath:String = extension.getShortPath(file.nativePath);
-                var code:int = extension.execute(programShortPath, fileShortPath, "", 512000, -1);
+                var code:int = extension.execute(programShortPath, "-s " + fileShortPath, "", 512000, -1);
             }
         }
 
@@ -105,12 +105,12 @@
             <mx:VBox height="100%" width="70%">
                 <mx:DataGrid dataProvider="{infos}" width="100%" height="100%">
                     <mx:columns>
-                        <mx:DataGridColumn headerText="File" dataField="File Name"/>
-                        <mx:DataGridColumn headerText="File Type" dataField="File Type"/>
-                        <mx:DataGridColumn headerText="MIME" dataField="MIME Type"/>
-                        <mx:DataGridColumn headerText="File Size" dataField="File Size"/>
-                        <mx:DataGridColumn headerText="File Permissions" dataField="File Permissions"/>
-                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="File Modification Date/Time"/>
+                        <mx:DataGridColumn headerText="File" dataField="FileName"/>
+                        <mx:DataGridColumn headerText="File Type" dataField="FileType"/>
+                        <mx:DataGridColumn headerText="MIME" dataField="MIMEType"/>
+                        <mx:DataGridColumn headerText="File Size" dataField="FileSize"/>
+                        <mx:DataGridColumn headerText="File Permissions" dataField="FilePermissions"/>
+                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="ModifyDate"/>
                     </mx:columns>
                 </mx:DataGrid>
             </mx:VBox>
