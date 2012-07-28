@@ -16,7 +16,7 @@ XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 
 Macro trace(message)
-  msg(message);
+  ;msg(message);
 EndMacro
 
 Procedure msg(message.s)
@@ -133,6 +133,7 @@ Procedure RunExifTool(*params.ExifParameters)
     Define offset.l = 0
     Define size.l = 0
     While ProgramRunning(Compiler)
+      Sleep_(100)
       size = AvailableProgramOutput(Compiler)
       If(size > 0)
         ReadProgramData(Compiler, *stdout + offset, size)
@@ -436,6 +437,5 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 230
-; FirstLine = 188
+; CursorPosition = 18
 ; Folding = ---

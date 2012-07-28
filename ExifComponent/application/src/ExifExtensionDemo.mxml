@@ -25,6 +25,7 @@
 
         private var extension:ExifComponent;
         private const log:ILogger = Log.getLogger("ExifExtensionDemo");
+        private var programShortPath:String;
 
         private function initializeApplication():void
         {
@@ -71,6 +72,7 @@
                 return !File(element).isDirectory;
             });
             log.info("Files: {0}", files.length);
+            programShortPath = extension.getShortPath(exiftool.text);
             startExif();
         }
 
@@ -78,7 +80,6 @@
         {
             if (files.length > 0)
             {
-                var programShortPath:String = extension.getShortPath(exiftool.text);
                 var file:File = files.pop();
                 var fileShortPath:String = extension.getShortPath(file.nativePath);
                 var code:int = extension.execute(programShortPath, fileShortPath, "", 512000, -1);

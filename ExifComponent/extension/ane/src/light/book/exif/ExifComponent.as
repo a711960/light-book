@@ -6,7 +6,6 @@ package light.book.exif
 
     import mx.logging.ILogger;
     import mx.logging.Log;
-    import mx.utils.ObjectUtil;
 
     /**
      * Script was executed with errors
@@ -42,6 +41,9 @@ package light.book.exif
      */
     public class ExifComponent extends EventDispatcher
     {
+        private static const TRIM:RegExp = /^\s*|\s*$/g;
+        private static const PATTERN:RegExp = /^([^:]+):(.+)$/img;
+
         /**
          * Extension id, must be specified in air-manifest.xml and extension.xml
          */
@@ -157,7 +159,7 @@ package light.book.exif
          */
         private function onStatusEvent(event:StatusEvent):void
         {
-//            log.debug("Status event received: contextType={0} code={1}", this.contextType, event.code);
+            log.debug("Status event received: contextType={0} code={1}", this.contextType, event.code);
             var code:int = parseInt(event.code);
             var meta:MetaInfo = new MetaInfo();
 
@@ -168,14 +170,12 @@ package light.book.exif
             }
             else if(event.level)
             {
-                var pattern:RegExp = /^([^:]+):(.+)$/img;
-                var trim:RegExp = /^\s*|\s*$/g;
-                var result:Array = pattern.exec(event.level) as Array;
+                var result:Array = PATTERN.exec(event.level) as Array;
                 while (result != null) 
                 {
-                    var key:String = (result[1] as String).replace(trim, "");
+                    var key:String = (result[1] as String).replace(TRIM, "");
                     meta[key] = result[2];
-                    result = pattern.exec(event.level);
+                    result = PATTERN.exec(event.level);
                 }
                 dispatchEvent(new ExifResult(ExifResult.RESULT, code, meta));
             }
