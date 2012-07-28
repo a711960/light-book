@@ -20,24 +20,6 @@ package light.book.exif
     /**
      * <p>ScriptComponent extension, interface to MS ScriptComponent</p>
      *
-     * <p>Data objects are serialized to JSON and then are available in exif via
-     * <b>args</b> variable</p>
-     *
-     * <p>JSON parsers are automatically embedded in exif:
-     *
-     * <ul>
-     * <li>VBScript: <a href="http://demon.tw/my-work/vbs-json.html">http://demon.tw/my-work/vbs-json.html</a></li>
-     * <li>JScript: <a href="https://github.com/douglascrockford/JSON-js/">https://github.com/douglascrockford/JSON-js/</a></li>
-     * </ul>
-     *
-     * Loopback example:
-     * <pre>
-     *    Dim o
-     *    Set o = args 'args contains parsed data from Air
-     *    o.add "key", "value"
-     *    Return o  ' Return is a function
-     * </pre>
-     * </p>
      */
     public class ExifComponent extends EventDispatcher
     {
