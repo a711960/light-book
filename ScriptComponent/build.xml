@@ -221,6 +221,7 @@
         <delete file="${app.dir}/air-manifest.xml"/>
         <delete dir="${app.ext.unpacked.dir}/${native}.ane"/>
         <delete dir="${native.dir}/bin"/>
+        <delete dir="${doc.dir}"/>
     </target>
 
 
