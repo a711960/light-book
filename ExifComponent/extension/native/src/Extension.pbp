@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 4.61 (Windows - x86)">
+  <section name="config">
+    <options closefiles="1" openmode="0" name="Extension"/>
+    <comment>
+      Example of Adobe Air extension
+    </comment>
+  </section>
+  <section name="data">
+    <explorer view="" pattern="0"/>
+    <log show="1"/>
+    <lastopen date="2012-07-28 18:09" user="Dookie" host="BANANAS"/>
+  </section>
+  <section name="files">
+    <file name="Extension.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
+      <fingerprint md5="aa2e1732f72b3c28ef9228afe82ec3a5"/>
+    </file>
+    <file name="C:\Dev\light-book\trunk\Common\include\FlashRuntimeExtensions.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="2f9a2a7a8b4a6ac5e36afeae7a0bc0a7"/>
+    </file>
+    <file name="C:\Dev\light-book\trunk\Common\include\icuin.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="8f6ee8f5611bf7f2c2637caf80f0e48e"/>
+    </file>
+    <file name="C:\Dev\light-book\trunk\Common\include\icuuc.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="5c7e8a836156c990f14dcde5f1fbce0d"/>
+    </file>
+    <file name="C:\Dev\light-book\trunk\Common\include\Unicode.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="4edb172116484013ac30ea12b83cb1f3"/>
+    </file>
+    <file name="C:\Dev\light-book\trunk\Common\include\Unsigned.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="b6f51f9ec8065616f2efe7c3cdb8798c"/>
+    </file>
+  </section>
+  <section name="targets">
+    <target name="Extension" enabled="1" default="1">
+      <inputfile value="Extension.pb"/>
+      <outputfile value="../bin/ExifComponent.dll"/>
+      <compiler version="PureBasic 4.61 (Windows - x86)"/>
+      <executable value="..\bin\ExifComponent.dll"/>
+      <options thread="1" onerror="1"/>
+      <temporaryexe value="source"/>
+      <format exe="dll" cpu="5"/>
+      <warnings custom="1" type="display"/>
+      <compilecount enable="1" value="357"/>
+      <buildcount enable="1" value="355"/>
+      <execonstant enable="1"/>
+      <versioninfo enable="1">
+        <field0 value="0,0,1,0"/>
+        <field1 value="0,0,1,0"/>
+        <field2 value="PureBasic"/>
+        <field3 value="PureBasic"/>
+        <field4 value="0,0,1,0"/>
+        <field5 value="0,0,1,0"/>
+        <field6 value="PureBasic Extension"/>
+        <field7 value="PureBasic Extension"/>
+        <field8 value="ExifComponent.dll"/>
+        <field15 value="VOS_NT_WINDOWS32"/>
+        <field16 value="VFT_DLL"/>
+      </versioninfo>
+    </target>
+  </section>
+</project>
