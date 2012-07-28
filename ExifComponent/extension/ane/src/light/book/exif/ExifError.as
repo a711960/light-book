@@ -1,7 +1,7 @@
 package light.book.exif
 {
     /**
-     * Provides basic information about script errors
+     * Provides basic information about errors
      */
     public class ExifError extends Error
     {

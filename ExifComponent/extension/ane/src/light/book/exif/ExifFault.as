@@ -4,7 +4,7 @@ package light.book.exif
     import flash.events.Event;
 
     /**
-     * Script was executed with errors
+     * Exiftool was executed with errors (exitCode <> 0 or error tag)
      */
     public class ExifFault extends ErrorEvent
     {
@@ -26,9 +26,9 @@ package light.book.exif
 
         /**
          * Constructor
-         * @param type
-         * @param code
-         * @param error
+         * @param type event type
+         * @param code request id
+         * @param error error description
          */
         public function ExifFault(type:String, code:int, error:ExifError)
         {

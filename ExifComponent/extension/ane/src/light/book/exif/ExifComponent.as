@@ -8,17 +8,17 @@ package light.book.exif
     import mx.logging.Log;
 
     /**
-     * Script was executed with errors
+     * Exiftool was executed with errors
      */
     [Event(name="EXIF_RESULT", type="light.book.exif.ExifResult")]
 
     /**
-     * Script was successfully executed
+     * Exiftool was successfully executed
      */
     [Event(name="EXIF_FAULT", type="light.book.exif.ExifFault")]
 
     /**
-     * <p>ScriptComponent extension, interface to MS ScriptComponent</p>
+     * <p>ExifComponent extension, interface to Exiftool</p>
      *
      */
     public class ExifComponent extends EventDispatcher
@@ -49,7 +49,7 @@ package light.book.exif
 
         /**
          * Constructor
-         * @param contextType default value is "ScriptComponent"
+         * @param contextType default value is "ExifComponent"
          */
         public function ExifComponent(contextType:String = "ExifComponent")
         {
@@ -88,6 +88,7 @@ package light.book.exif
             return _context != null;
         }
 
+
         public function execute(executable:String, parameters:String = "", workingDir:String = "", maxOutput:int = 512000, timeout:int = -1):int
         {
             if (!contextCreated)
@@ -112,6 +113,12 @@ package light.book.exif
             return code;
         }
 
+        /**
+         * Returns file short path (8.3) by long path,
+         * file must exist
+         * @param path long path to existing file
+         * @return short path (8.3) or null on error
+         */
         public function getShortPath(path:String):String
         {
             var result:String = null;

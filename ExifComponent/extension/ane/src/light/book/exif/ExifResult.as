@@ -3,7 +3,7 @@ package light.book.exif
     import flash.events.Event;
 
     /**
-     * Script was successfully executed
+     * Exiftool was successfully executed
      */
     public class ExifResult extends Event
     {
@@ -13,20 +13,20 @@ package light.book.exif
         public static const RESULT:String = "EXIF_RESULT";
 
         /**
-         * Script id
+         * Request id
          */
         public var code:int;
 
         /**
-         * Deserialized exif "result" variable
+         * Extracted metadata
          */
         public var result:MetaInfo;
 
         /**
          * Constructor
          * @param type event type
-         * @param code exif id
-         * @param result deserialized exif "result" variable
+         * @param code request id
+         * @param result extracted metadata
          */
         public function ExifResult(type:String, code:int, result:MetaInfo)
         {
