@@ -1,4 +1,4 @@
-﻿EnableExplicit
+EnableExplicit
 
 #AIR_CLASS = "ApolloRuntimeContentWindow"
 
@@ -105,7 +105,7 @@ Structure FREBitmapData2
   bits32.l[0] 
 EndStructure    
 
-ImportC "../lib/FlashRuntimeExtensions.lib"
+ImportC "..\..\..\..\Common\lib\FlashRuntimeExtensions.lib"
 
 ;returns FRE_OK
 ;        FRE_WRONG_THREAD

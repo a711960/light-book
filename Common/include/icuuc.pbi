@@ -1,6 +1,6 @@
 EnableExplicit
 
-ImportC "icuuc.lib"
+ImportC "..\..\..\..\Common\lib\icuuc.lib"
   ;-- int 	ucnv_compareNames (const char *name1, const char *name2)
   ;  	Do a fuzzy compare of two converter/alias names.
   ucnv_compareNames_49.l(name1.l, name2.l)
@@ -131,6 +131,132 @@ ImportC "icuuc.lib"
 ;  	Returns the number of chars held in the converter's internal state because more input is needed for completing the conversion.
 ; UBool 	ucnv_isFixedWidth (UConverter *cnv, UErrorCode *status)
 ;  	Returns whether Or Not the charset of the converter has a fixed number of bytes per charset character. 
+
+; int32_t 	u_strlen (const UChar *s)
+;  	Determine the length of an Array of UChar.
+; int32_t 	u_countChar32 (const UChar *s, int32_t length)
+;  	Count Unicode code points in the length UChar code units of the string.
+; UBool 	u_strHasMoreChar32Than (const UChar *s, int32_t length, int32_t number)
+;  	Check If the string contains more Unicode code points than a certain number.
+  ;-- UChar * 	u_strcat (UChar *dst, const UChar *src)
+  ;  	Concatenate two ustrings.
+  u_strcat_49(dst.l, src.l)
+; UChar * 	u_strncat (UChar *dst, const UChar *src, int32_t n)
+;  	Concatenate two ustrings.
+; UChar * 	u_strstr (const UChar *s, const UChar *substring)
+;  	Find the first occurrence of a substring in a string.
+; UChar * 	u_strFindFirst (const UChar *s, int32_t length, const UChar *substring, int32_t subLength)
+;  	Find the first occurrence of a substring in a string.
+; UChar * 	u_strchr (const UChar *s, UChar c)
+;  	Find the first occurrence of a BMP code point in a string.
+; UChar * 	u_strchr32 (const UChar *s, UChar32 c)
+;  	Find the first occurrence of a code point in a string.
+; UChar * 	u_strrstr (const UChar *s, const UChar *substring)
+;  	Find the last occurrence of a substring in a string.
+; UChar * 	u_strFindLast (const UChar *s, int32_t length, const UChar *substring, int32_t subLength)
+;  	Find the last occurrence of a substring in a string.
+; UChar * 	u_strrchr (const UChar *s, UChar c)
+;  	Find the last occurrence of a BMP code point in a string.
+; UChar * 	u_strrchr32 (const UChar *s, UChar32 c)
+;  	Find the last occurrence of a code point in a string.
+; UChar * 	u_strpbrk (const UChar *string, const UChar *matchSet)
+;  	Locates the first occurrence in the string string of any of the characters in the string matchSet.
+; int32_t 	u_strcspn (const UChar *string, const UChar *matchSet)
+;  	Returns the number of consecutive characters in string, beginning With the first, that do Not occur somewhere in matchSet.
+; int32_t 	u_strspn (const UChar *string, const UChar *matchSet)
+;  	Returns the number of consecutive characters in string, beginning With the first, that occur somewhere in matchSet.
+; UChar * 	u_strtok_r (UChar *src, const UChar *delim, UChar **saveState)
+;  	The string tokenizer API allows an application To Break a string into tokens.
+; int32_t 	u_strcmp (const UChar *s1, const UChar *s2)
+;  	Compare two Unicode strings For bitwise equality (code unit order).
+; int32_t 	u_strcmpCodePointOrder (const UChar *s1, const UChar *s2)
+;  	Compare two Unicode strings in code point order.
+; int32_t 	u_strCompare (const UChar *s1, int32_t length1, const UChar *s2, int32_t length2, UBool codePointOrder)
+;  	Compare two Unicode strings (binary order).
+; int32_t 	u_strCompareIter (UCharIterator *iter1, UCharIterator *iter2, UBool codePointOrder)
+;  	Compare two Unicode strings (binary order) As presented by UCharIterator objects.
+; int32_t 	u_strCaseCompare (const UChar *s1, int32_t length1, const UChar *s2, int32_t length2, uint32_t options, UErrorCode *pErrorCode)
+;  	Compare two strings Case-insensitively using full Case folding.
+; int32_t 	u_strncmp (const UChar *ucs1, const UChar *ucs2, int32_t n)
+;  	Compare two ustrings For bitwise equality.
+; int32_t 	u_strncmpCodePointOrder (const UChar *s1, const UChar *s2, int32_t n)
+;  	Compare two Unicode strings in code point order.
+; int32_t 	u_strcasecmp (const UChar *s1, const UChar *s2, uint32_t options)
+;  	Compare two strings Case-insensitively using full Case folding.
+; int32_t 	u_strncasecmp (const UChar *s1, const UChar *s2, int32_t n, uint32_t options)
+;  	Compare two strings Case-insensitively using full Case folding.
+; int32_t 	u_memcasecmp (const UChar *s1, const UChar *s2, int32_t length, uint32_t options)
+;  	Compare two strings Case-insensitively using full Case folding.
+; UChar * 	u_strcpy (UChar *dst, const UChar *src)
+;  	Copy a ustring.
+; UChar * 	u_strncpy (UChar *dst, const UChar *src, int32_t n)
+;  	Copy a ustring.
+; UChar * 	u_uastrcpy (UChar *dst, const char *src)
+;  	Copy a byte string encoded in the Default codepage To a ustring.
+; UChar * 	u_uastrncpy (UChar *dst, const char *src, int32_t n)
+;  	Copy a byte string encoded in the Default codepage To a ustring.
+; char * 	u_austrcpy (char *dst, const UChar *src)
+;  	Copy ustring To a byte string encoded in the Default codepage.
+; char * 	u_austrncpy (char *dst, const UChar *src, int32_t n)
+;  	Copy ustring To a byte string encoded in the Default codepage.
+; UChar * 	u_memcpy (UChar *dest, const UChar *src, int32_t count)
+;  	Synonym For memcpy(), but With UChars only.
+; UChar * 	u_memmove (UChar *dest, const UChar *src, int32_t count)
+;  	Synonym For memmove(), but With UChars only.
+; UChar * 	u_memset (UChar *dest, UChar c, int32_t count)
+;  	Initialize count characters of dest To c.
+; int32_t 	u_memcmp (const UChar *buf1, const UChar *buf2, int32_t count)
+;  	Compare the first count UChars of each buffer.
+; int32_t 	u_memcmpCodePointOrder (const UChar *s1, const UChar *s2, int32_t count)
+;  	Compare two Unicode strings in code point order.
+; UChar * 	u_memchr (const UChar *s, UChar c, int32_t count)
+;  	Find the first occurrence of a BMP code point in a string.
+; UChar * 	u_memchr32 (const UChar *s, UChar32 c, int32_t count)
+;  	Find the first occurrence of a code point in a string.
+; UChar * 	u_memrchr (const UChar *s, UChar c, int32_t count)
+;  	Find the last occurrence of a BMP code point in a string.
+; UChar * 	u_memrchr32 (const UChar *s, UChar32 c, int32_t count)
+;  	Find the last occurrence of a code point in a string.
+; int32_t 	u_unescape (const char *src, UChar *dest, int32_t destCapacity)
+;  	Unescape a string of characters And write the resulting Unicode characters To the destination buffer.
+; UChar32 	u_unescapeAt (UNESCAPE_CHAR_AT charAt, int32_t *offset, int32_t length, void *context)
+;  	Unescape a single sequence.
+; int32_t 	u_strToUpper (UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode)
+;  	Uppercase the characters in a string.
+; int32_t 	u_strToLower (UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, const char *locale, UErrorCode *pErrorCode)
+;  	Lowercase the characters in a string.
+; int32_t 	u_strToTitle (UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, UBreakIterator *titleIter, const char *locale, UErrorCode *pErrorCode)
+;  	Titlecase a string.
+; int32_t 	u_strFoldCase (UChar *dest, int32_t destCapacity, const UChar *src, int32_t srcLength, uint32_t options, UErrorCode *pErrorCode)
+;  	Case-fold the characters in a string.
+; wchar_t * 	u_strToWCS (wchar_t *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-16 string To a wchar_t string.
+; UChar * 	u_strFromWCS (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const wchar_t *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a wchar_t string To UTF-16.
+; char * 	u_strToUTF8 (char *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-16 string To UTF-8.
+; UChar * 	u_strFromUTF8 (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const char *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-8 string To UTF-16.
+; char * 	u_strToUTF8WithSub (char *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UChar32 subchar, int32_t *pNumSubstitutions, UErrorCode *pErrorCode)
+;  	Convert a UTF-16 string To UTF-8.
+; UChar * 	u_strFromUTF8WithSub (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const char *src, int32_t srcLength, UChar32 subchar, int32_t *pNumSubstitutions, UErrorCode *pErrorCode)
+;  	Convert a UTF-8 string To UTF-16.
+; UChar * 	u_strFromUTF8Lenient (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const char *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-8 string To UTF-16.
+; UChar32 * 	u_strToUTF32 (UChar32 *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-16 string To UTF-32.
+; UChar * 	u_strFromUTF32 (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const UChar32 *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a UTF-32 string To UTF-16.
+; UChar32 * 	u_strToUTF32WithSub (UChar32 *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UChar32 subchar, int32_t *pNumSubstitutions, UErrorCode *pErrorCode)
+;  	Convert a UTF-16 string To UTF-32.
+; UChar * 	u_strFromUTF32WithSub (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const UChar32 *src, int32_t srcLength, UChar32 subchar, int32_t *pNumSubstitutions, UErrorCode *pErrorCode)
+;  	Convert a UTF-32 string To UTF-16.
+; char * 	u_strToJavaModifiedUTF8 (char *dest, int32_t destCapacity, int32_t *pDestLength, const UChar *src, int32_t srcLength, UErrorCode *pErrorCode)
+;  	Convert a 16-bit Unicode string To Java Modified UTF-8.
+; UChar * 	u_strFromJavaModifiedUTF8WithSub (UChar *dest, int32_t destCapacity, int32_t *pDestLength, const char *src, int32_t srcLength, UChar32 subchar, int32_t *pNumSubstitutions, UErrorCode *pErrorCode)
+;  	Convert a Java Modified UTF-8 string To a 16-bit Unicode string. 
 EndImport
 ; IDE Options = PureBasic 4.61 (Windows - x86)
+; CursorPosition = 142
+; FirstLine = 121
 ; EnableXP

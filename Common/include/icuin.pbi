@@ -1,6 +1,6 @@
 EnableExplicit
 
-ImportC "icuin.lib"
+ImportC "..\..\..\..\Common\lib\icuin.lib"
   ;-- UCharsetDetector * 	ucsdet_open (UErrorCode *status)
   ;  	Open a charset detector.
   ucsdet_open_49.l(status.l)
