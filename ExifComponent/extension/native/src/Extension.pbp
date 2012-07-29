@@ -10,23 +10,23 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-07-29 23:43" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-07-29 23:59" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="4f50ba2fb15619b797b4bbf6e64c233e"/>
+      <fingerprint md5="4a0b3a6ec859a26ba32a7c6609c2bff9"/>
     </file>
     <file name="C:\Dev\light-book\trunk\Common\include\FlashRuntimeExtensions.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="2f9a2a7a8b4a6ac5e36afeae7a0bc0a7"/>
     </file>
     <file name="C:\Dev\light-book\trunk\Common\include\icuin.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="8f6ee8f5611bf7f2c2637caf80f0e48e"/>
     </file>
     <file name="C:\Dev\light-book\trunk\Common\include\icuuc.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="5c7e8a836156c990f14dcde5f1fbce0d"/>
     </file>
     <file name="C:\Dev\light-book\trunk\Common\include\Unicode.pb">
@@ -48,8 +48,8 @@
       <temporaryexe value="source"/>
       <format exe="dll" cpu="5"/>
       <warnings custom="1" type="display"/>
-      <compilecount enable="1" value="499"/>
-      <buildcount enable="1" value="497"/>
+      <compilecount enable="1" value="403"/>
+      <buildcount enable="1" value="401"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

@@ -16,7 +16,7 @@ XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 
 Macro trace(message)
-  msg(message);
+  ;msg(message);
 EndMacro
 
 Procedure msg(message.s)
@@ -133,8 +133,11 @@ Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutp
       Sleep_(100)
       size = AvailableProgramOutput(program)
       If(size > 0 And offset + size <= maxOutput)
-        ReadProgramData(program, *stdout + offset, size)
-        offset = offset + size
+          ReadProgramData(program, *stdout + offset, size)
+          offset = offset + size
+      ElseIf (offset + size >= maxOutput)
+          KillProgram(program)
+          trace("kill program")
       EndIf
     Wend
     
@@ -225,6 +228,7 @@ Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
       Next
       FreeMemory(*target)
       ucsdet_close_49(ucsd)
+      trace(result)
       ProcedureReturn result
   Else
       ProcedureReturn ""
@@ -391,6 +395,8 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
      
       If Len(file) > 1
           If Not DirExists(@file)
+              ;trace(PeekS(*string, fromULong(length) + 1) + " ==> " + file)
+            
               AddElement(*params\Files())
               *params\Files() = PeekS(*string, fromULong(length) + 1)
               
@@ -491,6 +497,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 250
-; FirstLine = 172
+; CursorPosition = 397
+; FirstLine = 384
 ; Folding = ----
