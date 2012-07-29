@@ -308,8 +308,12 @@ Procedure.s GetShortPathEx(*path.Ascii)
     FreeMemory(*shortpath)
     ProcedureReturn ""
   EndIf
-     
-  ProcedureReturn PeekS(*result, size, #PB_UTF8)
+    
+  
+  Define out.s = PeekS(*result, size, #PB_UTF8)
+  FreeMemory(*result)
+  
+  ProcedureReturn out
 EndProcedure
  
 ;CDecl
@@ -391,74 +395,21 @@ EndProcedure
 ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked GetShortPath, args size:" + Str(fromULong(argc)))
   
-  Define length.l, *path.Ascii, result.l
+  Define length.l, *path.Ascii, result.l, path.s, resultObject.l
   
   result = FREGetObjectAsUTF8(*argv\object[0], @length, @*path)
   If(result <> #FRE_OK)
     ProcedureReturn CreateErrorString(ResultDescription(result, "FREGetObjectAsUTF8"))
   EndIf
    
-  Define result.l, resultObject.l, resultString.s, size.i, pathSize.l, *longpath.Unicode, *shortpath.Unicode
-    
-  size = MultiByteToWideChar_(#CP_UTF8, 0, *path, -1, 0, 0)
-  If(0 = size)
-    ProcedureReturn CreateErrorString("MultiByteToWideChar failed(size), " + GetError())
-  EndIf
+  path = GetShortPathEx(*path)
   
-  *longpath.Unicode = AllocateMemory(size * 2)
-  If(0 = *longpath)
-    ProcedureReturn CreateErrorString("Failed to allocate memory, " + GetError())
-  EndIf
+  If(Len(path) = 1)
+      ProcedureReturn CreateErrorString("GetShortPathEx failed")
+  EndIf    
   
-  size = MultiByteToWideChar_(#CP_UTF8, 0 , *path, -1, *longpath, size)
-  If(0 = size)
-    FreeMemory(*longpath)
-    ProcedureReturn CreateErrorString("MultiByteToWideChar failed, " + GetError())
-  EndIf
-  
-  pathSize = GetShortPathNameW(*longpath, #Null, 0)
-  If(0 = pathSize)
-    FreeMemory(*longpath)
-    ProcedureReturn CreateErrorString("GetShortPathNameW failed (size), " + GetError())
-  EndIf
-  
-  *shortpath = AllocateMemory(pathSize * 2 + 1)
-  If(0 = *shortpath)
-    FreeMemory(*longpath)
-    ProcedureReturn CreateErrorString("Failed to allocate memory, " + GetError())
-  EndIf
-  
-  pathSize = GetShortPathNameW(*longpath, *shortpath, size)
-  If(0 = pathSize)
-    FreeMemory(*longpath)
-    FreeMemory(*shortpath)
-    ProcedureReturn CreateErrorString("GetShortPathNameW failed, " + GetError())
-  EndIf
-  
-  FreeMemory(*longpath)
-    
-  size = WideCharToMultiByte_(#CP_UTF8, 0, *shortpath, pathSize, 0, 0, 0, 0)
-  If(0 = size)
-    FreeMemory(*shortpath)
-    ProcedureReturn CreateErrorString("WideCharToMultiByte failed(size), " + GetError())
-  EndIf
-
-  Define *result = AllocateMemory(size)
-  If(0 = *result)
-    FreeMemory(*shortpath)
-    ProcedureReturn CreateErrorString("Failed to allocate memory, " + GetError())
-  EndIf
-  
-  If(0 = WideCharToMultiByte_(#CP_UTF8, 0 , *shortpath, pathSize, *result, size, 0, 0))
-    FreeMemory(*shortpath)
-    ProcedureReturn CreateErrorString("WideCharToMultiByte failed, " + GetError())
-  EndIf
-     
-  trace(PeekS(*result, size, #PB_UTF8))
-  
-  result = FRENewObjectFromUTF8(toULong(size), *result, @resultObject)
+  result = FRENewObjectFromUTF8(toULong(Len(path)), @path, @resultObject)
   If(result <> #FRE_OK)
-    FreeMemory(*shortpath)
     ProcedureReturn CreateErrorString(ResultDescription(result, "FREGetObjectAsUTF8"))
   EndIf
   
@@ -519,6 +470,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 376
-; FirstLine = 345
+; CursorPosition = 315
+; FirstLine = 283
 ; Folding = ----
