@@ -20,7 +20,7 @@ package light.book.exif
         /**
          * Extracted metadata
          */
-        public var result:MetaInfo;
+        public var result:Array;
 
         /**
          * Constructor
@@ -28,7 +28,7 @@ package light.book.exif
          * @param code request id
          * @param result extracted metadata
          */
-        public function ExifResult(type:String, code:int, result:MetaInfo)
+        public function ExifResult(type:String, code:int, result:Array)
         {
             super(type, false, false);
             this.code = code;

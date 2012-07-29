@@ -91,22 +91,27 @@ ProcedureDLL DetachThread(Instance)
 EndProcedure
 
 
+
 Structure ExifParameters
-  executable.s  ;path to exiftool.exe
-  workingDir.s  ;process working directory
-  parameters.s  ;exiftool parameters
-  timeout.l     ;execution timeout
-  maxOutput.l   ;buffer size
-  ctx.l         ;extension context
-  code.l        ;request code
+  executable.s    ;path to exiftool.exe
+  workingDir.s    ;process working directory
+  parameters.s    ;exiftool parameters
+  timeout.l       ;execution timeout
+  maxOutput.l     ;buffer size
+  ctx.l           ;extension context
+  code.l          ;request code
+  List Files.s()
+  List FilesShort.s()
 EndStructure
 
 
 Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
-  Define program.i = RunProgram(executable, "-s " + parameters, workingDir, flags)
+  Define program.i = RunProgram(executable, parameters, workingDir, flags)
   If program
     Define *stdout = AllocateMemory(maxOutput)
     Define offset.l, size.l
+    
+    ;todo timeout
     
     While ProgramRunning(program)
       Sleep_(100)
@@ -126,6 +131,7 @@ Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutp
       FreeMemory(*stdout)
       ProcedureReturn *result
     Else
+      trace("exitCode: " + Str(exitCode))
       FreeMemory(*stdout)
       ProcedureReturn 0
     EndIf
@@ -135,30 +141,38 @@ Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutp
 EndProcedure
 
 
-Procedure.s ParseTags(*stdout, file.s)
-  Define i.l, m.l, prev.l, size.l
-  Define status.l, ucsd.l, ucsm.l, *name
+Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
+  Define i.l, m.l, prev.l, size.l, index.l, converted.l, name.s, value_size.l, keySize.l
+  Define status.l, ucsd.l, ucsm.l, *name, line_begin.l, line.s, value_begin.l, key.s
   Define result.s = ""
   
   ucsd = ucsdet_open_49(@status)
   
   If ucsd <> 0
       size = MemorySize(*stdout)
+      Define *target = AllocateMemory(4096)
       For i = 1 To size - 1
         If(PeekB(*stdout + i - 1) = 13 And PeekB(*stdout + i) = 10)
-           Define line_begin.l = *stdout + prev
-
-           For m = 1 To (i - prev)
-               If(PeekB(*stdout + prev + m) = 58) ; Asc(":")
-                    Break
-               EndIf
-           Next
+           line_begin = *stdout + prev
+           line = PeekS(line_begin, i - prev, #PB_Ascii)
            
-           Define value_begin.l = *stdout + (prev + m + 2)
-           Define value_size.l = i - (prev + m + 2)
-           Define keySize.l = m
            
-           prev = i
+           If FindString(line, "=====") > 0
+               prev = i + 1
+               Continue
+           EndIf
+           
+           m = FindString(line, ":") - 1
+           If(m = -1)
+               prev = i + 1
+               Continue
+           EndIf
+           
+           value_begin = *stdout + (prev + m + 2)
+           value_size = i - (prev + m + 1) - 2
+           keySize = m 
+           
+           prev = i + 1
            
            ucsdet_setText_49(ucsd, value_begin, value_size, @status)
            If status <> 0
@@ -171,19 +185,30 @@ Procedure.s ParseTags(*stdout, file.s)
            EndIf
           
            *name = ucsdet_getName_49(ucsm, @status)
-           Define *target = AllocateMemory(4096)
-           Define converted.l = ucnv_convert_49(@"utf-8", *name, *target, 4000, value_begin, value_size, @status)
-           If converted > 0
-                result = result + PeekS(line_begin, keySize, #PB_Ascii) + ":" + PeekS(*target, converted - 1, #PB_Ascii)
+           
+           name = PeekS(*name, -1, #PB_Ascii)
+           
+           ;this encoding create unrecoverable rror in ICU
+           If name = "IBM424_rtl" Or name = "IBM424_ltr"              
+               *name = @"utf-8"
            EndIf
-           FreeMemory(*target)
+
+           converted = ucnv_convert_49(@"utf-8", *name, *target, 4096, value_begin, value_size, @status)
+           If converted > 0
+               key = PeekS(line_begin, keySize, #PB_Ascii)
+               If(FindString(key, "ExifTool Version Number") Or FindString(key, "ExifToolVersion"))
+                   SelectElement(Files(), index)
+                   SelectElement(FilesShort(), index)
+                   result = result + "FileNameOriginal                :" + Files() + #CRLF$ 
+                   result = result + "MD5                             :" + MD5FileFingerprint(FilesShort()) + #CRLF$  
+                   index = index + 1
+               EndIf
+               result = result + key + ":" + PeekS(*target, converted, #PB_Ascii) + #CRLF$ 
+           EndIf
        EndIf
       Next
+      FreeMemory(*target)
       ucsdet_close_49(ucsd)
-      If Len(result) > 1
-          result = result + #CRLF$ + "MD5:" + MD5FileFingerprint(file) 
-      EndIf
-      trace(result)
       ProcedureReturn result
   Else
       ProcedureReturn ""
@@ -192,12 +217,24 @@ EndProcedure
   
 
 Procedure RunExifTool(*params.ExifParameters)
-    Define eventResult.l
+    Define eventResult.l, parameters.s, i.l
     
-    Define stdout.i = GetStdout(*params\executable, *params\parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
+    
+    If Len(*params\parameters) > 1
+        parameters = *params\parameters + " "
+    Else
+        parameters = ""
+    EndIf
+    
+    For i = 0 To ListSize(*params\FilesShort()) - 1
+        SelectElement(*params\FilesShort(), i)
+        parameters = parameters + #DOUBLEQUOTE$ + *params\FilesShort() + #DOUBLEQUOTE$ + " "
+    Next
+    
+    Define stdout.i = GetStdout(*params\executable, parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
   
     If stdout
-        Define result.s = ParseTags(stdout, *params\parameters)
+        Define result.s = ParseTags(stdout, *params\Files(), *params\FilesShort())
         If Len(result) > 1
             eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc(result))
             trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
@@ -209,15 +246,77 @@ Procedure RunExifTool(*params.ExifParameters)
         eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: execution failed"))
         trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
     EndIf
-  FreeMemory(*params)
+    FreeMemory(*params)
 EndProcedure
 
+
+;CDecl
+Procedure.s GetShortPathEx(*path.Ascii)
+
+  Define result.l, size.i, pathSize.l, *longpath.Unicode, *shortpath.Unicode
+    
+  size = MultiByteToWideChar_(#CP_UTF8, 0, *path, -1, 0, 0)
+  If(0 = size)
+    ProcedureReturn ""
+  EndIf
+  
+  *longpath.Unicode = AllocateMemory(size * 2)
+  If(0 = *longpath)
+    ProcedureReturn ""
+  EndIf
+  
+  size = MultiByteToWideChar_(#CP_UTF8, 0 , *path, -1, *longpath, size)
+  If(0 = size)
+    FreeMemory(*longpath)
+    ProcedureReturn ""
+  EndIf
+  
+  pathSize = GetShortPathNameW(*longpath, #Null, 0)
+  If(0 = pathSize)
+    FreeMemory(*longpath)
+    ProcedureReturn ""
+  EndIf
+  
+  *shortpath = AllocateMemory(pathSize * 2 + 1)
+  If(0 = *shortpath)
+    FreeMemory(*longpath)
+    ProcedureReturn ""
+  EndIf
+  
+  pathSize = GetShortPathNameW(*longpath, *shortpath, size)
+  If(0 = pathSize)
+    FreeMemory(*longpath)
+    FreeMemory(*shortpath)
+    ProcedureReturn ""
+  EndIf
+  
+  FreeMemory(*longpath)
+    
+  size = WideCharToMultiByte_(#CP_UTF8, 0, *shortpath, pathSize, 0, 0, 0, 0)
+  If(0 = size)
+    FreeMemory(*shortpath)
+    ProcedureReturn ""
+  EndIf
+
+  Define *result = AllocateMemory(size)
+  If(0 = *result)
+    FreeMemory(*shortpath)
+    ProcedureReturn ""
+  EndIf
+  
+  If(0 = WideCharToMultiByte_(#CP_UTF8, 0 , *shortpath, pathSize, *result, size, 0, 0))
+    FreeMemory(*shortpath)
+    ProcedureReturn ""
+  EndIf
+     
+  ProcedureReturn PeekS(*result, size, #PB_UTF8)
+EndProcedure
  
 ;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked Execute, args size:" + Str(fromULong(argc)))
 
-  Define result.l, length.l, maxOutput.l, parameters.s, *string.Ascii, code.l, executable.s, timeout.l, workingDir.s
+  Define result.l, length.l, maxOutput.l, parameters.s, *string.Ascii, code.l, executable.s, timeout.l, workingDir.s, arraySize.l, i.l, element.l, file.s
   
   result = FREGetObjectAsInt32(*argv\object[0], @code)
   trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
@@ -240,15 +339,20 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   workingDir = PeekS(*string, fromULong(length) + 1)
   
+  result = FREGetArrayLength(*argv\object[6], @arraySize)
+  trace("result=" + ResultDescription(result, "FREGetArrayLength"))
+  
   trace("Argument: code=" + Str(code))
   trace("Argument: maxOutput=" + Str(maxOutput))
   trace("Argument: timeout=" + Str(timeout))
   trace("Argument: executable=" + executable)
   trace("Argument: parameters=" + parameters)
   trace("Argument: workingDir=" + workingDir)
+  trace("Argument: arraySize=" + Str(arraySize))
   
   
   Define *params.ExifParameters = AllocateMemory(SizeOf(ExifParameters))
+  InitializeStructure(*params, ExifParameters)
   *params\ctx = ctx
   *params\code = code
   *params\executable = executable
@@ -256,6 +360,22 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *params\workingDir = workingDir
   *params\maxOutput = maxOutput
   
+  For i = 0 To arraySize - 1
+      result = FREGetArrayElementAt(*argv\object[6], i, @element)
+      ;trace("result=" + ResultDescription(result, "FREGetArrayElementAt"))
+      
+      result = FREGetObjectAsUTF8(element, @length, @*string)
+      ;trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
+      file = GetShortPathEx(*string)
+      
+      If Len(file) > 1
+          AddElement(*params\Files())
+          *params\Files() = PeekS(*string, fromULong(length) + 1)
+          
+          AddElement(*params\FilesShort())
+          *params\FilesShort() = file
+      EndIf
+  Next
   
   CreateThread(@RunExifTool(), *params)
   
@@ -399,6 +519,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 183
-; FirstLine = 171
-; Folding = ---
+; CursorPosition = 376
+; FirstLine = 345
+; Folding = ----

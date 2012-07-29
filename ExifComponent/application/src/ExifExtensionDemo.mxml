@@ -17,15 +17,13 @@
         import mx.logging.ILogger;
         import mx.logging.Log;
 
+        private const log:ILogger = Log.getLogger("ExifExtensionDemo");
+
         [Bindable]
         private var infos:ArrayCollection = new ArrayCollection();
-
         private var browser:File = new File();
-        private var files:Array = [];
 
         private var extension:ExifComponent;
-        private const log:ILogger = Log.getLogger("ExifExtensionDemo");
-        private var programShortPath:String;
 
         private function initializeApplication():void
         {
@@ -50,8 +48,7 @@
         private function onResult(event:ExifResult):void
         {
             //log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(event.result));
-            infos.addItem(event.result.info);
-            startExif();
+            infos.addAll(new ArrayCollection(event.result));
         }
 
         private function onExit(event:Event):void
@@ -67,22 +64,20 @@
         private function onDirectorySelected(event:Event):void
         {
             infos.removeAll();
-            files = browser.getDirectoryListing().filter(function (element:*, index:int, arr:Array):Boolean
+            var files:Array = browser.getDirectoryListing().filter(function (element:*, index:int, arr:Array):Boolean
             {
                 return !File(element).isDirectory;
             });
             log.info("Files: {0}", files.length);
-            programShortPath = extension.getShortPath(exiftool.text);
-            startExif();
-        }
-
-        private function startExif():void
-        {
+            var programShortPath:String = extension.getShortPath(exiftool.text);
             if (files.length > 0)
             {
-                var file:File = files.pop();
-                var fileShortPath:String = extension.getShortPath(file.nativePath);
-                var code:int = extension.execute(programShortPath, fileShortPath, "", 512000, -1);
+                var fileList:Array = [];
+                for each (var file:File in files)
+                {
+                    fileList.push(file.nativePath);
+                }
+                var code:int = extension.execute(programShortPath, fileList, "-s", "", 1048576, -1);
             }
         }
 

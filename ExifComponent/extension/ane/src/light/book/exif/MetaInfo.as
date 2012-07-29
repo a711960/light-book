@@ -6,14 +6,17 @@ package light.book.exif
 
     public dynamic class MetaInfo extends Proxy
     {
-        private static const builtin:Object = {info:true, keys:true, values:true, count:true};
+        private static const builtin:Object = {info:true, keys:true, values:true, count:true, file:true};
 
         private var _info:Dictionary = new Dictionary();
         private var _keys:Array = [];
         private var _values:Array = [];
+        
+        private var _file:String;
 
-        public function MetaInfo()
+        public function MetaInfo(file:String)
         {
+            this._file = file;
         }
 
         public function addProperty(key:String, value:String):void
@@ -48,6 +51,11 @@ package light.book.exif
             return _keys.length;
         }
 
+        public function get file():String
+        {
+            return _file;
+        }
+
         override flash_proxy function getProperty(name:*):*
         {
             if (builtin[name])
@@ -62,6 +70,8 @@ package light.book.exif
                         return this.keys;
                     case 'info':
                         return this.info;
+                    case 'file':
+                        return this.file;
                 }
             }
             return _info[name];
@@ -124,9 +134,11 @@ package light.book.exif
                     return 'keys';
                 case 3:
                     return 'info';
+                case 4:
+                    return 'file';
             }
 
-            return keys[index - 4];
+            return keys[index - 5];
         }
 
         override flash_proxy function nextValue(index:int):*
@@ -141,9 +153,11 @@ package light.book.exif
                     return this.keys;
                 case 3:
                     return this.info;
+                case 4:
+                    return this.file;
             }
 
-            return values[index - 4];
+            return values[index - 5];
         }
 
         override flash_proxy function callProperty(methodName:*, ... args):*

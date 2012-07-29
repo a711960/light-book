@@ -89,7 +89,7 @@ package light.book.exif
         }
 
 
-        public function execute(executable:String, parameters:String = "", workingDir:String = "", maxOutput:int = 512000, timeout:int = -1):int
+        public function execute(executable:String, filePaths:Array, parameters:String = "", workingDir:String = "", maxOutput:int = 512000, timeout:int = -1):int
         {
             if (!contextCreated)
                 return -1;
@@ -100,14 +100,14 @@ package light.book.exif
 
             try
             {
-                result = _context.call("execute", code, maxOutput, timeout, executable, parameters, workingDir) as Boolean;
+                result = _context.call("execute", code, maxOutput, timeout, executable, parameters, workingDir, filePaths) as Boolean;
                 
                 if(!result)
                     throw new Error("Execute result: false");
             }
             catch (e:Error)
             {
-                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, stacktrace: {7}", code, maxOutput, timeout, executable, parameters, workingDir, e.getStackTrace());
+                log.error("Invocation error: execute({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, stacktrace: {8}", code, maxOutput, timeout, executable, parameters, workingDir, filePaths, e.getStackTrace());
                 return -1;
             }
             return code;
@@ -150,7 +150,8 @@ package light.book.exif
         {
             log.debug("Status event received: contextType={0} code={1}", this.contextType, event.code);
             var code:int = parseInt(event.code);
-            var meta:MetaInfo = new MetaInfo();
+
+            var result:Array = [];
 
             if(event.level && event.level.indexOf("error:") == 0)
             {
@@ -159,14 +160,22 @@ package light.book.exif
             }
             else if(event.level)
             {
-                var result:Array = PATTERN.exec(event.level) as Array;
-                while (result != null) 
+                var i:int = 0;
+                var match:Array = PATTERN.exec(event.level) as Array;
+                var meta:MetaInfo;
+                while (match != null) 
                 {
-                    var key:String = (result[1] as String).replace(TRIM, "");
-                    meta[key] = result[2];
-                    result = PATTERN.exec(event.level);
+                    var key:String = (match[1] as String).replace(TRIM, "");
+                    if(key == "FileNameOriginal")
+                    {
+                        meta = new MetaInfo(match[2]);
+                        result.push(meta);
+                        i++;
+                    }
+                    meta[key] = match[2];
+                    match = PATTERN.exec(event.level);
                 }
-                dispatchEvent(new ExifResult(ExifResult.RESULT, code, meta));
+                dispatchEvent(new ExifResult(ExifResult.RESULT, code, result));
             }
             else
             {
