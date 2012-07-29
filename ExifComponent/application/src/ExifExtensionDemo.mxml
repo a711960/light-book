@@ -49,6 +49,7 @@
         private function onResult(event:ExifResult):void
         {
             //log.info("Code: {0} returned: {1}", event.code, ObjectUtil.toString(event.result));
+            log.info("Code: {0} size: {1}", event.code, event.result.length);
             infos.addAll(new ArrayCollection(event.result));
         }
 
