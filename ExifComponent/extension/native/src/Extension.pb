@@ -16,7 +16,7 @@ XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 
 Macro trace(message)
-  ;msg(message);
+  msg(message);
 EndMacro
 
 Procedure msg(message.s)
@@ -49,6 +49,21 @@ Procedure.s GetError()
     EndIf
     ProcedureReturn err_msg$
 EndProcedure 
+
+
+#FILE_ATTRIBUTE_DIRECTORY = $10
+#INVALID_FILE_ATTRIBUTES = -1
+
+Procedure.l DirExists(*file)
+  Define ftyp.l = GetFileAttributes_(*file);
+  If (ftyp = #INVALID_FILE_ATTRIBUTES)
+      ProcedureReturn #False;  //something is wrong with your path!
+  EndIf
+  If (ftyp & #FILE_ATTRIBUTE_DIRECTORY)
+      ProcedureReturn #True;   // this is a directory!
+  EndIf
+  ProcedureReturn #False;    // this is not a directory!
+EndProcedure
 
 
 Procedure.l CreateErrorString(message.s)
@@ -106,6 +121,7 @@ EndStructure
 
 
 Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
+
   Define program.i = RunProgram(executable, parameters, workingDir, flags)
   If program
     Define *stdout = AllocateMemory(maxOutput)
@@ -123,15 +139,15 @@ Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutp
     Wend
     
     Define exitCode.l = ProgramExitCode(program)
+    trace("exitCode: " + Str(exitCode))
     CloseProgram(program) ; Close the connection to the program
     
-    If exitCode = 0
+    If offset > 0
       Define *result = AllocateMemory(offset)
       CopyMemory(*stdout, *result, offset)
       FreeMemory(*stdout)
       ProcedureReturn *result
     Else
-      trace("exitCode: " + Str(exitCode))
       FreeMemory(*stdout)
       ProcedureReturn 0
     EndIf
@@ -195,15 +211,15 @@ Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
 
            converted = ucnv_convert_49(@"utf-8", *name, *target, 4096, value_begin, value_size, @status)
            If converted > 0
-               key = PeekS(line_begin, keySize, #PB_Ascii)
+               key = Trim(PeekS(line_begin, keySize, #PB_Ascii))
                If(FindString(key, "ExifTool Version Number") Or FindString(key, "ExifToolVersion"))
                    SelectElement(Files(), index)
                    SelectElement(FilesShort(), index)
-                   result = result + "FileNameOriginal                :" + Files() + #CRLF$ 
-                   result = result + "MD5                             :" + MD5FileFingerprint(FilesShort()) + #CRLF$  
+                   result = result + "FileNameOriginal" + #CR$ + Files() + #CR$ 
+                   result = result + "MD5" + #CR$ + MD5FileFingerprint(FilesShort()) + #CR$  
                    index = index + 1
                EndIf
-               result = result + key + ":" + PeekS(*target, converted, #PB_Ascii) + #CRLF$ 
+               result = result + key + #CR$ + PeekS(*target, converted, #PB_Ascii) + #CR$ 
            EndIf
        EndIf
       Next
@@ -219,7 +235,6 @@ EndProcedure
 Procedure RunExifTool(*params.ExifParameters)
     Define eventResult.l, parameters.s, i.l
     
-    
     If Len(*params\parameters) > 1
         parameters = *params\parameters + " "
     Else
@@ -231,8 +246,8 @@ Procedure RunExifTool(*params.ExifParameters)
         parameters = parameters + #DOUBLEQUOTE$ + *params\FilesShort() + #DOUBLEQUOTE$ + " "
     Next
     
-    Define stdout.i = GetStdout(*params\executable, parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
-  
+    Define stdout.l = GetStdout(*params\executable, parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
+    
     If stdout
         Define result.s = ParseTags(stdout, *params\Files(), *params\FilesShort())
         If Len(result) > 1
@@ -242,6 +257,7 @@ Procedure RunExifTool(*params.ExifParameters)
             eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: failed to extract metadata"))
             trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
         EndIf
+        FreeMemory(stdout)
     Else
         eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: execution failed"))
         trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
@@ -315,6 +331,7 @@ Procedure.s GetShortPathEx(*path.Ascii)
   
   ProcedureReturn out
 EndProcedure
+
  
 ;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
@@ -371,13 +388,17 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
       result = FREGetObjectAsUTF8(element, @length, @*string)
       ;trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
       file = GetShortPathEx(*string)
-      
+     
       If Len(file) > 1
-          AddElement(*params\Files())
-          *params\Files() = PeekS(*string, fromULong(length) + 1)
-          
-          AddElement(*params\FilesShort())
-          *params\FilesShort() = file
+          If Not DirExists(@file)
+              AddElement(*params\Files())
+              *params\Files() = PeekS(*string, fromULong(length) + 1)
+              
+              AddElement(*params\FilesShort())
+              *params\FilesShort() = file
+          Else
+              trace("file is directory: " + file)
+          EndIf
       EndIf
   Next
   
@@ -470,6 +491,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 315
-; FirstLine = 283
+; CursorPosition = 250
+; FirstLine = 172
 ; Folding = ----

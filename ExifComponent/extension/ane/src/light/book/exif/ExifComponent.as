@@ -23,9 +23,6 @@ package light.book.exif
      */
     public class ExifComponent extends EventDispatcher
     {
-        private static const TRIM:RegExp = /^\s*|\s*$/g;
-        private static const PATTERN:RegExp = /^([^:]+):(.+)$/img;
-
         /**
          * Extension id, must be specified in air-manifest.xml and extension.xml
          */
@@ -160,21 +157,22 @@ package light.book.exif
             }
             else if(event.level)
             {
-                var i:int = 0;
-                var match:Array = PATTERN.exec(event.level) as Array;
+                var matches:Array = event.level.split("\r");
+                var key:String;
                 var meta:MetaInfo;
-                while (match != null) 
+
+                for (var i:int = 0; i < matches.length; i++)
                 {
-                    var key:String = (match[1] as String).replace(TRIM, "");
+                    key = matches[i] as String;
                     if(key == "FileNameOriginal")
                     {
-                        meta = new MetaInfo(match[2]);
+                        meta = new MetaInfo();
                         result.push(meta);
-                        i++;
                     }
-                    meta[key] = match[2];
-                    match = PATTERN.exec(event.level);
+                    meta.addProperty(key, matches[i + 1]);
+                    i++;
                 }
+                log.debug("Status event parsed: contextType={0} code={1}", this.contextType, event.code);
                 dispatchEvent(new ExifResult(ExifResult.RESULT, code, result));
             }
             else

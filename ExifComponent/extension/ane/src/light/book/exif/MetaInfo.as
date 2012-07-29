@@ -1,22 +1,30 @@
 package light.book.exif
 {
     import flash.utils.Dictionary;
-    import flash.utils.Proxy;
-    import flash.utils.flash_proxy;
 
-    public dynamic class MetaInfo extends Proxy
+    public class MetaInfo
     {
-        private static const builtin:Object = {info:true, keys:true, values:true, count:true, file:true};
+        public static const AUTO_ADD:Object = {FileName:true, Directory:true, FileSize:true, FileModifyDate:true, FilePermissions:true, FileNameOriginal:true, MIMEType:true, FileType:true, MD5:true, Error:true, Warning:true};
 
         private var _info:Dictionary = new Dictionary();
         private var _keys:Array = [];
         private var _values:Array = [];
-        
-        private var _file:String;
 
-        public function MetaInfo(file:String)
+        private var _FileName:String;
+        private var _Directory:String;
+        private var _FileSize:String;
+        private var _FileModifyDate:String;
+        private var _FilePermissions:String;
+        private var _FileNameOriginal:String;
+        private var _MIMEType:String;
+        private var _FileType:String;
+        private var _MD5:String;
+        private var _Error:String;
+        private var _Warning:String;
+
+
+        public function MetaInfo()
         {
-            this._file = file;
         }
 
         public function addProperty(key:String, value:String):void
@@ -24,6 +32,25 @@ package light.book.exif
             _info[key] = value;
             _keys.push(key);
             _values.push(value);
+            if (AUTO_ADD[key])
+            {
+                this["_" + key] = value;
+                if (key == "Error" && value == "Unknown file type")
+                {
+                    var index:int = _FileNameOriginal ? _FileNameOriginal.toLowerCase().lastIndexOf(".") : -1;
+                    if (index >= 0)
+                    {
+                        if (index < _FileNameOriginal.length - 1)
+                        {
+                            var extension:String = _FileNameOriginal.toLowerCase().substr(index + 1);
+                            var mimeType:String = MimeTypeMap.instance.getMimeType(extension);
+
+                            _FileType = extension ? extension.toUpperCase() : null;
+                            _MIMEType = mimeType;
+                        }
+                    }
+                }
+            }
         }
 
         public function getProperty(key:String):String
@@ -51,118 +78,69 @@ package light.book.exif
             return _keys.length;
         }
 
-        public function get file():String
+        public function get FileName():String
         {
-            return _file;
+            return _FileName;
         }
 
-        override flash_proxy function getProperty(name:*):*
+        public function get Directory():String
         {
-            if (builtin[name])
-            {
-                switch (name.toString())
-                {
-                    case 'count':
-                        return this.count;
-                    case 'values':
-                        return this.values;
-                    case 'keys':
-                        return this.keys;
-                    case 'info':
-                        return this.info;
-                    case 'file':
-                        return this.file;
-                }
-            }
-            return _info[name];
+            return _Directory;
         }
 
-        override flash_proxy function setProperty(name:*, value:*):void
+        public function get FileSize():String
         {
-            if (builtin[name] == null)
-            {
-                _info[name] = value;
-                _keys.push(name);
-                _values.push(value);
-            }
+            return _FileSize;
         }
 
-        override flash_proxy function deleteProperty(name:*):Boolean
+        public function get FileModifyDate():String
         {
-            if (builtin[name] == null && _info.hasOwnProperty(name))
-            {
-                delete _info[name];
-
-                var pos:int = -1;
-
-                _keys = _keys.filter(function (element:*, index:int, arr:Array):Boolean
-                {
-                    pos = index;
-                    return element != name;
-                });
-
-                _values = _values.filter(function (element:*, index:int, arr:Array):Boolean
-                {
-                    return pos != index;
-                });
-                return true;
-            }
-            return false;
+            return _FileModifyDate;
         }
 
-        override flash_proxy function nextNameIndex(index:int):int
+        public function get FilePermissions():String
         {
-            if (index < _keys.length + 4)
-            {
-                return index + 1;
-            }
-            else
-            {
-                return 0;
-            }
+            return _FilePermissions;
         }
 
-        override flash_proxy function nextName(index:int):String
+        public function get FileNameOriginal():String
         {
-            switch (index)
-            {
-                case 0:
-                    return 'count';
-                case 1:
-                    return 'values';
-                case 2:
-                    return 'keys';
-                case 3:
-                    return 'info';
-                case 4:
-                    return 'file';
-            }
-
-            return keys[index - 5];
+            return _FileNameOriginal;
         }
 
-        override flash_proxy function nextValue(index:int):*
+        public function get MIMEType():String
         {
-            switch (index)
-            {
-                case 0:
-                    return this.count;
-                case 1:
-                    return this.values;
-                case 2:
-                    return this.keys;
-                case 3:
-                    return this.info;
-                case 4:
-                    return this.file;
-            }
-
-            return values[index - 5];
+            return _MIMEType;
         }
 
-        override flash_proxy function callProperty(methodName:*, ... args):*
+        public function get FileType():String
         {
-            return getProperty(methodName);
+            return _FileType;
+        }
+
+        public function get MD5():String
+        {
+            return _MD5;
+        }
+
+        public function get isError():Boolean
+        {
+            return _Error != null;
+        }
+
+        public function get isWarning():Boolean
+        {
+            return _Warning != null;
+        }
+
+        public function get Error():String
+        {
+            return _Error;
+        }
+
+        public function get Warning():String
+        {
+            return _Warning;
         }
     }
 }

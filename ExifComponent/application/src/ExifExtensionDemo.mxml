@@ -9,6 +9,7 @@
         import light.book.exif.ExifComponent;
         import light.book.exif.ExifFault;
         import light.book.exif.ExifResult;
+        import light.book.exif.MetaInfo;
 
         import logging.ConsoleTarget;
         import logging.TextTarget;
@@ -105,7 +106,8 @@
                         <mx:DataGridColumn headerText="MIME" dataField="MIMEType"/>
                         <mx:DataGridColumn headerText="File Size" dataField="FileSize"/>
                         <mx:DataGridColumn headerText="File Permissions" dataField="FilePermissions"/>
-                        <mx:DataGridColumn headerText="File Modification Date/Time" dataField="FileModifyDate"/>
+                        <mx:DataGridColumn headerText="Error" dataField="Error"/>
+                        <mx:DataGridColumn headerText="Warning" dataField="Warning"/>
                     </mx:columns>
                 </mx:DataGrid>
             </mx:VBox>
