@@ -1,5 +1,11 @@
 ﻿EnableExplicit
 
+XIncludeFile "..\..\..\..\Common\include\Unsigned.pb"
+XIncludeFile "..\..\..\..\Common\include\FlashRuntimeExtensions.pbi"
+XIncludeFile "..\..\..\..\Common\include\Unicode.pb"
+XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
+XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
+
 Import "Kernel32.lib"
   ;   DWORD WINAPI GetShortPathName(
   ;     __in   LPCTSTR lpszLongPath,
@@ -8,12 +14,6 @@ Import "Kernel32.lib"
   ;   );
   GetShortPathNameW(path.l, shortpath.l, size.l)
 EndImport
-
-XIncludeFile "..\..\..\..\Common\include\Unsigned.pb"
-XIncludeFile "..\..\..\..\Common\include\FlashRuntimeExtensions.pbi"
-XIncludeFile "..\..\..\..\Common\include\Unicode.pb"
-XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
-XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 
 Macro trace(message)
   ;msg(message);
@@ -30,25 +30,6 @@ Procedure msg(message.s)
     CloseFile(file)
   EndIf
 EndProcedure
-
-
-Procedure.s GetError()
-   Define error.l,  err_msg$
-   error = GetLastError_()
-   err_msg$ = "no last error"
-   If error
-      Define *Memory, length.l
-      *Memory = AllocateMemory(255)
-      length = FormatMessage_(#FORMAT_MESSAGE_FROM_SYSTEM, #Null, error, 0, *Memory, 255, #Null)
-      If length > 1 ; Some error messages are "" + Chr (13) + Chr (10)... stoopid M$... :(
-         err_msg$ = PeekS(*Memory, length - 2)
-      Else
-      err_msg$ = "unknown"
-      EndIf
-      FreeMemory(*Memory)
-    EndIf
-    ProcedureReturn err_msg$
-EndProcedure 
 
 
 #FILE_ATTRIBUTE_DIRECTORY = $10
@@ -207,7 +188,7 @@ Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
            
            name = PeekS(*name, -1, #PB_Ascii)
            
-           ;this encoding create unrecoverable rror in ICU
+           ;this encoding create unrecoverable error in ICU
            If name = "IBM424_rtl" Or name = "IBM424_ltr"              
                *name = @"utf-8"
            EndIf
@@ -497,6 +478,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 397
-; FirstLine = 384
+; CursorPosition = 190
+; FirstLine = 234
 ; Folding = ----
