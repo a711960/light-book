@@ -2,6 +2,7 @@
 
 XIncludeFile "..\..\..\..\Common\include\FlashRuntimeExtensions.pbi"
 
+;-- Dll
 ProcedureDLL AttachProcess(Instance)
   ;- This procedure is called once, when the program loads the library
   ;  for the first time. All init stuffs can be done here (but not DirectX init)
@@ -141,7 +142,6 @@ EndProcedure
 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 31
-; FirstLine = 12
+; CursorPosition = 25
 ; Folding = ---
 ; EnableXP
