@@ -1,35 +1,26 @@
 ﻿EnableExplicit
 
-#TRACE_ENABLED = 0
+#TRACE_ENABLED = 1
 #TRACE_FILENAME = "ExifComponent.dll"
 
 XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
-
 XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 XIncludeFile "FileUtils.pb"
 
+
 ;-- Structure ExifParameters
 Structure ExifParameters
-  executable.s    ;path to exiftool.exe
-  workingDir.s    ;process working directory
-  parameters.s    ;exiftool parameters
-  timeout.l       ;execution timeout
-  maxOutput.l     ;buffer size
-  ctx.l           ;extension context
-  code.l          ;request code
-  List Files.s()
-  List FilesShort.s()
+  executable.s          ;path to exiftool.exe
+  workingDir.s          ;process working directory
+  parameters.s          ;exiftool parameters
+  timeout.l             ;execution timeout
+  maxOutput.l           ;buffer size
+  ctx.l                 ;extension context
+  code.l                ;request code
+  List Files.s()        ;long filenames
+  List FilesShort.s()   ;file short names
 EndStructure
-
-
-Procedure.l CreateErrorString(message.s)
-    Define result.l, resultObject.l
-    Define error.s = "error: " + message
-    result = FRENewObjectFromUTF8(toULong(Len(error)), AsciiAlloc(error), @resultObject)
-    ProcedureReturn resultObject
-EndProcedure
-
 
 
 Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
@@ -149,7 +140,9 @@ EndProcedure
   
 
 Procedure RunExifTool(*params.ExifParameters)
-    Define eventResult.l, parameters.s, i.l
+    OnErrorCall(@ErrorHandler())
+    
+    Define parameters.s, i.l
     
     If Len(*params\parameters) > 1
         parameters = *params\parameters + " "
@@ -167,16 +160,13 @@ Procedure RunExifTool(*params.ExifParameters)
     If stdout
         Define result.s = ParseTags(stdout, *params\Files(), *params\FilesShort())
         If Len(result) > 1
-            eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc(result))
-            trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+            DispatchEvent(*params\ctx, Str(*params\code), result)
         Else
-            eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: failed to extract metadata"))
-            trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+            DispatchEvent(*params\ctx, Str(*params\code), "error: failed to extract metadata")
         EndIf
         FreeMemory(stdout)
     Else
-        eventResult = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), AsciiAlloc("error: execution failed"))
-        trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+        DispatchEvent(*params\ctx, Str(*params\code), "error: execution failed")
     EndIf
     FreeMemory(*params)
 EndProcedure
@@ -184,108 +174,57 @@ EndProcedure
 
 
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
-  trace("Invoked Execute, args size:" + Str(fromULong(argc)))
+  OnErrorCall(@ErrorHandler())
+    
+  Define arraySize.l, i.l, longPath.s, shortPath.s
 
-  Define result.l, length.l, maxOutput.l, parameters.s, *string.Ascii, code.l, executable.s, timeout.l, workingDir.s, arraySize.l, i.l, element.l, file.s
-  
-  result = FREGetObjectAsInt32(*argv\object[0], @code)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
-  
-  result = FREGetObjectAsInt32(*argv\object[1], @maxOutput)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
-  
-  result = FREGetObjectAsInt32(*argv\object[2], @timeout)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
-  
-  result = FREGetObjectAsUTF8(*argv\object[3], @length, @*string)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  executable = PeekS(*string, fromULong(length) + 1)
-  
-  result = FREGetObjectAsUTF8(*argv\object[4], @length, @*string)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  parameters = PeekS(*string, fromULong(length) + 1)
-  
-  result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  workingDir = PeekS(*string, fromULong(length) + 1)
-  
-  result = FREGetArrayLength(*argv\object[6], @arraySize)
-  trace("result=" + ResultDescription(result, "FREGetArrayLength"))
-  
-  trace("Argument: code=" + Str(code))
-  trace("Argument: maxOutput=" + Str(maxOutput))
-  trace("Argument: timeout=" + Str(timeout))
-  trace("Argument: executable=" + executable)
-  trace("Argument: parameters=" + parameters)
-  trace("Argument: workingDir=" + workingDir)
-  trace("Argument: arraySize=" + Str(arraySize))
-  
-  
   Define *params.ExifParameters = AllocateMemory(SizeOf(ExifParameters))
   InitializeStructure(*params, ExifParameters)
   *params\ctx = ctx
-  *params\code = code
-  *params\executable = executable
-  *params\parameters = parameters
-  *params\workingDir = workingDir
-  *params\maxOutput = maxOutput
+  *params\code = GetArgInt32(0, argc, *argv)
+  *params\maxOutput = GetArgInt32(1, argc, *argv)
+  *params\timeout = GetArgInt32(2, argc, *argv)
+  *params\executable = GetArgString(3, argc, *argv)
+  *params\parameters = GetArgString(4, argc, *argv)
+  *params\workingDir = GetArgString(5, argc, *argv)
+  
+  arraySize = GetArgArrayLen(6, argc, *argv)
   
   For i = 0 To arraySize - 1
-      result = FREGetArrayElementAt(*argv\object[6], i, @element)
-      ;trace("result=" + ResultDescription(result, "FREGetArrayElementAt"))
-      
-      result = FREGetObjectAsUTF8(element, @length, @*string)
-      ;trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-      file = GetShortPathUTF8(*string)
-     
-      If Len(file) > 1
-          If Not DirExists(@file)
-              ;trace(PeekS(*string, fromULong(length) + 1) + " ==> " + file)
-            
+      longPath = GetString(GetArgArrayItem(6, argc, *argv, i))
+      shortPath = GetShortPathUTF8(@longPath)
+      If Len(shortPath) > 1
+          If Not DirExists(@shortPath)
               AddElement(*params\Files())
-              *params\Files() = PeekS(*string, fromULong(length) + 1)
+              *params\Files() = longPath
               
               AddElement(*params\FilesShort())
-              *params\FilesShort() = file
+              *params\FilesShort() = shortPath
           Else
-              trace("file is directory: " + file)
+              trace("shortPath is directory: '" + shortPath + "', longPath=" + longPath)
           EndIf
       EndIf
   Next
   
   CreateThread(@RunExifTool(), *params)
   
-  Define resultObject.l
- 
-  result = FRENewObjectFromBool(toULong(1), @resultObject)
-  trace(ResultDescription(result, "FRENewObjectFromBool"))
-  
-  ProcedureReturn resultObject
+  ProcedureReturn GetNewBool(1)
 EndProcedure
 
 
 ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
-  trace("Invoked GetShortPath, args size:" + Str(fromULong(argc)))
-  
-  Define length.l, *path.Ascii, result.l, path.s, resultObject.l
-  
-  result = FREGetObjectAsUTF8(*argv\object[0], @length, @*path)
-  If(result <> #FRE_OK)
-    ProcedureReturn CreateErrorString(ResultDescription(result, "FREGetObjectAsUTF8"))
-  EndIf
+  OnErrorCall(@ErrorHandler())  
+    
+  Define shortPath.s
+  Define longPath.s = GetArgString(0, argc, *argv)
    
-  path = GetShortPathUTF8(*path)
+  shortPath = GetShortPathUTF8(@longPath)
   
-  If(Len(path) = 1)
-      ProcedureReturn CreateErrorString("GetShortPathEx failed")
+  If(Len(shortPath) = 1)
+      ProcedureReturn GetNewStringUTF8("error: GetShortPathEx failed")
   EndIf    
   
-  result = FRENewObjectFromUTF8(toULong(Len(path)), @path, @resultObject)
-  If(result <> #FRE_OK)
-    ProcedureReturn CreateErrorString(ResultDescription(result, "FREGetObjectAsUTF8"))
-  EndIf
-  
-  ProcedureReturn resultObject
+  ProcedureReturn GetNewStringUTF8(shortPath)
 EndProcedure
 
 
@@ -328,6 +267,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 185
-; FirstLine = 11
+; CursorPosition = 143
+; FirstLine = 106
 ; Folding = --

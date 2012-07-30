@@ -31,11 +31,12 @@ Procedure.s GetShortPathUTF8(*path.Ascii)
     ProcedureReturn ""
   EndIf
   
-  SetLastError_(#ERROR_SUCCESS)
+  ;SetLastError_(#ERROR_SUCCESS)
   pathSize = GetShortPathNameW(*longpath, #Null, 0)
-  If(0 = pathSize Or GetLastError_() <> #ERROR_SUCCESS)
-    FreeMemory(*longpath)
-    ProcedureReturn ""
+  If 0 = pathSize ;Or GetLastError_() <> #ERROR_SUCCESS
+      FreeMemory(*longpath)
+      trace("GetLastError: " + GetErrorMessage())
+      ProcedureReturn ""
   EndIf
   
   *shortpath = AllocateMemory(pathSize * 2 + 1)
@@ -91,6 +92,7 @@ Procedure.l DirExists(*file)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 13
+; CursorPosition = 30
+; FirstLine = 17
 ; Folding = -
 ; EnableXP
