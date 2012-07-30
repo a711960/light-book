@@ -9,7 +9,7 @@ XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
 XIncludeFile "FileUtils.pb"
 
-
+;-- Structure ExifParameters
 Structure ExifParameters
   executable.s    ;path to exiftool.exe
   workingDir.s    ;process working directory
@@ -22,12 +22,15 @@ Structure ExifParameters
   List FilesShort.s()
 EndStructure
 
+
 Procedure.l CreateErrorString(message.s)
     Define result.l, resultObject.l
     Define error.s = "error: " + message
     result = FRENewObjectFromUTF8(toULong(Len(error)), AsciiAlloc(error), @resultObject)
     ProcedureReturn resultObject
 EndProcedure
+
+
 
 Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
 
@@ -180,7 +183,6 @@ EndProcedure
 
 
 
-;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked Execute, args size:" + Str(fromULong(argc)))
 
@@ -234,7 +236,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
       
       result = FREGetObjectAsUTF8(element, @length, @*string)
       ;trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-      file = GetShortPathEx(*string)
+      file = GetShortPathUTF8(*string)
      
       If Len(file) > 1
           If Not DirExists(@file)
@@ -261,7 +263,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   ProcedureReturn resultObject
 EndProcedure
 
-;CDecl
+
 ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked GetShortPath, args size:" + Str(fromULong(argc)))
   
@@ -272,7 +274,7 @@ ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
     ProcedureReturn CreateErrorString(ResultDescription(result, "FREGetObjectAsUTF8"))
   EndIf
    
-  path = GetShortPathEx(*path)
+  path = GetShortPathUTF8(*path)
   
   If(Len(path) = 1)
       ProcedureReturn CreateErrorString("GetShortPathEx failed")
@@ -287,11 +289,7 @@ ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
 EndProcedure
 
 
-
-;CDecl
 ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *functions.Long)
-  trace("create context: " + Str(ctx) + "=" + Utf8ToUnicode(ctxType))
-  
   Define result.l
   
   ;exported extension functions count:
@@ -315,28 +313,21 @@ ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *
   f(1)\function = @GetShortPath()
   
   *functions\l = @f()
-  
-  trace("create context complete");
 EndProcedure
 
-;CDecl
 ProcedureC contextFinalizer(ctx.l)
 EndProcedure 
 
-
-;CDecl
 ProcedureCDLL initializer(extData.l, *ctxInitializer.Long, *ctxFinalizer.Long)
   *ctxInitializer\l = @contextInitializer()
   *ctxFinalizer\l = @contextFinalizer()
 EndProcedure 
 
-
-;CDecl
 ;this method is never called on Windows...
 ProcedureCDLL finalizer(extData.l)
-  ;do nothing
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 9
+; CursorPosition = 185
+; FirstLine = 11
 ; Folding = --

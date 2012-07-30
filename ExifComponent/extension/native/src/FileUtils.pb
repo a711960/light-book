@@ -11,7 +11,7 @@ EndImport
 
 
 ;CDecl
-Procedure.s GetShortPathEx(*path.Ascii)
+Procedure.s GetShortPathUTF8(*path.Ascii)
 
   Define result.l, size.i, pathSize.l, *longpath.Unicode, *shortpath.Unicode
     
@@ -31,8 +31,9 @@ Procedure.s GetShortPathEx(*path.Ascii)
     ProcedureReturn ""
   EndIf
   
+  SetLastError_(#ERROR_SUCCESS)
   pathSize = GetShortPathNameW(*longpath, #Null, 0)
-  If(0 = pathSize)
+  If(0 = pathSize Or GetLastError_() <> #ERROR_SUCCESS)
     FreeMemory(*longpath)
     ProcedureReturn ""
   EndIf
@@ -90,7 +91,6 @@ Procedure.l DirExists(*file)
 EndProcedure
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 89
-; FirstLine = 39
+; CursorPosition = 13
 ; Folding = -
 ; EnableXP
