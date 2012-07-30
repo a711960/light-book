@@ -1,91 +1,13 @@
 ﻿EnableExplicit
 
-XIncludeFile "..\..\..\..\Common\include\Unsigned.pb"
-XIncludeFile "..\..\..\..\Common\include\FlashRuntimeExtensions.pbi"
-XIncludeFile "..\..\..\..\Common\include\Unicode.pb"
+#TRACE_ENABLED = 0
+#TRACE_FILENAME = "ExifComponent.dll"
+
+XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
+
 XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
-
-Import "Kernel32.lib"
-  ;   DWORD WINAPI GetShortPathName(
-  ;     __in   LPCTSTR lpszLongPath,
-  ;     __out  LPTSTR lpszShortPath,
-  ;     __in   DWORD cchBuffer
-  ;   );
-  GetShortPathNameW(path.l, shortpath.l, size.l)
-EndImport
-
-Macro trace(message)
-  ;msg(message);
-EndMacro
-
-Procedure msg(message.s)
-  Define filePath.s{1000}
-  GetModuleFileName_(#Null, @filePath, 1000)
-  Define path.s = GetPathPart(filePath) + "ExifComponent.dll" + ".log"
-  Define file.l = OpenFile(#PB_Any, path)
-  If file <> 0    ; opens an existing file or creates one, if it does not exist yet
-    FileSeek(file, Lof(file))         ; jump to the end of the file (result of Lof() is used)
-    WriteStringN(file, FormatDate("%dd.%mm.%yyyy %hh:%ii:%ss", Date())+ "  " + "ExifComponent.dll" + "  " + message)
-    CloseFile(file)
-  EndIf
-EndProcedure
-
-
-#FILE_ATTRIBUTE_DIRECTORY = $10
-#INVALID_FILE_ATTRIBUTES = -1
-
-Procedure.l DirExists(*file)
-  Define ftyp.l = GetFileAttributes_(*file);
-  If (ftyp = #INVALID_FILE_ATTRIBUTES)
-      ProcedureReturn #False;  //something is wrong with your path!
-  EndIf
-  If (ftyp & #FILE_ATTRIBUTE_DIRECTORY)
-      ProcedureReturn #True;   // this is a directory!
-  EndIf
-  ProcedureReturn #False;    // this is not a directory!
-EndProcedure
-
-
-Procedure.l CreateErrorString(message.s)
-    Define result.l, resultObject.l
-    Define error.s = "error: " + message
-    trace(error)
-    result = FRENewObjectFromUTF8(toULong(Len(error)), AsciiAlloc(error), @resultObject)
-    trace(ResultDescription(result, "FRENewObjectFromUTF8"))
-    ProcedureReturn resultObject
-EndProcedure
-
-
-ProcedureDLL AttachProcess(Instance)
-  ;- This procedure is called once, when the program loads the library
-  ;  for the first time. All init stuffs can be done here (but not DirectX init)
-  Define processID.l = GetCurrentProcessId_()
-
-  trace(#CRLF$)
-  trace(#CRLF$)
-  trace("----------------------------------------------------------------")
-  trace("AttachProcess: " + Str(processID) + ", instance = " + Str(Instance))
-EndProcedure
-
-
-ProcedureDLL DetachProcess(Instance)
-  ;- Called when the program release (free) the DLL
-  trace("DetachProcess: " + Str(Instance))
-  trace("----------------------------------------------------------------")
-EndProcedure
-
-
-;- Both are called when a thread in a program call Or release (free) the DLL
-ProcedureDLL AttachThread(Instance)
-  trace("AttachThread: " + Str(Instance))
-EndProcedure
-
-
-ProcedureDLL DetachThread(Instance)
-  trace("DetachThread: " + Str(Instance))
-EndProcedure
-
+XIncludeFile "FileUtils.pb"
 
 
 Structure ExifParameters
@@ -100,6 +22,12 @@ Structure ExifParameters
   List FilesShort.s()
 EndStructure
 
+Procedure.l CreateErrorString(message.s)
+    Define result.l, resultObject.l
+    Define error.s = "error: " + message
+    result = FRENewObjectFromUTF8(toULong(Len(error)), AsciiAlloc(error), @resultObject)
+    ProcedureReturn resultObject
+EndProcedure
 
 Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
 
@@ -251,73 +179,7 @@ Procedure RunExifTool(*params.ExifParameters)
 EndProcedure
 
 
-;CDecl
-Procedure.s GetShortPathEx(*path.Ascii)
 
-  Define result.l, size.i, pathSize.l, *longpath.Unicode, *shortpath.Unicode
-    
-  size = MultiByteToWideChar_(#CP_UTF8, 0, *path, -1, 0, 0)
-  If(0 = size)
-    ProcedureReturn ""
-  EndIf
-  
-  *longpath.Unicode = AllocateMemory(size * 2)
-  If(0 = *longpath)
-    ProcedureReturn ""
-  EndIf
-  
-  size = MultiByteToWideChar_(#CP_UTF8, 0 , *path, -1, *longpath, size)
-  If(0 = size)
-    FreeMemory(*longpath)
-    ProcedureReturn ""
-  EndIf
-  
-  pathSize = GetShortPathNameW(*longpath, #Null, 0)
-  If(0 = pathSize)
-    FreeMemory(*longpath)
-    ProcedureReturn ""
-  EndIf
-  
-  *shortpath = AllocateMemory(pathSize * 2 + 1)
-  If(0 = *shortpath)
-    FreeMemory(*longpath)
-    ProcedureReturn ""
-  EndIf
-  
-  pathSize = GetShortPathNameW(*longpath, *shortpath, size)
-  If(0 = pathSize)
-    FreeMemory(*longpath)
-    FreeMemory(*shortpath)
-    ProcedureReturn ""
-  EndIf
-  
-  FreeMemory(*longpath)
-    
-  size = WideCharToMultiByte_(#CP_UTF8, 0, *shortpath, pathSize, 0, 0, 0, 0)
-  If(0 = size)
-    FreeMemory(*shortpath)
-    ProcedureReturn ""
-  EndIf
-
-  Define *result = AllocateMemory(size)
-  If(0 = *result)
-    FreeMemory(*shortpath)
-    ProcedureReturn ""
-  EndIf
-  
-  If(0 = WideCharToMultiByte_(#CP_UTF8, 0 , *shortpath, pathSize, *result, size, 0, 0))
-    FreeMemory(*shortpath)
-    ProcedureReturn ""
-  EndIf
-    
-  
-  Define out.s = PeekS(*result, size, #PB_UTF8)
-  FreeMemory(*result)
-  
-  ProcedureReturn out
-EndProcedure
-
- 
 ;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   trace("Invoked Execute, args size:" + Str(fromULong(argc)))
@@ -455,12 +317,10 @@ ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *
   *functions\l = @f()
   
   trace("create context complete");
-EndProcedure 
-
+EndProcedure
 
 ;CDecl
 ProcedureC contextFinalizer(ctx.l)
-  trace("dispose context: " + Str(ctx))
 EndProcedure 
 
 
@@ -478,6 +338,5 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 190
-; FirstLine = 234
-; Folding = ----
+; CursorPosition = 9
+; Folding = --

@@ -32,7 +32,7 @@ package light.book.exif
          */
         public function ExifFault(type:String, code:int, error:ExifError)
         {
-            super(type, false, false);
+            super(type, true, true);
             this.code = code;
             this.error = error;
             this.text = error.toString();
