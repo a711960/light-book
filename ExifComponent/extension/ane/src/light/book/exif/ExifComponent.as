@@ -175,7 +175,7 @@ package light.book.exif
             }
             else
             {
-                dispatchEvent(new ExifFault(ExifFault.FAULT, code, new ExifError("Unexpected error", 1)));
+                dispatchEvent(new ExifFault(ExifFault.FAULT, code, ExifError.UNKNOWN));
             }
         }
 

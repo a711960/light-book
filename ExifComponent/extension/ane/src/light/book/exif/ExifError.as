@@ -17,8 +17,11 @@ package light.book.exif
             7: "Failed to init ICU",
             8: "Exiftool timed out",
             9: "Failed to get file short path name",
-            10: "Failed to convert UCS2 to UTF8"
+            10: "Failed to convert UCS2 to UTF8",
+            100: "Unknown error"
         };
+
+        public static const UNKNOWN:ExifError = new ExifError(ERROR_DESCRIPTIONS[100], 100);
 
         /**
          * @inheritDoc
