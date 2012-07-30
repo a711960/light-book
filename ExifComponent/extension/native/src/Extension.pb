@@ -1,8 +1,23 @@
 ﻿EnableExplicit
 
-#TRACE_ENABLED = 1
+#TRACE_ENABLED = 0
 #TRACE_FILENAME = "ExifComponent.dll"
 
+;-- Error index
+Enumeration
+    #ERR_MBTOWC_FAILED   = 1
+    #ERR_EXECUTE         = 2
+    #ERR_ALLOCATE_MEMORY = 3
+    #ERR_BUFFER_OVERFLOW = 4
+    #ERR_NO_OUTPUT       = 5
+    #ERR_PARSE_OUTPUT    = 6
+    #ERR_ICU_OPEN        = 7
+    #ERR_TIMEOUT         = 8
+    #ERR_GETSPATH_FAILED = 9
+    #ERR_WCTOMB_FAILED   = 10
+EndEnumeration
+
+;-- Uncludes
 XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
 XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
@@ -23,61 +38,87 @@ Structure ExifParameters
 EndStructure
 
 
-Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l)
-
-  Define program.i = RunProgram(executable, parameters, workingDir, flags)
-  If program
-    Define *stdout = AllocateMemory(maxOutput)
-    Define offset.l, size.l
-    
-    ;todo timeout
-    
-    While ProgramRunning(program)
-      Sleep_(100)
-      size = AvailableProgramOutput(program)
-      If(size > 0 And offset + size <= maxOutput)
-          ReadProgramData(program, *stdout + offset, size)
-          offset = offset + size
-      ElseIf (offset + size >= maxOutput)
-          KillProgram(program)
-          trace("kill program")
-      EndIf
-    Wend
-    
-    Define exitCode.l = ProgramExitCode(program)
-    trace("exitCode: " + Str(exitCode))
-    CloseProgram(program) ; Close the connection to the program
-    
-    If offset > 0
-      Define *result = AllocateMemory(offset)
-      CopyMemory(*stdout, *result, offset)
-      FreeMemory(*stdout)
-      ProcedureReturn *result
+Procedure.l GetStdout(executable.s, parameters.s, workingDir.s, flags.l, maxOutput.l, timeout.l)
+    Define program.i = RunProgram(executable, parameters, workingDir, flags)
+    If program
+        Define *stdout = AllocateMemory(maxOutput)
+        
+        If *stdout = 0
+            KillProgram(program)
+            CloseProgram(program)
+            trace("AllocateMemory failed, killing exiftool")
+            ProcedureReturn -#ERR_ALLOCATE_MEMORY
+        EndIf
+        
+        Define offset.l, size.l
+        
+        Define StartTime.l = ElapsedMilliseconds()             
+        
+        While ProgramRunning(program)
+          Sleep_(100)
+          size = AvailableProgramOutput(program)
+          If(size > 0 And offset + size <= maxOutput)
+              ReadProgramData(program, *stdout + offset, size)
+              offset = offset + size
+          ElseIf (offset + size >= maxOutput)
+              KillProgram(program)
+              CloseProgram(program)
+              FreeMemory(*stdout)
+              trace("buffer overrun, killing exiftool")
+              ProcedureReturn -#ERR_BUFFER_OVERFLOW
+          EndIf
+          
+          If(timeout > 0 And ElapsedMilliseconds() - StartTime > timeout) 
+              trace("timeout, killing exiftool")
+              KillProgram(program)
+              CloseProgram(program)
+              FreeMemory(*stdout)
+              ProcedureReturn -#ERR_TIMEOUT
+          EndIf
+        Wend
+        
+        trace("exitCode: " + Str(ProgramExitCode(program)))
+        CloseProgram(program) ; Close the connection to the program
+        
+        If offset > 0
+            Define *result = AllocateMemory(offset)
+            If *result = 0
+                FreeMemory(*stdout)
+                ProcedureReturn -#ERR_ALLOCATE_MEMORY
+            EndIf
+            CopyMemory(*stdout, *result, offset)
+            ProcedureReturn *result
+        Else
+          FreeMemory(*stdout)
+          ProcedureReturn -#ERR_NO_OUTPUT
+        EndIf
     Else
-      FreeMemory(*stdout)
-      ProcedureReturn 0
+        ProcedureReturn -#ERR_EXECUTE
     EndIf
-  Else
-    ProcedureReturn 0
-  EndIf
 EndProcedure
 
 
-Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
+Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s(), *status.Long)
   Define i.l, m.l, prev.l, size.l, index.l, converted.l, name.s, value_size.l, keySize.l
   Define status.l, ucsd.l, ucsm.l, *name, line_begin.l, line.s, value_begin.l, key.s
   Define result.s = ""
   
   ucsd = ucsdet_open_49(@status)
-  
   If ucsd <> 0
       size = MemorySize(*stdout)
       Define *target = AllocateMemory(4096)
+      
+      If *target = 0
+          ucsdet_close_49(ucsd)
+          trace("AllocateMemory failed")
+          *status\l = #ERR_ALLOCATE_MEMORY
+          ProcedureReturn ""
+      EndIf
+      
       For i = 1 To size - 1
         If(PeekB(*stdout + i - 1) = 13 And PeekB(*stdout + i) = 10)
            line_begin = *stdout + prev
            line = PeekS(line_begin, i - prev, #PB_Ascii)
-           
            
            If FindString(line, "=====") > 0
                prev = i + 1
@@ -131,9 +172,14 @@ Procedure.s ParseTags(*stdout, List Files.s(), List FilesShort.s())
       Next
       FreeMemory(*target)
       ucsdet_close_49(ucsd)
-      trace(result)
+      If(Len(result) > 1)
+          *status\l = 0
+      Else
+          *status\l = #ERR_PARSE_OUTPUT
+      EndIf
       ProcedureReturn result
   Else
+      *status\l = #ERR_ICU_OPEN
       ProcedureReturn ""
   EndIf
 EndProcedure
@@ -155,18 +201,19 @@ Procedure RunExifTool(*params.ExifParameters)
         parameters = parameters + #DOUBLEQUOTE$ + *params\FilesShort() + #DOUBLEQUOTE$ + " "
     Next
     
-    Define stdout.l = GetStdout(*params\executable, parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput)
+    Define stdout.l = GetStdout(*params\executable, parameters, *params\workingDir, #PB_Program_Open | #PB_Program_Read | #PB_Program_Hide, *params\maxOutput, *params\timeout)
     
-    If stdout
-        Define result.s = ParseTags(stdout, *params\Files(), *params\FilesShort())
-        If Len(result) > 1
+    If stdout > 0
+        Define status.l
+        Define result.s = ParseTags(stdout, *params\Files(), *params\FilesShort(), @status)
+        If (status = 0)
             DispatchEvent(*params\ctx, Str(*params\code), result)
         Else
-            DispatchEvent(*params\ctx, Str(*params\code), "error: failed to extract metadata")
+            DispatchEvent(*params\ctx, Str(*params\code), "error: " + Str(status))
         EndIf
         FreeMemory(stdout)
     Else
-        DispatchEvent(*params\ctx, Str(*params\code), "error: execution failed")
+        DispatchEvent(*params\ctx, Str(*params\code), "error: " + Str(-stdout))
     EndIf
     FreeMemory(*params)
 EndProcedure
@@ -176,7 +223,7 @@ EndProcedure
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   OnErrorCall(@ErrorHandler())
     
-  Define arraySize.l, i.l, longPath.s, shortPath.s
+  Define arraySize.l, i.l, longPath.s, shortPath.s, status.l
 
   Define *params.ExifParameters = AllocateMemory(SizeOf(ExifParameters))
   InitializeStructure(*params, ExifParameters)
@@ -192,38 +239,45 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   
   For i = 0 To arraySize - 1
       longPath = GetString(GetArgArrayItem(6, argc, *argv, i))
-      shortPath = GetShortPathUTF8(@longPath)
+      shortPath = GetShortPathUTF8(@longPath, @status)
       If Len(shortPath) > 1
-          If Not DirExists(@shortPath)
+          If FileSize(shortPath) >= 0
               AddElement(*params\Files())
               *params\Files() = longPath
               
               AddElement(*params\FilesShort())
               *params\FilesShort() = shortPath
+          ElseIf FileSize(longPath) >= 0
+              trace("shortPath does not exist: '" + shortPath + "', using longPath instead=" + longPath)
+              AddElement(*params\Files())
+              *params\Files() = longPath
+              
+              AddElement(*params\FilesShort())
+              *params\FilesShort() = longPath
           Else
-              trace("shortPath is directory: '" + shortPath + "', longPath=" + longPath)
+               trace("longPath does not exist: " + longPath)
           EndIf
       EndIf
   Next
   
   CreateThread(@RunExifTool(), *params)
   
-  ProcedureReturn GetNewBool(1)
+  ProcedureReturn 0
 EndProcedure
 
 
 ProcedureC.l GetShortPath(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   OnErrorCall(@ErrorHandler())  
     
-  Define shortPath.s
+  Define shortPath.s, status.l
   Define longPath.s = GetArgString(0, argc, *argv)
    
-  shortPath = GetShortPathUTF8(@longPath)
+  shortPath = GetShortPathUTF8(@longPath, @status)
   
-  If(Len(shortPath) = 1)
-      ProcedureReturn GetNewStringUTF8("error: GetShortPathEx failed")
+  If(status <> 0)
+      ProcedureReturn GetNewStringUTF8("error: " + Str(status))
   EndIf    
-  
+ 
   ProcedureReturn GetNewStringUTF8(shortPath)
 EndProcedure
 
@@ -267,6 +321,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 143
-; FirstLine = 106
+; CursorPosition = 75
+; FirstLine = 35
 ; Folding = --

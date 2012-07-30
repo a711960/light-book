@@ -33,6 +33,7 @@ package light.book.exif
          */
         private static const log:ILogger = Log.getLogger(CONTEXT);
 
+
         /**
          * @private
          */
@@ -93,14 +94,9 @@ package light.book.exif
 
             var code:int = Math.round(Math.random() * 100000);
 
-            var result:Boolean = false;
-
             try
             {
-                result = _context.call("execute", code, maxOutput, timeout, executable, parameters, workingDir, filePaths) as Boolean;
-                
-                if(!result)
-                    throw new Error("Execute result: false");
+                _context.call("execute", code, maxOutput, timeout, executable, parameters, workingDir, filePaths);
             }
             catch (e:Error)
             {
@@ -126,9 +122,10 @@ package light.book.exif
             {
                 result = _context.call("GetShortPath", path) as String;
                 
-                if(result && result.indexOf("error:") == 0)
+                if(ExifError.isError(result))
                 {
-                    log.error("Invocation error: " + result);
+                    var exifError:ExifError = ExifError.parseError(result);
+                    log.error(exifError.toString());
                     result = null;
                 }
             }
@@ -150,10 +147,11 @@ package light.book.exif
 
             var result:Array = [];
 
-            if(event.level && event.level.indexOf("error:") == 0)
+            if(ExifError.isError(event.level))
             {
-                log.error("Invocation error: " + event.level);
-                dispatchEvent(new ExifFault(ExifFault.FAULT, code, new ExifError(event.level, 1)));
+                var exifError:ExifError = ExifError.parseError(event.level);
+                log.error(exifError.toString());
+                dispatchEvent(new ExifFault(ExifFault.FAULT, code, exifError));
             }
             else if(event.level)
             {

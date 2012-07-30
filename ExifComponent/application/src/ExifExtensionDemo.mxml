@@ -79,7 +79,12 @@
                 {
                     fileList.push(file.nativePath);
                 }
-                var code:int = extension.execute(programShortPath, fileList, "-s", "", 1048576, -1);
+                var code:int = extension.execute(programShortPath, fileList, "-s", "", 512000, -1);
+                
+                if(code < 0)
+                {
+                    log.error("execution failed");
+                }
             }
         }
 
