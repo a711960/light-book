@@ -41,6 +41,66 @@ Macro trace(message)
   CompilerEndIf
 EndMacro
 
+Procedure ErrorHandler()
+  Define ErrorMessage$
+  ErrorMessage$ = "A program error was detected:" + Chr(13) 
+  ErrorMessage$ + Chr(13)
+  ErrorMessage$ + "Error Message:   " + ErrorMessage()      + Chr(13)
+  ErrorMessage$ + "Error Code:      " + Str(ErrorCode())    + Chr(13)  
+  ErrorMessage$ + "Code Address:    " + Str(ErrorAddress()) + Chr(13)
+ 
+  If ErrorCode() = #PB_OnError_InvalidMemory   
+    ErrorMessage$ + "Target Address:  " + Str(ErrorTargetAddress()) + Chr(13)
+  EndIf
+ 
+  If ErrorLine() = -1
+    ErrorMessage$ + "Sourcecode line: Enable OnError lines support to get code line information." + Chr(13)
+  Else
+    ErrorMessage$ + "Sourcecode line: " + Str(ErrorLine()) + Chr(13)
+    ErrorMessage$ + "Sourcecode file: " + ErrorFile() + Chr(13)
+  EndIf
+ 
+  ErrorMessage$ + Chr(13)
+  ErrorMessage$ + "Register content:" + Chr(13)
+ 
+  CompilerSelect #PB_Compiler_Processor 
+    CompilerCase #PB_Processor_x86
+      ErrorMessage$ + "EAX = " + Str(ErrorRegister(#PB_OnError_EAX)) + Chr(13)
+      ErrorMessage$ + "EBX = " + Str(ErrorRegister(#PB_OnError_EBX)) + Chr(13)
+      ErrorMessage$ + "ECX = " + Str(ErrorRegister(#PB_OnError_ECX)) + Chr(13)
+      ErrorMessage$ + "EDX = " + Str(ErrorRegister(#PB_OnError_EDX)) + Chr(13)
+      ErrorMessage$ + "EBP = " + Str(ErrorRegister(#PB_OnError_EBP)) + Chr(13)
+      ErrorMessage$ + "ESI = " + Str(ErrorRegister(#PB_OnError_ESI)) + Chr(13)
+      ErrorMessage$ + "EDI = " + Str(ErrorRegister(#PB_OnError_EDI)) + Chr(13)
+      ErrorMessage$ + "ESP = " + Str(ErrorRegister(#PB_OnError_ESP)) + Chr(13)
+ 
+    CompilerCase #PB_Processor_x64
+      ErrorMessage$ + "RAX = " + Str(ErrorRegister(#PB_OnError_RAX)) + Chr(13)
+      ErrorMessage$ + "RBX = " + Str(ErrorRegister(#PB_OnError_RBX)) + Chr(13)
+      ErrorMessage$ + "RCX = " + Str(ErrorRegister(#PB_OnError_RCX)) + Chr(13)
+      ErrorMessage$ + "RDX = " + Str(ErrorRegister(#PB_OnError_RDX)) + Chr(13)
+      ErrorMessage$ + "RBP = " + Str(ErrorRegister(#PB_OnError_RBP)) + Chr(13)
+      ErrorMessage$ + "RSI = " + Str(ErrorRegister(#PB_OnError_RSI)) + Chr(13)
+      ErrorMessage$ + "RDI = " + Str(ErrorRegister(#PB_OnError_RDI)) + Chr(13)
+      ErrorMessage$ + "RSP = " + Str(ErrorRegister(#PB_OnError_RSP)) + Chr(13)
+      ErrorMessage$ + "Display of registers R8-R15 skipped."         + Chr(13)
+ 
+    CompilerCase #PB_Processor_PowerPC
+      ErrorMessage$ + "r0 = " + Str(ErrorRegister(#PB_OnError_r0)) + Chr(13)
+      ErrorMessage$ + "r1 = " + Str(ErrorRegister(#PB_OnError_r1)) + Chr(13)
+      ErrorMessage$ + "r2 = " + Str(ErrorRegister(#PB_OnError_r2)) + Chr(13)
+      ErrorMessage$ + "r3 = " + Str(ErrorRegister(#PB_OnError_r3)) + Chr(13)
+      ErrorMessage$ + "r4 = " + Str(ErrorRegister(#PB_OnError_r4)) + Chr(13)
+      ErrorMessage$ + "r5 = " + Str(ErrorRegister(#PB_OnError_r5)) + Chr(13)
+      ErrorMessage$ + "r6 = " + Str(ErrorRegister(#PB_OnError_r6)) + Chr(13)
+      ErrorMessage$ + "r7 = " + Str(ErrorRegister(#PB_OnError_r7)) + Chr(13)
+      ErrorMessage$ + "Display of registers r8-R31 skipped."       + Chr(13)
+  CompilerEndSelect
+ 
+  MessageRequester("Fatal Error", ErrorMessage$)
+EndProcedure
+ 
+
 
 ;-- Error handling
 Procedure.s GetErrorMessage()
@@ -139,9 +199,131 @@ Procedure.l UnicodeToUtf8Alloc(string.s)
   ProcedureReturn *result
 EndProcedure
 
+;-- Extension utils
+#ERROR_ASSERTION_FAILURE = $29C
+
+Procedure.l GetInt32(object.l)
+    Define result.l
+    Define ret.l = FREGetObjectAsInt32(object, @result)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREGetObjectAsInt32"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn result
+EndProcedure
+
+Procedure.l GetArgInt32(index.l, argc.l, *argv.FREObjectArray)
+    If(index >= argc)
+        trace("Error: index out of bounds index=" + Str(index) + ", size=" + Str(argc))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn GetInt32(*argv\object[index])
+EndProcedure
+
+Procedure.s GetString(object.l)
+    Define length.l , *result.Ascii
+    Define ret.l = FREGetObjectAsUTF8(object, @length, @*result)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREGetObjectAsUTF8"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn PeekS(*result, fromULong(length) + 1, #PB_UTF8)
+EndProcedure
+
+Procedure.s GetArgString(index.l, argc.l, *argv.FREObjectArray)
+    If(index >= argc)
+        trace("Error: index out of bounds index=" + Str(index) + ", size=" + Str(argc))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn GetString(*argv\object[index])
+EndProcedure
+
+Procedure.l GetArrayLen(arr.l)
+    Define result.l
+    Define ret.l = FREGetArrayLength(arr, @result)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREGetArrayLength"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn result
+EndProcedure
+
+Procedure.l GetArgArrayLen(index.l, argc.l, *argv.FREObjectArray)
+    If(index >= argc)
+        trace("Error: index out of bounds index=" + Str(index) + ", size=" + Str(argc))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn GetArrayLen(*argv\object[index])
+EndProcedure
+
+Procedure.l GetArrayItem(arr.l, index.l)
+    Define result.l
+    Define ret.l = FREGetArrayElementAt(arr, index, @result)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREGetArrayElementAt"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn result
+EndProcedure
+
+Procedure.l GetArgArrayItem(index.l, argc.l, *argv.FREObjectArray, itemIndex.l)
+    If(index >= argc)
+        trace("Error: index out of bounds index=" + Str(index) + ", size=" + Str(argc))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn GetArrayItem(*argv\object[index], itemIndex)
+EndProcedure
+
+Procedure.l GetNewBool(bool.l)
+    Define resultObject.l
+    Define ret.l = FRENewObjectFromBool(toULong(bool), @resultObject)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FRENewObjectFromBool"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn resultObject
+EndProcedure
+
+Procedure.l GetNewStringUTF8(message.s)
+    Define ret.l, resultObject.l
+    ret = FRENewObjectFromUTF8(toULong(Len(message)), AsciiAlloc(message), @resultObject)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FRENewObjectFromUTF8"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn resultObject
+EndProcedure
+
+Procedure DispatchEvent(ctx.l, code.s, level.s)
+    Define ret.l
+    ret = FREDispatchStatusEventAsync(ctx, AsciiAlloc(code), AsciiAlloc(level))
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREDispatchStatusEventAsync"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+EndProcedure
+
+;      result = FREGetArrayElementAt(*argv\object[6], i, @element)
+
+; argc.l, *argv.FREObjectArray
+;   result = FREGetObjectAsInt32(*argv\object[0], @code)
+;   result = FREGetObjectAsInt32(*argv\object[1], @maxOutput)
+;   result = FREGetObjectAsInt32(*argv\object[2], @timeout)
+;   
+;   result = FREGetObjectAsUTF8(*argv\object[3], @length, @*string)
+;   executable = PeekS(*string, fromULong(length) + 1)
+;   
+;   result = FREGetObjectAsUTF8(*argv\object[4], @length, @*string)
+;   parameters = PeekS(*string, fromULong(length) + 1)
+;   
+;   result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
+;   workingDir = PeekS(*string, fromULong(length) + 1)
+;   
+;   result = FREGetArrayLength(*argv\object[6], @arraySize)
 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 25
-; Folding = ---
+; CursorPosition = 296
+; FirstLine = 262
+; Folding = -----
 ; EnableXP
