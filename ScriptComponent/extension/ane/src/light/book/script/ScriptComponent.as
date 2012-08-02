@@ -155,13 +155,13 @@ package light.book.script
                 var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
                 if (ScriptError.isError(resultObject))
                 {
-                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, ScriptError.parseError(resultObject)));
+                    throw ScriptError.parseError(resultObject);
                 }
             }
             catch (e:Error)
             {
-                log.error("Serialization error: {0}: {1}", e.errorID, e.message);
-                resultObject = {Class:"error", number:1};
+                log.error("Error: {0}: {1}", e.errorID, e.message);
+                code = -1;
             }
             return code;
         }
@@ -191,7 +191,7 @@ package light.book.script
             catch (e:Error)
             {
                 log.error("Serialization error: {0}: {1}", e.errorID, e.message);
-                resultObject = {Class:"error", number:1};
+                resultObject = {Class:"error", number:200};
             }
             if (ScriptError.isError(resultObject))
             {
@@ -216,7 +216,7 @@ package light.book.script
             catch(e:Error)
             {
                 log.error("Deserialization error: {0}: {1}", e.errorID, e.message);
-                resultObject = {Class: "error", number: 1};
+                resultObject = {Class: "error", number: 200};
             }
             if(ScriptError.isError(resultObject))
             {

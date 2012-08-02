@@ -23,7 +23,8 @@ package light.book.script
             2: "Failed to create BSTR",
             3: "Failed to create MS ScriptControl",
             4: "Failed to create script object",
-            100: "Unknown error"
+            100: "Unknown error",
+            200: "Serialization error"
             };
         /**
          * Error line
