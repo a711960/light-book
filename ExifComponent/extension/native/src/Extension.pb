@@ -1,6 +1,6 @@
 ﻿EnableExplicit
 
-#TRACE_ENABLED = 0
+#TRACE_ENABLED = 1
 #TRACE_FILENAME = "ExifComponent.dll"
 
 ;-- Error index
@@ -17,7 +17,7 @@ Enumeration
     #ERR_WCTOMB_FAILED   = 10
 EndEnumeration
 
-;-- Uncludes
+;-- Includes
 XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
 XIncludeFile "..\..\..\..\Common\include\icuin.pbi"
 XIncludeFile "..\..\..\..\Common\include\icuuc.pbi"
@@ -321,6 +321,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 75
-; FirstLine = 35
+; CursorPosition = 78
+; FirstLine = 27
 ; Folding = --
