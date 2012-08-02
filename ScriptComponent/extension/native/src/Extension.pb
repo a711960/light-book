@@ -1,21 +1,7 @@
 ﻿EnableExplicit
 
-Macro trace(message)
-  ;msg(message);
-EndMacro
-
-Procedure msg(message.s)
-  Define filePath.s{1000}
-  GetModuleFileName_(#Null, @filePath, 1000)
-  Define path.s = GetPathPart(filePath) + "ScriptComponent.dll" + ".log"
-  Define file.l = OpenFile(#PB_Any, path)
-  If file <> 0    ; opens an existing file or creates one, if it does not exist yet
-    FileSeek(file, Lof(file))         ; jump to the end of the file (result of Lof() is used)
-    WriteStringN(file, FormatDate("%dd.%mm.%yyyy %hh:%ii:%ss", Date())+ "  " + "ScriptComponent.dll" + "  " + message)
-    CloseFile(file)
-  EndIf
-EndProcedure
-
+#TRACE_ENABLED = 1
+#TRACE_FILENAME = "ScriptComponent.dll"
 
 DataSection
   jsonVBS : IncludeBinary "VbsJson.vbs" 
@@ -24,53 +10,10 @@ DataSection
   Data.s Chr(0);null-terminator
 EndDataSection 
 
-XIncludeFile "Unsigned.pb"
-XIncludeFile "Unicode.pb"
-XIncludeFile "Logger.pb"
-XIncludeFile "FlashRuntimeExtensions.pbi"
+;-- Includes
+XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
 XIncludeFile "ScriptControl.pb"
 XIncludeFile "Object.pb"
-
-
-ProcedureDLL AttachProcess(Instance)
-  ;- This procedure is called once, when the program loads the library
-  ;  for the first time. All init stuffs can be done here (but not DirectX init)
-  Define processID.l = GetCurrentProcessId_()
-
-  trace(#CRLF$)
-  trace(#CRLF$)
-  trace("----------------------------------------------------------------")
-  trace("AttachProcess: " + Str(processID) + ", instance = " + Str(Instance))
-EndProcedure
-
-
-ProcedureDLL DetachProcess(Instance)
-  ;- Called when the program release (free) the DLL
-  trace("DetachProcess: " + Str(Instance))
-  trace("----------------------------------------------------------------")
-EndProcedure
-
-
-;- Both are called when a thread in a program call Or release (free) the DLL
-ProcedureDLL AttachThread(Instance)
-  trace("AttachThread: " + Str(Instance))
-EndProcedure
-
-
-ProcedureDLL DetachThread(Instance)
-  trace("DetachThread: " + Str(Instance))
-EndProcedure
-
-
-Procedure ErrorHandler()
-  Define ErrorMessage$ = "A program error was detected:" + Chr(13) 
-  ErrorMessage$ + Chr(13)
-  ErrorMessage$ + "Error Message:   " + ErrorMessage()      + Chr(13)
-  ErrorMessage$ + "Error Code:      " + Str(ErrorCode())    + Chr(13)  
-  ErrorMessage$ + "Code Address:    " + Str(ErrorAddress()) + Chr(13)
-  trace(ErrorMessage$)
-EndProcedure
-
 
 Structure ScriptParameters
   hwnd.l
@@ -214,6 +157,8 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   result = FREGetObjectAsUTF8(*argv\object[6], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
   jsonData = PeekS(*string, fromULong(length) + 1)
+;jsonData = GetArgString(6, argc, *argv)
+
   
   result = FREGetObjectAsUTF8(*argv\object[7], @length, @*string)
   trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
@@ -307,6 +252,5 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 217
-; FirstLine = 189
-; Folding = ---
+; CursorPosition = 158
+; Folding = --
