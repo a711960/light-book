@@ -29,7 +29,15 @@ package light.book.script
          * Error line
          */
         public var line:Number = 0;
+
+        /**
+         * Script error number
+         */
         public var scripterror:Number = 0;
+
+        /**
+         * Script error description
+         */
         public var description:String = "";
 
         /**

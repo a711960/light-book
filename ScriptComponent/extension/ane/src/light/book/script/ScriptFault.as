@@ -26,9 +26,9 @@ package light.book.script
 
         /**
          * Constructor
-         * @param type
-         * @param code
-         * @param error
+         * @param type event type
+         * @param code script id
+         * @param error script error object
          */
         public function ScriptFault(type:String, code:int, error:ScriptError)
         {
