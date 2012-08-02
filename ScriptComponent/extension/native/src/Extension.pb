@@ -1,7 +1,16 @@
 ﻿EnableExplicit
 
-#TRACE_ENABLED = 1
+#TRACE_ENABLED = 0
 #TRACE_FILENAME = "ScriptComponent.dll"
+
+;-- Error index
+Enumeration
+    #ERR_SUCCESS         = 0
+    #ERR_SCRIPT_ERROR    = 1
+    #ERR_CREATE_BSTR     = 2
+    #ERR_CREATE_MSSC     = 3
+    #ERR_CREATE_OBJ      = 4
+EndEnumeration
 
 ;-- Includes
 XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
@@ -34,89 +43,77 @@ EndStructure
 Procedure.s ExecuteScript(*params.ScriptParameters)
     
   OnErrorCall(@ErrorHandler())
-    
-  Define request.s = Str(*params\code)
-  
-  trace("[" + request + "] Prepared To run script")
-
   Define resultString.s
   
   ;Create Control
   Define *control.IScript = NewScript()
-  trace("[" + request + "] Initialized ScriptComponent")
-  
+  If(*control = 0)
+      ProcedureReturn ErrorJSON(#ERR_CREATE_MSSC, 0, 0, "Failed to create BSTR")
+  EndIf
+
   Define jsonParser.s
   
   ;Set timeout
   *control\SetTimeOut(*params\timeout)
-  trace("[" + request + "] ScriptComponent timeout=" + Str(*params\timeout))
   
   ;Set allow UI
   *control\SetAllowUI(*params\allowUI)
-  trace("[" + request + "] ScriptComponent allowUI=" + Str(*params\allowUI))
   
   ;Set use safe subset
   *control\SetUseSafeSubset(*params\safeSubset)
-  trace("[" + request + "] ScriptComponent safeSubset=" + Str(*params\safeSubset))
   
   ;Set Script Language
   If(*params\vbs)
     *control\SetLanguage("VBScript")
-    trace("[" + request + "] ScriptComponent language=VBScript")
     jsonParser = PeekS(?jsonVBS, -1, #PB_UTF16)
   Else
     *control\SetLanguage("JScript")
-    trace("[" + request + "] ScriptComponent language=JScript")
     jsonParser = PeekS(?jsonJS, -1, #PB_UTF16)
   EndIf
   
   Define *parameters.objObject, jsonData.s
   *parameters = NewObject()
-  jsonData = Utf8ToUnicode(*params\jsonData)
-  trace("[" + request + "] ScriptComponent jsonData: " + #CRLF$ + jsonData)
-  
-  Define *arguments.VARIANT
-  *arguments = AddMapElement(*parameters\Values(), "arguments")
-  Define hRes.l = VariantInit_(*arguments)
-  If #S_OK <> hRes
-    trace("Failed to create BSTR");
-    resultString = ErrorJSON(2, 0)
+  If(*parameters = 0)
+      trace("Failed to create objObject");
+      resultString = ErrorJSON(#ERR_CREATE_OBJ, 0, 0, "Failed to create BSTR")
   Else
-    *arguments\vt = #VT_BSTR
-    *arguments\bstrVal = T_BSTR(jsonData)
-    *control\AddObject("parameters", *parameters)
-    ;trace("[" + request + "] ScriptComponent parser: " + #CRLF$ + jsonParser)
-    
-    ;Add Script to Control
-    Define r.l = *control\AddCode(jsonParser)
-    If r <> #S_OK
-      resultString = *control\GetError()
-      trace("Failed to add json parser: " + resultString)
-    Else
-      trace("[" + request + "] ScriptComponent loaded JSON parser")
+      jsonData = Utf8ToUnicode(*params\jsonData)
       
-      Define parsedArgs.l = *control\EvalLong("InitScript()")
-      
-      If (parsedArgs = 1)
-        ;trace("[" + request + "] ScriptComponent script: " + #CRLF$ + Utf8ToUnicode(*params\script))
+      Define *arguments.VARIANT
+      *arguments = AddMapElement(*parameters\Values(), "arguments")
+      Define hRes.l = VariantInit_(*arguments)
+      If #S_OK <> hRes
+        trace("Failed to create BSTR");
+        resultString = ErrorJSON(#ERR_CREATE_BSTR, 0, 0, "Failed to create BSTR")
+      Else
+        *arguments\vt = #VT_BSTR
+        *arguments\bstrVal = T_BSTR(jsonData)
+        *control\AddObject("parameters", *parameters)
+        
         ;Add Script to Control
-        r = *control\AddCode(Utf8ToUnicode(*params\script))
+        Define r.l = *control\AddCode(jsonParser)
         If r <> #S_OK
           resultString = *control\GetError()
-          trace("Failed to execute plugin: " + resultString)
+          trace("Failed to add json parser: " + resultString)
         Else
-          trace("[" + request + "] ScriptComponent executed plugin")
-          ;Get value of variable "result" 
-          resultString.s = *control\EvalStr("result")
-          trace("result = " + resultString)
+          If (*control\EvalLong("InitScript()") = 1)
+            ;Add Script to Control
+            r = *control\AddCode(Utf8ToUnicode(*params\script))
+            If r <> #S_OK
+              resultString = *control\GetError()
+              trace("Failed to execute script")
+            Else
+              ;Get value of variable "result" 
+              resultString.s = *control\EvalStr("result")
+            EndIf
+          Else
+             trace("ScriptComponent InitScript() function failed")
+             resultString = *control\GetError()
+          EndIf
         EndIf
-      Else
-         trace("[" + request + "] ScriptComponent InitScript() function")
-         resultString = *control\GetError()
-      EndIf
-    EndIf
-    VariantClear_(*arguments)
-  EndIf 
+        VariantClear_(*arguments)
+       EndIf 
+   EndIf
   
   ;Destroy Control
   *control\Release()
@@ -147,7 +144,7 @@ ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
   *params\allowUI = GetArgBool(4, argc, *argv)
   *params\safeSubset = GetArgBool(5, argc, *argv)
   
-  Define resultString.s = ErrorJSON(0, 0)
+  Define resultString.s = ErrorJSON(#ERR_SUCCESS, 0, 0, "")
   
   If(GetArgBool(1, argc, *argv))
     CreateThread(@RunScript(), *params)
@@ -201,5 +198,6 @@ ProcedureCDLL finalizer(extData.l)
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 40
+; CursorPosition = 79
+; FirstLine = 66
 ; Folding = --

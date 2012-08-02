@@ -9,6 +9,7 @@ package light.book.script
 
     import mx.logging.ILogger;
     import mx.logging.Log;
+    import mx.utils.ObjectUtil;
 
     /**
      * Script was executed with errors
@@ -106,7 +107,7 @@ package light.book.script
             return _context != null;
         }
 
-        private static const ERROR_JSON:String = '{"line":0, "number":1, "Class":"error"}';
+        private static const ERROR_JSON:String = '{"line":0, "number":100, "scripterror":0, "Class":"error"}';
 
         /**
          * @private
@@ -154,7 +155,7 @@ package light.book.script
                 var resultObject:Object = by.blooddy.crypto.serialization.JSON.decode(result);
                 if (ScriptError.isError(resultObject))
                 {
-                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
+                    dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, ScriptError.parseError(resultObject)));
                 }
             }
             catch (e:Error)
@@ -194,7 +195,7 @@ package light.book.script
             }
             if (ScriptError.isError(resultObject))
             {
-                throw new ScriptError(resultObject);
+                throw ScriptError.parseError(resultObject);
             }
             return resultObject;
         }
@@ -219,7 +220,7 @@ package light.book.script
             }
             if(ScriptError.isError(resultObject))
             {
-                dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, new ScriptError(resultObject)));
+                dispatchEvent(new ScriptFault(ScriptFault.FAULT, code, ScriptError.parseError(resultObject)));
             }
             else
             {

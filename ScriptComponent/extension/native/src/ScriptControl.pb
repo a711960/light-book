@@ -512,12 +512,13 @@ Procedure.l SCtr__GetUseSafeSubset(*This.Script)
   ProcedureReturn value
 EndProcedure
 
-Procedure.s ErrorJSON(number.l, line.l)
-  Define template.s = "{'line':{line}, 'number':{number}, 'Class':'error'}"
+Procedure.s ErrorJSON(number.l, scriptError.l, line.l, description.s)
+  Define template.s = "{'line':{line}, 'number':{number}, 'scripterror':{scripterror}, 'Class':'error', 'description':'{description}'}"
   template= ReplaceString(template, "'", #DOUBLEQUOTE$)
   template= ReplaceString(template, "{line}", Str(line))
   template= ReplaceString(template, "{number}", Str(number))
- 
+  template= ReplaceString(template, "{description}", description)
+  template= ReplaceString(template, "{scripterror}", Str(scriptError))
   ProcedureReturn template
 EndProcedure
 
@@ -526,19 +527,29 @@ EndProcedure
 Procedure.s SCtr__GetError(*This.Script)
 ;- The last error reported by the scripting engine
   Protected ScriptError.IScriptError
-  Protected Line.l, Result.s, number.l
+  Protected Line.l, Result.s, number.l, Description, DescriptionText.s
   If *This\ScriptControl\get_Error(@ScriptError) = #S_OK
     ScriptError\get_Line(@Line)
     ScriptError\get_Number(@number)
+    If ScriptError\get_Description(@Description) = #S_OK
+      If Description
+        DescriptionText = PeekS(Description)
+      Else
+        DescriptionText = "No Error"
+      EndIf
+    Else
+      DescriptionText = "get_Description failed"
+    EndIf    
     ScriptError\Clear()
     ScriptError\Release()
     
-    Result = ErrorJSON(number, Line)
+    Result = ErrorJSON(#ERR_SCRIPT_ERROR, number, Line, DescriptionText)
   Else
-    Result = ErrorJSON(1, 0)
+    Result = ErrorJSON(#ERR_SUCCESS, 0, 0, "No Error")
   EndIf
   ProcedureReturn Result
 EndProcedure
+
 
 
 
@@ -627,7 +638,7 @@ DataSection
     Data.i @SCtr__GetError()
 EndDataSection
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 508
-; FirstLine = 562
+; CursorPosition = 547
+; FirstLine = 527
 ; Folding = ------
 ; EnableXP
