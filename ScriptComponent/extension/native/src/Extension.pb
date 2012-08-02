@@ -3,6 +3,12 @@
 #TRACE_ENABLED = 1
 #TRACE_FILENAME = "ScriptComponent.dll"
 
+;-- Includes
+XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
+XIncludeFile "ScriptControl.pb"
+XIncludeFile "Object.pb"
+
+;-- JSon parsers
 DataSection
   jsonVBS : IncludeBinary "VbsJson.vbs" 
   Data.s Chr(0);null-terminator
@@ -10,10 +16,6 @@ DataSection
   Data.s Chr(0);null-terminator
 EndDataSection 
 
-;-- Includes
-XIncludeFile "..\..\..\..\Common\include\ExtensionBase.pb"
-XIncludeFile "ScriptControl.pb"
-XIncludeFile "Object.pb"
 
 Structure ScriptParameters
   hwnd.l
@@ -27,14 +29,16 @@ Structure ScriptParameters
   safeSubset.l
 EndStructure
 
+
 ; Returns Unicode JSON string
 Procedure.s ExecuteScript(*params.ScriptParameters)
+    
+  OnErrorCall(@ErrorHandler())
+    
   Define request.s = Str(*params\code)
   
   trace("[" + request + "] Prepared To run script")
-  
-  OnErrorCall(@ErrorHandler())
-  
+
   Define resultString.s
   
   ;Create Control
@@ -123,91 +127,40 @@ EndProcedure
  
 Procedure RunScript(*params.ScriptParameters)
   Define result.s = ExecuteScript(*params)
-  Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @result, -1, 0, 0, 0, 0)
-  Define eventResult.l = FREDispatchStatusEventAsync(*params\ctx, AsciiAlloc(Str(*params\code)), UnicodeToUtf8Alloc(result))
-  trace (ResultDescription(eventResult, "FREDispatchStatusEventAsync"))
+  DispatchEventEx(*params\ctx, AsciiAlloc(Str(*params\code)), UnicodeToUtf8Alloc(result))
   FreeMemory(*params)
 EndProcedure
 
  
 ;CDecl
 ProcedureC.l Execute(ctx.l, funcData.l, argc.l, *argv.FREObjectArray)
-  trace("Invoked Execute, args size:" + Str(fromULong(argc)))
+  OnErrorCall(@ErrorHandler())  
 
-  Define result.l, length.l, async.l, jsonData.s, script.s, *string.Ascii, code.l, vbs.l, timeout.l, allowUI.l, safeSubset.l
-  
-  result = FREGetObjectAsInt32(*argv\object[0], @code)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
- 
-  result = FREGetObjectAsBool(*argv\object[1], @async)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
-  
-  result = FREGetObjectAsBool(*argv\object[2], @vbs)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
-  
-  result = FREGetObjectAsInt32(*argv\object[3], @timeout)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsInt32"))
-  
-  result = FREGetObjectAsBool(*argv\object[4], @allowUI)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
-  
-  result = FREGetObjectAsBool(*argv\object[5], @safeSubset)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsBool"))
-  
-  result = FREGetObjectAsUTF8(*argv\object[6], @length, @*string)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  jsonData = PeekS(*string, fromULong(length) + 1)
-;jsonData = GetArgString(6, argc, *argv)
-
-  
-  result = FREGetObjectAsUTF8(*argv\object[7], @length, @*string)
-  trace("result=" + ResultDescription(result, "FREGetObjectAsUTF8"))
-  script = PeekS(*string, fromULong(length) + 1)
-  
-  trace("Argument: code=" + Str(code))
-  trace("Argument: async=" + Str(fromULong(async)))
-  trace("Argument: timeout=" + Str(timeout))
-  trace("Argument: timeout=" + Str(allowUI))
-  trace("Argument: isVBScript=" + Str(vbs))
-  trace("Argument: jsonData=" + Utf8ToUnicode(jsonData))
-  trace("Argument: script=" + Utf8ToUnicode(script))
-  
-  
   Define *params.ScriptParameters = AllocateMemory(SizeOf(ScriptParameters))
   *params\ctx = ctx
-  *params\code = code
+  *params\code = GetArgInt32(0, argc, *argv)
   *params\hwnd = 0 ;todo
-  *params\script = script
-  *params\jsonData = jsonData
-  *params\vbs = vbs
-  *params\timeout = timeout
-  *params\allowUI = allowUI
-  *params\safeSubset = safeSubset
+  *params\script = GetArgString(7, argc, *argv)
+  *params\jsonData = GetArgString(6, argc, *argv)
+  *params\vbs = GetArgBool(2, argc, *argv)
+  *params\timeout = GetArgInt32(3, argc, *argv)
+  *params\allowUI = GetArgBool(4, argc, *argv)
+  *params\safeSubset = GetArgBool(5, argc, *argv)
   
   Define resultString.s = ErrorJSON(0, 0)
   
-  If(async)
-    trace("execute async")
+  If(GetArgBool(1, argc, *argv))
     CreateThread(@RunScript(), *params)
   Else
-    trace("execute sync")
     resultString = ExecuteScript(*params)
   EndIf
 
-  Define resultObject.l
-  Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @resultString, -1, 0, 0, 0, 0)
-  
-  result = FRENewObjectFromUTF8(toULong(size), UnicodeToUtf8Alloc(resultString), @resultObject)
-  trace(ResultDescription(result, "FRENewObjectFromUTF8"))
-  
-  ProcedureReturn resultObject
+  ProcedureReturn GetNewStringWC(resultString)
 EndProcedure
 
 
 ;CDecl
 ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *functions.Long)
-  trace("create context: " + Str(ctx) + "=" + Utf8ToUnicode(ctxType))
-  
   Define result.l
   
   ;exported extension functions count:
@@ -227,14 +180,11 @@ ProcedureC contextInitializer(extData.l, ctxType.s, ctx.l, *numFunctions.Long, *
   f(0)\function = @Execute()
   
   *functions\l = @f()
-  
-  trace("create context complete");
 EndProcedure 
 
 
 ;CDecl
 ProcedureC contextFinalizer(ctx.l)
-  trace("dispose context: " + Str(ctx))
 EndProcedure 
 
 
@@ -248,9 +198,8 @@ EndProcedure
 ;CDecl
 ;this method is never called on Windows...
 ProcedureCDLL finalizer(extData.l)
-  ;do nothing
 EndProcedure 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 158
+; CursorPosition = 40
 ; Folding = --

@@ -10,12 +10,12 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2012-08-02 21:01" user="Dookie" host="BANANAS"/>
+    <lastopen date="2012-08-02 23:02" user="Dookie" host="BANANAS"/>
   </section>
   <section name="files">
     <file name="Extension.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="ffb222c4dad5f6702a6844fe37a8839c"/>
+      <fingerprint md5="88e8c51f4149592fcfb9f9f41736ce5b"/>
     </file>
     <file name="Unicode.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -44,8 +44,8 @@
       <temporaryexe value="source"/>
       <format exe="dll" cpu="5"/>
       <warnings custom="1" type="display"/>
-      <compilecount enable="1" value="353"/>
-      <buildcount enable="1" value="351"/>
+      <compilecount enable="1" value="367"/>
+      <buildcount enable="1" value="365"/>
       <execonstant enable="1"/>
       <versioninfo enable="1">
         <field0 value="0,0,1,0"/>

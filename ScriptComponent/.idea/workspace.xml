@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="0f2f565a-927f-4b98-99a8-7a14e35e223d" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ScriptComponent\extension\native\src\Logger.pb" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ScriptComponent\extension\native\src\Unicode.pb" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ScriptComponent\extension\native\src\Unsigned.pb" afterPath="" />
-      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ScriptComponent\extension\native\src\FlashRuntimeExtensions.pbi" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pb" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pbp" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pbp" />
@@ -87,14 +83,6 @@
                 <marker date="1343166982353" expanded="false" signature="272:669" placeholder="..." />
                 <marker date="1343166982353" expanded="true" signature="877:889" placeholder="..." />
                 <marker date="1343166982353" expanded="true" signature="900:1443" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="1594:1680" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="1749:1856" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="1916:1960" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="2026:3184" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="2344:2590" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="2620:3174" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="2703:2990" placeholder="{...}" />
-                <marker date="1343166982353" expanded="true" signature="3044:3117" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -112,7 +100,7 @@
       <file leaf-file-name="Extension.pb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="154" column="83" selection-start="4960" selection-end="4960" vertical-scroll-proportion="0.67480916">
+            <state line="158" column="40" selection-start="4567" selection-end="4567" vertical-scroll-proportion="-0.0015243902">
               <folding />
             </state>
           </provider>
@@ -193,7 +181,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -300,7 +288,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -513,8 +501,10 @@
       </method>
     </configuration>
     <configuration default="false" name="ScripComponentDemo" type="AirRunConfigurationType" factoryName="AIR" adl_options="-extdir C:\Dev\light-book\trunk\ScriptComponent\application\extensions\unpacked" air_descriptor_path="$PROJECT_DIR$/application/air-manifest.xml" air_program_params="-profile extendedDesktop" air_publisher_id="" air_root_dir_path="$PROJECT_DIR$/application" air_run_mode="AppDescriptor" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="ScriptComponent" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://">
+      <RunnerSettings RunnerId="FlexDebugRunner" />
       <RunnerSettings RunnerId="FlexRunner" />
       <RunnerSettings RunnerId="Profile" />
+      <ConfigurationWrapper RunnerId="FlexDebugRunner" />
       <ConfigurationWrapper RunnerId="FlexRunner" />
       <method>
         <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="before.run" />
@@ -588,7 +578,7 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15955175" sideWeight="0.67070484" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="jenkinsBrowser" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39977974" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -602,8 +592,8 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15955175" sideWeight="0.7488987" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25110132" sideWeight="0.99907064" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15848452" sideWeight="0.75" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.99907064" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -735,7 +725,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/src/ScriptExtensionDemo.mxml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="38" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0" />
+        <state line="35" column="38" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1343166982353" expanded="false" signature="272:669" placeholder="..." />
+            <marker date="1343166982353" expanded="true" signature="877:889" placeholder="..." />
+            <marker date="1343166982353" expanded="true" signature="900:1443" placeholder="{...}" />
+          </folding>
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/script/ScriptError.as">
@@ -754,7 +750,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="154" column="83" selection-start="4960" selection-end="4960" vertical-scroll-proportion="0.67480916">
+        <state line="158" column="40" selection-start="4567" selection-end="4567" vertical-scroll-proportion="-0.0015243902">
           <folding />
         </state>
       </provider>
