@@ -65,7 +65,6 @@
 
     <target name="build.all" description="Build all modules and create application installer">
         <available file="${env.AIR_SDK_HOME}" property="sdk.set"/>
-
         <fail message="AIR_SDK_HOME is not set or does not exist (${env.AIR_SDK_HOME})">
             <condition>
                 <not>
@@ -75,7 +74,6 @@
         </fail>
 
         <available file="${env.CLUCENE}" property="clucene.set"/>
-
         <fail message="CLUCENE is not set or does not exist (${env.CLUCENE})">
             <condition>
                 <not>
@@ -86,6 +84,7 @@
 
         <info title="Build all" description="Build all modules and create application installer"/>
         <echo message="AIR_SDK_HOME: ${sdk.dir}"/>
+        <echo message="     CLUCENE: ${env.CLUCENE}"/>
         <echo message="    PLATFORM: ${platform}"/>
         <echo message="    warnings: ${warnings}"/>
         <echo message="       debug: ${debug}"/>
