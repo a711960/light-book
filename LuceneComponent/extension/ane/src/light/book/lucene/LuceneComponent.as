@@ -90,7 +90,7 @@ package light.book.lucene
         public function test():Boolean
         {
             if (!contextCreated)
-                return -1;
+                return false;
 
             var result:Boolean = false;
 

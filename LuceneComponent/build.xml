@@ -212,7 +212,6 @@
         <delete file="${doc.dir}"/>
         <exec executable="${aasdoc}" failonerror="true">
             <arg line="-output ${doc.dir}"/>
-            <arg line="-library-path+=${ane.lib.dir}/blooddy_crypto.swc"/>
             <arg line="--doc-sources=${ane.src.dir}"/>
         </exec>
     </target>

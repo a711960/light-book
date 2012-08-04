@@ -4,7 +4,7 @@ package light.book.lucene
     import flash.events.Event;
 
     /**
-     * Exiftool was executed with errors (exitCode <> 0 or error tag)
+     * Exiftool was executed with errors (exitCode != 0 or error tag)
      */
     public class ExifFault extends ErrorEvent
     {
