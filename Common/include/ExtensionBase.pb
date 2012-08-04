@@ -1,5 +1,7 @@
 ﻿EnableExplicit
 
+#ERROR_ASSERTION_FAILURE = $29C
+
 XIncludeFile "..\..\..\..\Common\include\FlashRuntimeExtensions.pbi"
 
 ;-- Dll
@@ -24,15 +26,45 @@ EndProcedure
 
 ;-- Debug
 Procedure msg(message.s)
-  Define filePath.s{1000}
-  GetModuleFileName_(#Null, @filePath, 1000)
-  Define path.s = GetPathPart(filePath) + #TRACE_FILENAME + ".log"
-  Define file.l = OpenFile(#PB_Any, path)
-  If file <> 0    ; opens an existing file or creates one, if it does not exist yet
-    FileSeek(file, Lof(file))         ; jump to the end of the file (result of Lof() is used)
-    WriteStringN(file, FormatDate("%dd.%mm.%yyyy %hh:%ii:%ss", Date())+ "  " + #TRACE_FILENAME + "  " + message)
-    CloseFile(file)
-  EndIf
+    Define handle.l = 0
+    Define grabbed.l = 0
+    While(grabbed = 0)
+        handle = CreateMutex_(#Null, #True, @"book-log")  
+        If(#ERROR_ALREADY_EXISTS = handle)
+            ;try
+            handle = OpenMutex_(#SYNCHRONIZE, #False, @"book-log")
+            If(#ERROR_FILE_NOT_FOUND = handle)
+                Continue
+            ElseIf (handle <> 0)
+                grabbed = 1
+            Else
+                ;failure
+                Break
+            EndIf
+        ElseIf(handle = 0)
+            ;failure
+            Break
+        Else
+            ;granted
+            grabbed = 1
+        EndIf
+    Wend
+    
+      
+    Define filePath.s{1000}
+    GetModuleFileName_(#Null, @filePath, 1000)
+    Define path.s = GetPathPart(filePath) + "light-book.log"
+    Define file.l = OpenFile(#PB_Any, path)
+    If file <> 0    ; opens an existing file or creates one, if it does not exist yet
+        FileSeek(file, Lof(file))         ; jump to the end of the file (result of Lof() is used)
+        WriteStringN(file, FormatDate("%dd.%mm.%yyyy %hh:%ii:%ss", Date())+ "  " + #TRACE_FILENAME + "  " + message)
+        CloseFile(file)
+    EndIf
+    
+    If(grabbed)
+        ReleaseMutex_(handle)
+        CloseHandle_(handle)
+    EndIf
 EndProcedure
 
 Macro trace(message)
@@ -110,6 +142,10 @@ Procedure.s GetErrorMessage()
    If error
       Define *Memory, length.l
       *Memory = AllocateMemory(255)
+      If(*Memory = 0)
+          trace("Error: AllocateMemory")
+          RaiseError(#ERROR_ASSERTION_FAILURE)
+      EndIf
       length = FormatMessage_(#FORMAT_MESSAGE_FROM_SYSTEM, #Null, error, 0, *Memory, 255, #Null)
       If length > 1 ; Some error messages are "" + Chr (13) + Chr (10)... stoopid M$... :(
          err_msg$ = PeekS(*Memory, length - 2)
@@ -168,17 +204,34 @@ Procedure.s Utf8ToUnicode(string.s)
   ;- Converts UCS2 to UTF8
   Define size.i, result.s
   size = MultiByteToWideChar_(#CP_UTF8, 0, @string, -1, 0, 0)
-  result = Space(size * 2 + 1)
-  MultiByteToWideChar_(#CP_UTF8, 0 , @string, -1, @result, size)
-  ProcedureReturn result
+  If(size = 0)
+      trace("Error: MultiByteToWideChar_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
+  result = Space(size * 2)+ Chr(0)
+  size = MultiByteToWideChar_(#CP_UTF8, 0 , @string, -1, @result, size)
+  If(size = 0)
+      trace("Error: MultiByteToWideChar_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
+  ProcedureReturn result 
 EndProcedure
+
 
 Procedure.s UnicodeToUtf8(string.s)
   ;- Converts UTF8 to UCS2
   Define size.i, result.s
   size = WideCharToMultiByte_(#CP_UTF8, 0, @string, -1, 0, 0, 0, 0)
+  If(size  = 0)
+      trace("Error: WideCharToMultiByte_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
   result = Space(size + 1)
-  WideCharToMultiByte_(#CP_UTF8, 0 , @string, -1, @result, size, 0, 0)
+  Define ret.l = WideCharToMultiByte_(#CP_UTF8, 0 , @string, -1, @result, size, 0, 0)
+  If(ret = 0)
+      trace("Error: WideCharToMultiByte_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
   ProcedureReturn result
 EndProcedure
 
@@ -187,6 +240,10 @@ EndProcedure
 Procedure.l AsciiAlloc(string.s)
   ;- Converts UCS2 to Ascii
   Define *result.Ascii = AllocateMemory(Len(string) + 1)
+  If(*result = 0)
+      trace("Error: AllocateMemory")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
   PokeS(*result, string, -1, #PB_Ascii)
   ProcedureReturn *result
 EndProcedure
@@ -194,13 +251,24 @@ EndProcedure
 Procedure.l UnicodeToUtf8Alloc(string.s)
   ;- Converts UTF8 to UCS2
   Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @string, -1, 0, 0, 0, 0)
+  If(size = 0)
+      trace("Error: WideCharToMultiByte_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
   Define *result.Ascii = AllocateMemory(size)
-  WideCharToMultiByte_(#CP_UTF8, 0 , @string, -1, *result, size, 0, 0)
+  If(*result = 0)
+      trace("Error: AllocateMemory")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
+  Define ret.l = WideCharToMultiByte_(#CP_UTF8, 0 , @string, -1, *result, size, 0, 0)
+  If(ret = 0)
+      trace("Error: WideCharToMultiByte_")
+      RaiseError(#ERROR_ASSERTION_FAILURE)
+  EndIf
   ProcedureReturn *result
 EndProcedure
 
 ;-- Extension utils
-#ERROR_ASSERTION_FAILURE = $29C
 
 Procedure.l GetInt32(object.l)
     Define result.l
@@ -227,7 +295,7 @@ Procedure.s GetString(object.l)
         trace("Error:" + ResultDescription(ret, "FREGetObjectAsUTF8"))
         RaiseError(#ERROR_ASSERTION_FAILURE)
     EndIf
-    ProcedureReturn PeekS(*result, fromULong(length) + 1, #PB_UTF8)
+    ProcedureReturn PeekS(*result, fromULong(length))
 EndProcedure
 
 Procedure.s GetArgString(index.l, argc.l, *argv.FREObjectArray)
@@ -294,6 +362,21 @@ Procedure.l GetNewStringUTF8(message.s)
     ProcedureReturn resultObject
 EndProcedure
 
+Procedure.l GetNewStringWC(message.s)
+    Define size.l = WideCharToMultiByte_(#CP_UTF8, 0, @message, -1, 0, 0, 0, 0)
+    If(size = 0)
+        trace("Error: WideCharToMultiByte  " + GetErrorMessage())
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    Define ret.l, resultObject.l
+    ret = FRENewObjectFromUTF8(toULong(size), UnicodeToUtf8Alloc(message), @resultObject)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FRENewObjectFromUTF8"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn resultObject
+EndProcedure
+
 Procedure DispatchEvent(ctx.l, code.s, level.s)
     Define ret.l
     ret = FREDispatchStatusEventAsync(ctx, AsciiAlloc(code), AsciiAlloc(level))
@@ -303,27 +386,37 @@ Procedure DispatchEvent(ctx.l, code.s, level.s)
     EndIf
 EndProcedure
 
-;      result = FREGetArrayElementAt(*argv\object[6], i, @element)
+Procedure DispatchEventEx(ctx.l, code.l, level.l)
+    Define ret.l
+    ret = FREDispatchStatusEventAsync(ctx, code, level)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREDispatchStatusEventAsync"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+EndProcedure
 
-; argc.l, *argv.FREObjectArray
-;   result = FREGetObjectAsInt32(*argv\object[0], @code)
-;   result = FREGetObjectAsInt32(*argv\object[1], @maxOutput)
-;   result = FREGetObjectAsInt32(*argv\object[2], @timeout)
-;   
-;   result = FREGetObjectAsUTF8(*argv\object[3], @length, @*string)
-;   executable = PeekS(*string, fromULong(length) + 1)
-;   
-;   result = FREGetObjectAsUTF8(*argv\object[4], @length, @*string)
-;   parameters = PeekS(*string, fromULong(length) + 1)
-;   
-;   result = FREGetObjectAsUTF8(*argv\object[5], @length, @*string)
-;   workingDir = PeekS(*string, fromULong(length) + 1)
-;   
-;   result = FREGetArrayLength(*argv\object[6], @arraySize)
+Procedure.l GetBool(object.l)
+    Define result.l
+    Define ret.l = FREGetObjectAsBool(object, @result)
+    If(ret <> #FRE_OK)
+        trace("Error:" + ResultDescription(ret, "FREGetObjectAsBool"))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn result
+EndProcedure
+
+Procedure.l GetArgBool(index.l, argc.l, *argv.FREObjectArray)
+    If(index >= argc)
+        trace("Error: index out of bounds index=" + Str(index) + ", size=" + Str(argc))
+        RaiseError(#ERROR_ASSERTION_FAILURE)
+    EndIf
+    ProcedureReturn GetBool(*argv\object[index])
+EndProcedure
+
 
 
 ; IDE Options = PureBasic 4.61 (Windows - x86)
-; CursorPosition = 296
-; FirstLine = 262
-; Folding = -----
+; CursorPosition = 152
+; FirstLine = 33
+; Folding = ------
 ; EnableXP
