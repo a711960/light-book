@@ -49,7 +49,7 @@ package light.book.lucene
          * Constructor
          * @param contextType default value is "ExifComponent"
          */
-        public function LuceneComponent(contextType:String = "ExifComponent")
+        public function LuceneComponent(contextType:String = "LuceneComponent")
         {
             //random type
             this.contextType = contextType + Math.round(Math.random() * 100000);
