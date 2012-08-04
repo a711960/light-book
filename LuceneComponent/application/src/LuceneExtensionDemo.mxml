@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
+                        creationComplete="initializeApplication()"
+                        showStatusBar="false"
+        >
+    <mx:Script>
+		<![CDATA[
+        import light.book.lucene.LuceneComponent;
+
+        import logging.ConsoleTarget;
+        import logging.TextTarget;
+        import mx.logging.ILogger;
+        import mx.logging.Log;
+
+        private const log:ILogger = Log.getLogger("ExifExtensionDemo");
+
+        private var extension:LuceneComponent;
+
+        private function initializeApplication():void
+        {
+            Log.addTarget(new ConsoleTarget());
+            Log.addTarget(new TextTarget(output));
+
+            log.info("started: debug {0}", Capabilities.isDebugger);
+            NativeApplication.nativeApplication.addEventListener(Event.EXITING, onExit, false, 0, true);
+
+            extension = new LuceneComponent("ExifExtensionDemo");
+        }
+
+        private function onExit(event:Event):void
+        {
+            extension.dispose();
+        }
+
+        private function onClick(event:MouseEvent):void
+        {
+            log.info("call test(): {0}", extension.test());
+        }
+        ]]>
+	</mx:Script>
+    <mx:VBox height="100%" width="100%">
+        <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
+        <mx:Button label="Run ExifTool" click="onClick(event)"/>
+    </mx:VBox>
+</mx:WindowedApplication>

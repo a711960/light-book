@@ -1,0 +1,17 @@
+all: extension
+
+target=LuceneComponent.dll
+
+commonInclude=./../../../../Common/include/
+commonLib=./../../../../Common/lib/
+
+src=Extension.cpp Extension.h
+
+lib=-lFlashRuntimeExtensions -L$(commonLib)
+
+inc=-I$(commonInclude)
+
+flags=-Wall -shared -static-libgcc -static-libstdc++
+
+extension: $(src)
+	g++ $(flags) $(src) $(lib) $(inc) -o ./../bin/$(target)

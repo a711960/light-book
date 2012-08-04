@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="JSON" type="flex">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/extension/ane/lib/blooddy_crypto.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
