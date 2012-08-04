@@ -74,6 +74,16 @@
             </condition>
         </fail>
 
+        <available file="${env.CLUCENE}" property="clucene.set"/>
+
+        <fail message="CLUCENE is not set or does not exist (${env.CLUCENE})">
+            <condition>
+                <not>
+                    <isset property="clucene.set"/>
+                </not>
+            </condition>
+        </fail>
+
         <info title="Build all" description="Build all modules and create application installer"/>
         <echo message="AIR_SDK_HOME: ${sdk.dir}"/>
         <echo message="    PLATFORM: ${platform}"/>
