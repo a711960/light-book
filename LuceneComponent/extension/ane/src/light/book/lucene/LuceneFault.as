@@ -6,7 +6,7 @@ package light.book.lucene
     /**
      * Exiftool was executed with errors (exitCode != 0 or error tag)
      */
-    public class ExifFault extends ErrorEvent
+    public class LuceneFault extends ErrorEvent
     {
         /**
          * Event type
@@ -15,9 +15,9 @@ package light.book.lucene
 
         /**
          * Error description
-         * @see ExifError
+         * @see LuceneError
          */
-        public var error:ExifError;
+        public var error:LuceneError;
 
         /**
          * Script id
@@ -30,7 +30,7 @@ package light.book.lucene
          * @param code request id
          * @param error error description
          */
-        public function ExifFault(type:String, code:int, error:ExifError)
+        public function LuceneFault(type:String, code:int, error:LuceneError)
         {
             super(type, true, true);
             this.code = code;
@@ -43,7 +43,7 @@ package light.book.lucene
          */
         override public function clone():Event
         {
-            var scriptFault:ExifFault = new ExifFault(type, code, error);
+            var scriptFault:LuceneFault = new LuceneFault(type, code, error);
             scriptFault.text = text;
             return scriptFault;
         }

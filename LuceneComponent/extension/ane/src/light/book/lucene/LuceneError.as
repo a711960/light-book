@@ -3,7 +3,7 @@ package light.book.lucene
     /**
      * Provides basic information about errors
      */
-    public class ExifError extends Error
+    public class LuceneError extends Error
     {
         private static const ERROR_PATTERN:RegExp = /error: ([0-9]+)[,]*([^,]*)[,]*([^,]*)[,]*([^,]*)[,]*([^,]*)/i;
 
@@ -21,12 +21,12 @@ package light.book.lucene
             100: "Unknown error"
         };
 
-        public static const UNKNOWN:ExifError = new ExifError(ERROR_DESCRIPTIONS[100], 100);
+        public static const UNKNOWN:LuceneError = new LuceneError(ERROR_DESCRIPTIONS[100], 100);
 
         /**
          * @inheritDoc
          */
-        public function ExifError(message:* = "",id:* = 0)
+        public function LuceneError(message:* = "",id:* = 0)
         {
             super(message, id)
         }
@@ -42,12 +42,12 @@ package light.book.lucene
             return level && ERROR_PATTERN.test(level);
         }
 
-        public static function parseError(level:String):ExifError
+        public static function parseError(level:String):LuceneError
         {
             var match:Array = ERROR_PATTERN.exec(level);
             var errorID:Number = parseInt(match[1]);
             var message:String = ERROR_DESCRIPTIONS[errorID];
-            var exifError:ExifError = new ExifError(message ? format(message, match) : "unknown error", errorID);
+            var exifError:LuceneError = new LuceneError(message ? format(message, match) : "unknown error", errorID);
             return exifError;
         }
 

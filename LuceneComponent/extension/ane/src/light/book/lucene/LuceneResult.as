@@ -5,7 +5,7 @@ package light.book.lucene
     /**
      * Exiftool was successfully executed
      */
-    public class ExifResult extends Event
+    public class LuceneResult extends Event
     {
         /**
          * Event type
@@ -28,7 +28,7 @@ package light.book.lucene
          * @param code request id
          * @param result extracted metadata
          */
-        public function ExifResult(type:String, code:int, result:Array)
+        public function LuceneResult(type:String, code:int, result:Array)
         {
             super(type, false, false);
             this.code = code;
@@ -40,7 +40,7 @@ package light.book.lucene
          */
         override public function clone():Event
         {
-            return new ExifResult(type, code, result);
+            return new LuceneResult(type, code, result);
         }
     }
 }
