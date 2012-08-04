@@ -7,9 +7,9 @@ commonLib=./../../../../Common/lib/
 
 src=Extension.cpp Extension.h
 
-lib=-lFlashRuntimeExtensions -L$(commonLib)
+lib=-lFlashRuntimeExtensions -llibclucene-core -llibclucene-shared -L$(commonLib)
 
-inc=-I$(commonInclude)
+inc=-I$(commonInclude) -I$(CLUCENE)\src\core\ -I$(CLUCENE)\src\shared\
 
 flags=-Wall -shared -static-libgcc -static-libstdc++
 
