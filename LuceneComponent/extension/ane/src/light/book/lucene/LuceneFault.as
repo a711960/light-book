@@ -11,7 +11,7 @@ package light.book.lucene
         /**
          * Event type
          */
-        public static const FAULT:String = "EXIF_FAULT";
+        public static const FAULT:String = "LUCENE_FAULT";
 
         /**
          * Error description

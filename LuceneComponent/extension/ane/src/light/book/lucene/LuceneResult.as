@@ -10,7 +10,7 @@ package light.book.lucene
         /**
          * Event type
          */
-        public static const RESULT:String = "EXIF_RESULT";
+        public static const RESULT:String = "LUCENE_RESULT";
 
         /**
          * Request id

@@ -10,12 +10,12 @@ package light.book.lucene
     /**
      * Exiftool was executed with errors
      */
-    [Event(name="EXIF_RESULT", type="light.book.lucene.LuceneResult")]
+    [Event(name="LUCENE_RESULT", type="light.book.lucene.LuceneResult")]
 
     /**
      * Exiftool was successfully executed
      */
-    [Event(name="EXIF_FAULT", type="light.book.lucene.LuceneFault")]
+    [Event(name="LUCENE_FAULT", type="light.book.lucene.LuceneFault")]
 
     /**
      * <p>ExifComponent extension, interface to Exiftool</p>
