@@ -1,14 +1,22 @@
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 #include <stdio.h>
-#include <wchar.h>
-#include <stdarg.h>
+//#include <wchar.h>
+//#include <stdarg.h>
 
-#include <malloc.h>
-#include <windows.h>
-
+//#include <malloc.h>
 
 #include "Extension.h"
+
+#include "CLucene.h"
+
+using namespace lucene::analysis;
+using namespace lucene::index;
+using namespace lucene::document;
+using namespace lucene::queryParser;
+using namespace lucene::search;
+using namespace lucene::store;
+
 
 #ifdef LOG_ENABLED
     #define DEBUG_PRINT(msg) print(msg)

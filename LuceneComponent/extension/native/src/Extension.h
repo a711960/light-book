@@ -1,4 +1,12 @@
-#define LOG_ENABLED false
+#ifndef UNICODE
+#define UNICODE
+#endif
+
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+
+#include <windows.h>
 
 #ifdef _WIN32
     //force using mingw <stdint.h>, see FlashRuntimeExtensions.h
@@ -7,6 +15,8 @@
     #define EXPORT __declspec(dllexport)
     #define LOG_FILE "c:/hidapi.log"
 #endif
+
+#define LOG_ENABLED false
 
 //export c-functions
 #ifdef __cplusplus
