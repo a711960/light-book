@@ -3,6 +3,10 @@
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
                         creationComplete="initializeApplication()"
                         showStatusBar="false"
+                        paddingBottom="0"
+                        paddingLeft="0"
+                        paddingRight="0"
+                        paddingTop="0"
         >
     <mx:Script>
 		<![CDATA[
@@ -98,7 +102,7 @@
     <mx:VBox height="100%" width="100%">
         <mx:HDividedBox height="100%" width="100%">
             <mx:VDividedBox height="100%" width="30%">
-                <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
+                <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" fontSize="12" editable="false"/>
                 <mx:VBox width="100%">
                     <mx:TextInput id="exiftool" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\exiftool.exe"/>
                     <mx:TextInput id="params" width="100%" text="c:\Dev\light-book\trunk\ExifComponent\test.fb2"/>

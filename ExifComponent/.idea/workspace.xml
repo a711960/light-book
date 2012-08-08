@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="0f2f565a-927f-4b98-99a8-7a14e35e223d" name="Default" comment="" />
+    <list default="true" readonly="true" id="0f2f565a-927f-4b98-99a8-7a14e35e223d" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/flexCompiler.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/AS3Module.iml" />
+      <change type="DELETED" beforePath="C:\Dev\light-book\trunk\ExifComponent\ExifComponent.iml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ant.xml" afterPath="$PROJECT_DIR$/.idea/ant.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml" afterPath="$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pbp" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pbp" />
+    </list>
     <ignored path="ScriptComponent.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -71,11 +81,42 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExifError.as" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ExifError.as" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifError.as">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="94" selection-start="935" selection-end="935" vertical-scroll-proportion="0.29188254">
+            <state line="27" column="94" selection-start="935" selection-end="935" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Extension.pb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="303" column="33" selection-start="9682" selection-end="9694" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExifExtensionDemo.mxml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="80" column="35" selection-start="2924" selection-end="2924" vertical-scroll-proportion="2.144144">
+              <folding>
+                <marker date="1344450976089" expanded="false" signature="434:778" placeholder="..." />
+                <marker date="1344450976089" expanded="true" signature="1095:1686" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="1751:1837" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="1904:2152" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2212:2256" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2322:2405" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2478:3324" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2641:2707" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2887:3314" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="2996:3067" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="3230:3300" placeholder="{...}" />
+                <marker date="1344450976089" expanded="true" signature="3391:3521" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -86,11 +127,6 @@
     <FindUsagesManager>
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
-  </component>
-  <component name="Git.Settings">
-    <option name="CHECKOUT_INCLUDE_TAGS" value="false" />
-    <option name="UPDATE_CHANGES_POLICY" value="STASH" />
-    <option name="LINE_SEPARATORS_CONVERSION" value="ASK" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
@@ -108,9 +144,9 @@
         <option value="$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifFault.as" />
         <option value="$PROJECT_DIR$/extension/native/src/Util.pb" />
         <option value="$PROJECT_DIR$/local.build.properties" />
-        <option value="$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml" />
         <option value="$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifError.as" />
         <option value="$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifComponent.as" />
+        <option value="$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml" />
       </list>
     </option>
   </component>
@@ -146,7 +182,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -184,6 +219,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExifComponent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExifComponent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="extension" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="native" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -244,6 +301,20 @@
               <option name="myItemId" value="application" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExifComponent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExifComponent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="application" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -284,20 +355,6 @@
               <option name="myItemId" value="application" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ExifComponent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ExifComponent" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="application" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="descriptor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -306,6 +363,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -339,7 +397,7 @@
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_flatWidth5" value="897" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="com.advancedtools.cpp.CppSupportLoader" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder5" value="5" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder3" value="3" />
     <property name="FileHistory.org.jetbrains.idea.svn.history.SvnHistoryProvider_treeOrder4" value="4" />
@@ -369,7 +427,7 @@
     <option name="referencePos" value="0" />
     <option name="showLabels" value="true" />
   </component>
-  <component name="RunManager" selected="AIR.ExifComponentDemo">
+  <component name="RunManager" selected="Flash App.ExifExtensionDemo">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
@@ -393,7 +451,17 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" adl_options="" air_descriptor_path="" air_program_params="" air_publisher_id="" air_root_dir_path="" air_run_mode="AppDescriptor" browser_family="FIREFOX" class_name="" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" method_name="" module_name="" output_log_level="" package_name="" player_path="FlashPlayer.exe" port="0" run_mode="HtmlOrSwfFile" run_trusted="true" scope="Class" socket_policy_port="0" url_to_launch="http://">
+    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" class_name="" method_name="" output_log_level="" package_name="" scope="Class">
+      <option name="BCName" value="" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browserFamily" value="FIREFOX" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="playerPath" value="FlashPlayerDebugger.exe" />
+        </LauncherParameters>
+      </option>
+      <option name="moduleName" value="" />
+      <option name="trusted" value="true" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -445,14 +513,6 @@
       <option name="VM_PARAMETERS" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="AirRunConfigurationType" factoryName="AIR" adl_options="" air_descriptor_path="" air_program_params="" air_publisher_id="" air_root_dir_path="" air_run_mode="AppDescriptor" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://">
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -517,20 +577,80 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="false" name="ExifComponentDemo" type="AirRunConfigurationType" factoryName="AIR" adl_options="-extdir C:\Dev\light-book\trunk\ExifComponent\application\extensions\unpacked" air_descriptor_path="$PROJECT_DIR$/application/air-manifest.xml" air_program_params="-profile extendedDesktop" air_publisher_id="" air_root_dir_path="$PROJECT_DIR$/application/" air_run_mode="AppDescriptor" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="ExifComponent" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://">
-      <RunnerSettings RunnerId="FlexDebugRunner" />
+    <configuration default="true" type="FlashRunConfigurationType" factoryName="Flash App">
+      <option name="BCName" value="" />
+      <option name="adlOptions" value="" />
+      <option name="airProgramParameters" value="" />
+      <option name="appDescriptorForEmulator" value="Generated" />
+      <option name="debugTransport" value="USB" />
+      <option name="debuggerSdkRaw" value="BC SDK" />
+      <option name="emulator" value="NexusOne" />
+      <option name="emulatorAdlOptions" value="" />
+      <option name="fullScreenHeight" value="0" />
+      <option name="fullScreenWidth" value="0" />
+      <option name="launchUrl" value="false" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browserFamily" value="FIREFOX" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="playerPath" value="FlashPlayerDebugger.exe" />
+        </LauncherParameters>
+      </option>
+      <option name="mobileRunTarget" value="Emulator" />
+      <option name="moduleName" value="" />
+      <option name="overriddenMainClass" value="" />
+      <option name="overriddenOutputFileName" value="" />
+      <option name="overrideMainClass" value="false" />
+      <option name="runTrusted" value="true" />
+      <option name="screenHeight" value="0" />
+      <option name="screenWidth" value="0" />
+      <option name="url" value="http://" />
+      <option name="usbDebugPort" value="7936" />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="ExifExtensionDemo" type="FlashRunConfigurationType" factoryName="Flash App">
+      <option name="BCName" value="AS3Module" />
+      <option name="adlOptions" value="-extdir C:\Dev\light-book\trunk\ExifComponent\application\extensions\unpacked" />
+      <option name="airProgramParameters" value="-profile extendedDesktop" />
+      <option name="appDescriptorForEmulator" value="Generated" />
+      <option name="debugTransport" value="USB" />
+      <option name="debuggerSdkRaw" value="BC SDK" />
+      <option name="emulator" value="NexusOne" />
+      <option name="emulatorAdlOptions" value="" />
+      <option name="fullScreenHeight" value="0" />
+      <option name="fullScreenWidth" value="0" />
+      <option name="launchUrl" value="false" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browserFamily" value="FIREFOX" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="playerPath" value="FlashPlayerDebugger.exe" />
+        </LauncherParameters>
+      </option>
+      <option name="mobileRunTarget" value="Emulator" />
+      <option name="moduleName" value="AS3Module" />
+      <option name="overriddenMainClass" value="" />
+      <option name="overriddenOutputFileName" value="" />
+      <option name="overrideMainClass" value="false" />
+      <option name="runTrusted" value="true" />
+      <option name="screenHeight" value="0" />
+      <option name="screenWidth" value="0" />
+      <option name="url" value="http://" />
+      <option name="usbDebugPort" value="7936" />
       <RunnerSettings RunnerId="FlexRunner" />
-      <RunnerSettings RunnerId="Profile" />
-      <ConfigurationWrapper RunnerId="FlexDebugRunner" />
       <ConfigurationWrapper RunnerId="FlexRunner" />
-      <ConfigurationWrapper RunnerId="Profile" />
       <method>
         <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="before.run" />
         <option name="Make" enabled="false" />
       </method>
     </configuration>
     <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="AIR.ExifComponentDemo" />
+      <item index="0" class="java.lang.String" itemvalue="Flash App.ExifExtensionDemo" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -538,7 +658,7 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
-  <component name="SvnConfiguration" maxAnnotateRevisions="500">
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
     <option name="mySSHConnectionTimeout" value="30000" />
@@ -553,6 +673,7 @@
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
     <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
     <configuration useDefault="false">C:\Users\Dookie\AppData\Roaming\Subversion</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
     <supportedVersion>125</supportedVersion>
@@ -609,8 +730,9 @@
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.67070484" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22678763" sideWeight="0.66519827" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22678763" sideWeight="0.66887414" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="jenkinsBrowser" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4944934" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -619,15 +741,15 @@
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Kahlua" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33480176" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33443707" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19583778" sideWeight="0.66519827" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.99907064" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19477054" sideWeight="0.66887414" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33112583" sideWeight="0.99907064" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Regex" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32929516" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -670,7 +792,10 @@
     <option name="INCLUDE_TEXT_INTO_PATCH" value="false" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
     <option name="CREATE_PATCH_EXPAND_DETAILS_DEFAULT" value="true" />
+    <option name="SHOW_FILE_HISTORY_DETAILS" value="true" />
+    <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
     <option name="LAST_COMMIT_MESSAGE" value="add" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
@@ -695,7 +820,21 @@
     <buildFile url="file://$PROJECT_DIR$/build.xml">
       <antCommandLine value="" />
       <runInBackground value="true" />
-      <targetFilters />
+      <targetFilters>
+        <filter targetName="create.application.package" isVisible="true" />
+        <filter targetName="native.generate.doc" isVisible="true" />
+        <filter targetName="build.native" isVisible="true" />
+        <filter targetName="build.application" isVisible="true" />
+        <filter targetName="build.all" isVisible="true" />
+        <filter targetName="unzip.extesion.content" isVisible="true" />
+        <filter targetName="create.descriptor" isVisible="true" />
+        <filter targetName="version" isVisible="true" />
+        <filter targetName="create.extension.package" isVisible="true" />
+        <filter targetName="distribute" isVisible="true" />
+        <filter targetName="clean" isVisible="true" />
+        <filter targetName="build.extension" isVisible="true" />
+        <filter targetName="before.run" isVisible="false" />
+      </targetFilters>
       <treeView value="true" />
       <verbose value="true" />
       <viewClosedWhenNoErrors value="false" />
@@ -743,19 +882,9 @@
         <state line="173" column="21" selection-start="4171" selection-end="4289" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="293" column="19" selection-start="9389" selection-end="9389" vertical-scroll-proportion="8.152209" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifFault.as">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="11" selection-start="37" selection-end="37" vertical-scroll-proportion="-0.44026187" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="74" column="23" selection-start="2702" selection-end="2702" vertical-scroll-proportion="0.31965813" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/MimeTypeMap.as">
@@ -773,15 +902,44 @@
         <state line="1" column="10" selection-start="20" selection-end="20" vertical-scroll-proportion="0.025914634" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifComponent.as">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="159" column="54" selection-start="4958" selection-end="4958" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifError.as">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="94" selection-start="935" selection-end="935" vertical-scroll-proportion="0.29188254">
+        <state line="27" column="94" selection-start="935" selection-end="935" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/ane/src/light/book/exif/ExifComponent.as">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="54" selection-start="4958" selection-end="4958" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/extension/native/src/Extension.pb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="303" column="33" selection-start="9682" selection-end="9694" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/src/ExifExtensionDemo.mxml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="35" selection-start="2924" selection-end="2924" vertical-scroll-proportion="2.144144">
+          <folding>
+            <marker date="1344450976089" expanded="false" signature="434:778" placeholder="..." />
+            <marker date="1344450976089" expanded="true" signature="1095:1686" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="1751:1837" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="1904:2152" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2212:2256" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2322:2405" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2478:3324" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2641:2707" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2887:3314" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="2996:3067" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="3230:3300" placeholder="{...}" />
+            <marker date="1344450976089" expanded="true" signature="3391:3521" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -837,7 +995,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>ExifComponent</last-edited>
+          <last-edited>AS3Module|AS3Module</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
