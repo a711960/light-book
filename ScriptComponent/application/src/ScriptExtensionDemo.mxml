@@ -3,6 +3,10 @@
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
                         creationComplete="initializeApplication()"
                         showStatusBar="false"
+                        paddingRight="0"
+                        paddingBottom="0"
+                        paddingLeft="0"
+                        paddingTop="0"
         >
     <mx:Script>
 		<![CDATA[
@@ -89,8 +93,8 @@
 	</mx:Script>
     <mx:VBox height="100%" width="100%">
         <mx:HDividedBox height="100%" width="100%">
-            <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" editable="false"/>
-            <mx:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" editable="true"
+            <mx:TextArea id="output" width="100%" height="100%" fontFamily="Courier new" fontSize="12" editable="false"/>
+            <mx:TextArea id="script" width="100%" height="100%" fontFamily="Courier new" fontSize="12" editable="true"
                          text="{example}"/>
         </mx:HDividedBox>
         <mx:HBox>
