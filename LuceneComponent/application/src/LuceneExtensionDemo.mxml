@@ -3,6 +3,10 @@
 <mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml"
                         creationComplete="initializeApplication()"
                         showStatusBar="false"
+                        paddingBottom="0"
+                        paddingTop="0"
+                        paddingLeft="0"
+                        paddingRight="0"
         >
     <mx:Script>
 		<![CDATA[
