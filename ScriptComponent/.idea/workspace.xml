@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="0f2f565a-927f-4b98-99a8-7a14e35e223d" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AS3Module.iml" afterPath="$PROJECT_DIR$/AS3Module.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extension/native/src/Extension.pbp" afterPath="$PROJECT_DIR$/extension/native/src/Extension.pbp" />
     </list>
     <ignored path="ScriptComponent.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -630,7 +628,11 @@
       <created>1344451661100</created>
       <updated>1344451661100</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="switch to 11.1.2">
+      <created>1344451978101</created>
+      <updated>1344451978101</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
