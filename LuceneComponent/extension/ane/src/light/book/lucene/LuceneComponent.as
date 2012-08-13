@@ -72,7 +72,7 @@ package light.book.lucene
                     _context.addEventListener(StatusEvent.STATUS, onStatusEvent);
                 }
             }
-            catch(e:Error)
+            catch (e:Error)
             {
                 log.error("Failed to create context: {0}, contextType: {1}, stacktrace: {2}", CONTEXT, this.contextType, e.getStackTrace());
             }
@@ -107,7 +107,7 @@ package light.book.lucene
         }
 
 
-         /**
+        /**
          * @private
          */
         private function onStatusEvent(event:StatusEvent):void

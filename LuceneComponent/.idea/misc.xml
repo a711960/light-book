@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CppTools.Loader" reportImplicitCastToBool="false" reportNameReferencedOnce="false" warnedAboutFileOutOfSourceRoot="true" version="3" currentProject="$PROJECT_DIR$/extension/native/src/makefile" additionalPreprocessorDefs="" compilerSelect="GCC" javaIncludes="false">
+  <component name="CppTools.Loader" reportImplicitCastToBool="false" reportNameReferencedOnce="false" warnedAboutFileOutOfSourceRoot="true" version="3" currentProject="$PROJECT_DIR$/extension/native/src/makefile" additionalPreprocessorDefs="_UNICODE;UNICODE" compilerSelect="GCC" javaIncludes="false">
     <include-dir path="$PROJECT_DIR$/../../../CLucene/src/shared" />
     <include-dir path="$PROJECT_DIR$/../../../CLucene/src/core" />
   </component>

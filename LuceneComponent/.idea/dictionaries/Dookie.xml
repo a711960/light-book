@@ -3,6 +3,10 @@
     <words>
       <w>deserialized</w>
       <w>exiftool</w>
+      <w>nonorms</w>
+      <w>termvector</w>
+      <w>tokenized</w>
+      <w>untokenized</w>
     </words>
   </dictionary>
 </component>

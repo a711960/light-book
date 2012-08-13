@@ -8,17 +8,17 @@ package light.book.lucene
         private static const ERROR_PATTERN:RegExp = /error: ([0-9]+)[,]*([^,]*)[,]*([^,]*)[,]*([^,]*)[,]*([^,]*)/i;
 
         private static const ERROR_DESCRIPTIONS:Object = {
-            1: "Failed to convert UTF8 to UCS2",
-            2: "Exiftool execution failed",
-            3: "AllocateMemory failed",
-            4: "Output exceeded maxOutput",
-            5: "Output is empty",
-            6: "Failed to parse Exiftool output",
-            7: "Failed to init ICU",
-            8: "Exiftool timed out",
-            9: "Failed to get file short path name",
-            10: "Failed to convert UCS2 to UTF8",
-            100: "Unknown error"
+            1:"Failed to convert UTF8 to UCS2",
+            2:"Exiftool execution failed",
+            3:"AllocateMemory failed",
+            4:"Output exceeded maxOutput",
+            5:"Output is empty",
+            6:"Failed to parse Exiftool output",
+            7:"Failed to init ICU",
+            8:"Exiftool timed out",
+            9:"Failed to get file short path name",
+            10:"Failed to convert UCS2 to UTF8",
+            100:"Unknown error"
         };
 
         public static const UNKNOWN:LuceneError = new LuceneError(ERROR_DESCRIPTIONS[100], 100);
@@ -26,7 +26,7 @@ package light.book.lucene
         /**
          * @inheritDoc
          */
-        public function LuceneError(message:* = "",id:* = 0)
+        public function LuceneError(message:* = "", id:* = 0)
         {
             super(message, id)
         }
@@ -55,7 +55,7 @@ package light.book.lucene
         {
             for (var i:int = start; i < rest.length; i++)
             {
-                message = message.replace(new RegExp("\\{"+(i-start)+"\\}", "g"), rest[i]);
+                message = message.replace(new RegExp("\\{" + (i - start) + "\\}", "g"), rest[i]);
             }
             return message;
         }
