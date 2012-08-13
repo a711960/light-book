@@ -34,7 +34,9 @@ package light.book.lucene
          */
         public var termVector:int;
 
-
+        /**
+         * Constructor.
+         */
         public function Field(name:String, value:String = null, store:int = Store.STORE_YES, index:int = Index.INDEX_TOKENIZED, termVector:int = TermVector.TERMVECTOR_YES)
         {
             this.name = name;

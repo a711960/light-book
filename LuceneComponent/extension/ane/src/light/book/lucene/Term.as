@@ -15,6 +15,9 @@ package light.book.lucene
          */
         public var value:String;
 
+        /**
+         * Constructor.
+         */
         public function Term(name:String = null, value:String = null)
         {
             this.name = name;
