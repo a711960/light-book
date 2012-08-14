@@ -7,6 +7,7 @@
 
 #include "Extension.h"
 #include "CLucene.h"
+#include "lib_json/json/json.h"
 
 const TCHAR* docs[] = {
   _T("a b c d e"),
@@ -20,12 +21,12 @@ const TCHAR* docs[] = {
 };
 
 const TCHAR* queries[] = {
-  _T("a b"),
-  _T("\"a b\""),
-  _T("\"a b c\""),
-  _T("a c"),
-  _T("\"a c\""),
-  _T("\"a c e\""),
+  L"a b",
+  L"\"a b\"",
+  L"\"a b c\"",
+  L"a c",
+  L"\"a c\"",
+  L"\"a c e\"",
   NULL
 };
 
@@ -184,21 +185,18 @@ FREObject get_result_as_int32(int value)
     return resultObject;
 }
 
-/*
-* hid_close (hid_device *device)
-*/
 FREObject test(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
 {
     DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "test");
      SimpleAnalyzer analyzer;
      try {
        //todo use wc to ansi convertion
-       Directory* dir = FSDirectory::getDirectory("c:\\Dev\\CLuceneTest\\index");
+       Directory* dir = FSDirectory::getDirectory("c:\\Dev\\CLuceneTest\\index");//default lock is used
        //Directory* dir = new RAMDirectory();
        IndexWriter* writer = new IndexWriter(dir, &analyzer, true);
        Document doc;
        for (int j = 0; docs[j] != NULL; ++j) {
-         doc.add( *_CLNEW Field(_T("contents"),
+         doc.add( *_CLNEW Field(L"contents",
                                 docs[j],
                                 Field::STORE_YES |
                                 Field::INDEX_TOKENIZED) );
@@ -209,34 +207,50 @@ FREObject test(FREContext ctx, void* funcData, uint32_t argc, FREObject argv[])
        delete writer;
        IndexReader* reader = IndexReader::open(dir);
        IndexSearcher searcher(reader);
-       QueryParser parser(_T("contents"), &analyzer);
+       QueryParser parser(L"contents", &analyzer);
        parser.setPhraseSlop(4);
        Hits* hits = NULL;
        for (int j = 0; queries[j] != NULL; ++j)
          {
            Query* query = parser.parse(queries[j]);
-           const wchar_t* qryInfo = query->toString(_T("contents"));
-//           _tprintf(_T("Query: %s\n"), qryInfo);
-           DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "Query: %s\n", qryInfo);
+           const wchar_t* qryInfo = query->toString(L"contents");
+           DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "Query: %s", qryInfo);
            delete[] qryInfo;
            hits = searcher.search(query);
-//           _tprintf(_T("%d total results\n"), hits->length());
-           DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "%d total results\n", hits->length());
+           DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "%d total results", hits->length());
            for (size_t i=0; i < hits->length() && i<10; i++) {
              Document* d = &hits->doc(i);
              double f = hits->score(i) < -1.0 ? 0.0 : hits->score(i);
-//             _tprintf(_T("#%d. %s (score: %.5f)\n"), i, d->get(_T("contents")), f );
+             DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, "#%d. %s (score: %.5f)", i, d->get(L"contents"), f);
            }
            delete hits;
            delete query;
          }
        searcher.close(); reader->close(); delete reader;
        dir->close(); delete dir;
-     } catch (CLuceneError& e) {
-//       _tprintf(_T(" caught a exception: %s\n"), e.twhat());
-     } catch (...){
-//       _tprintf(_T(" caught an unknown exception\n"));
      }
+     catch (CLuceneError& e)
+     {
+         DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__," caught a exception: %s", e.twhat());
+     } catch (...)
+     {
+         DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__," caught an unknown exception");
+     }
+
+     //todo convert widechar to utf-8 before creating json
+     Json::Value result;
+     result["encoding"] = "UTF-8";
+     result["number"] = 6;
+     Json::StyledWriter writer;
+     std::string output = writer.write(result);
+
+     char *a = new char[output.size()+1];
+     a[output.size()] = 0;
+     memcpy(a,output.c_str(),output.size());
+
+     DEBUG_PRINT(__FILE__, __LINE__, __FUNCTION__, a);
+     delete a;
+
     return get_result_as_boolean(true);
 }
 
